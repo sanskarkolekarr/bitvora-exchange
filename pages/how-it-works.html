@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>How It Works | BITVORA EXCHANGE</title>
+    <meta name="description" content="A complete technical walkthrough of how BITVORA Exchange converts crypto to INR. From deposit to bank transfer in under 15 minutes.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&family=DM+Mono:wght@400;700&family=Manrope:wght@300;400;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/lenis@1.0.45/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <script src="/assets/js/tailwind-config.js"></script>
+    <meta name="theme-color" content="#060608">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <script src="config.js"></script>
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/components.js" defer></script>
+
+    <style>
+        /* ── Page base ── */
+        body { background: #000000; }
+
+        /* ── Home-style surface card ── */
+        .pg-card {
+            background: #0e0e12;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 40px;
+            transition: border-color 0.4s cubic-bezier(0.23,1,0.32,1), transform 0.4s cubic-bezier(0.23,1,0.32,1);
+        }
+        .pg-card:hover {
+            border-color: rgba(255,255,255,0.15);
+            transform: translateY(-4px);
+        }
+
+        /* ── Inner nested card ── */
+        .inner-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 16px 20px;
+        }
+
+        /* ── Section wrapper ── */
+        .page-section {
+            padding: 60px 20px;
+        }
+        .section-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* ── Hero ── */
+        .hero-section {
+            padding: 120px 20px 60px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ── Stat strip ── */
+        .stat-strip {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            width: 100%;
+            max-width: 720px;
+            padding: 20px;
+            border-radius: 24px;
+            margin-top: 40px;
+        }
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+        .stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 36px;
+            color: white;
+            font-weight: 500;
+            line-height: 1;
+        }
+        .stat-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: rgba(200,200,216,0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+        }
+
+        /* ── Step cards ── */
+        .step-card {
+            padding: 28px 20px;
+            margin-bottom: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .step-num {
+            font-family: 'DM Mono', monospace;
+            font-size: 48px;
+            color: rgba(255,255,255,0.03);
+            font-weight: 700;
+            line-height: 1;
+            position: absolute;
+            top: 16px;
+            left: 20px;
+            pointer-events: none;
+        }
+        .step-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 22px;
+            color: white;
+            font-weight: 500;
+            margin-top: 36px;
+        }
+        .step-summary {
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px;
+            color: rgba(200,200,216,0.5);
+        }
+        .step-body p {
+            font-family: 'Manrope', sans-serif;
+            font-size: 15px;
+            color: rgba(200,200,216,0.65);
+            line-height: 1.9;
+            margin-bottom: 12px;
+        }
+        .step-body p:last-child { margin-bottom: 0; }
+        .detail-item {
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            color: rgba(200,200,216,0.5);
+            display: block;
+            padding: 4px 0;
+        }
+        .detail-item::before {
+            content: '· ';
+            color: rgba(200,200,216,0.3);
+        }
+
+        /* ── Confirmation grid ── */
+        .conf-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-top: 24px;
+        }
+        .conf-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 20px;
+            transition: border-color 0.3s;
+        }
+        .conf-card:hover {
+            border-color: rgba(255,255,255,0.1);
+        }
+        .conf-chain-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px;
+            color: white;
+        }
+        .conf-count {
+            font-family: 'DM Mono', monospace;
+            font-size: 24px;
+            color: white;
+            display: block;
+            margin-top: 8px;
+        }
+        .conf-count-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: rgba(200,200,216,0.3);
+            text-transform: uppercase;
+            display: block;
+            margin-top: 2px;
+        }
+        .conf-note {
+            font-family: 'Manrope', sans-serif;
+            font-size: 12px;
+            color: rgba(200,200,216,0.4);
+            margin-top: 8px;
+            display: block;
+        }
+
+        /* ── Skeleton ── */
+        .skel-pulse {
+            background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%);
+            background-size: 200% 100%;
+            animation: skel-shimmer 1.6s infinite;
+            border-radius: 12px;
+        }
+        @keyframes skel-shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ── FAQ accordion ── */
+        .faq-item {
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .faq-item:last-child { border-bottom: none; }
+        .faq-item summary {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 16px;
+            color: white;
+            cursor: pointer;
+            list-style: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            min-height: 56px;
+            padding: 16px 0;
+            gap: 12px;
+        }
+        .faq-item summary::-webkit-details-marker { display: none; }
+        .faq-answer {
+            font-family: 'Manrope', sans-serif;
+            font-size: 14px;
+            color: rgba(200,200,216,0.6);
+            line-height: 1.8;
+            padding-bottom: 16px;
+        }
+        .faq-plus {
+            font-size: 20px;
+            color: rgba(200,200,216,0.4);
+            transition: transform 0.3s cubic-bezier(0.23,1,0.32,1);
+            flex-shrink: 0;
+        }
+        details[open] .faq-plus { transform: rotate(45deg); }
+
+        /* ── Labels & accents (matching homepage) ── */
+        .mono-label {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            color: rgba(200,200,216,0.4);
+            display: block;
+        }
+        .section-subline {
+            font-family: 'DM Mono', monospace;
+            font-size: 10px;
+            color: rgba(200,200,216,0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        /* ── Fade up animation ── */
+        .fade-up {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: opacity 0.6s cubic-bezier(0.23,1,0.32,1), transform 0.6s cubic-bezier(0.23,1,0.32,1);
+        }
+        .fade-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── Desktop overrides ── */
+        @media (min-width: 768px) {
+            .hero-section {
+                padding: 160px 48px 80px;
+            }
+            .page-section {
+                padding: 96px 48px;
+            }
+            .stat-strip {
+                flex-direction: row;
+                padding: 28px 32px;
+                gap: 0;
+            }
+            .stat-item {
+                flex: 1;
+            }
+            .stat-divider {
+                width: 1px;
+                height: 48px;
+                background: rgba(255,255,255,0.05);
+                align-self: center;
+            }
+            .step-card {
+                padding: 40px 48px;
+                display: grid;
+                grid-template-columns: 40% 60%;
+                gap: 40px;
+                align-items: start;
+            }
+            .step-left { position: relative; }
+            .step-num {
+                font-size: 72px;
+                position: relative;
+                top: auto;
+                left: auto;
+            }
+            .step-title {
+                font-size: 26px;
+                margin-top: 12px;
+            }
+            .step-right { padding-top: 24px; }
+            .conf-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        @media (min-width: 1024px) {
+            .conf-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+
+<body style="background-color:#000000;color:#ffffff;-webkit-tap-highlight-color:transparent;" class="selection:bg-white selection:text-black">
+<main>
+
+    <!-- ══ HERO ══════════════════════════════════════════ -->
+    <section class="hero-section" style="position:relative;overflow:hidden;">
+        <!-- Ambient purple glow blob (same as index.html hero) -->
+        <div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-60%);width:600px;height:600px;background:radial-gradient(circle,rgba(168,85,247,0.12),transparent 70%);pointer-events:none;z-index:0;"></div>
+
+        <label class="font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-[#C8C8D8] opacity-40 block mb-5 relative z-10">THE PROTOCOL</label>
+        <h1 style="font-family:'Space Grotesk',sans-serif;font-size:clamp(40px,7vw,96px);font-weight:500;color:white;line-height:1.05;max-width:680px;margin-bottom:20px;letter-spacing:-0.02em;" class="relative z-10">
+            How It Works.
+        </h1>
+        <p style="font-family:'Manrope',sans-serif;font-size:16px;color:rgba(200,200,216,0.7);max-width:480px;line-height:1.7;font-weight:300;" class="relative z-10">
+            A complete technical walkthrough. From crypto in your wallet to rupees in your bank.
+        </p>
+
+        <!-- Hero stat strip — matches homepage stats bar surface -->
+        <div class="stat-strip bg-black/40 backdrop-blur-2xl border border-white/5 relative z-10" id="hero-stat-strip" style="box-shadow:0 40px 80px rgba(0,0,0,0.8);">
+            <div class="stat-item">
+                <span class="stat-value" id="stat-payout">~15 MIN</span>
+                <span class="stat-label">Average Payout</span>
+            </div>
+            <div class="stat-divider hidden" id="div1"></div>
+            <div class="stat-item">
+                <span class="stat-value" id="stat-chains">7 CHAINS</span>
+                <span class="stat-label">Supported</span>
+            </div>
+            <div class="stat-divider hidden" id="div2"></div>
+            <div class="stat-item">
+                <span class="stat-value" id="stat-verifications">26</span>
+                <span class="stat-label">Concurrent Verifications</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══ SECTION 1: THE FOUR STEPS ═══════════════════ -->
+    <section class="page-section">
+        <div class="section-inner">
+            <p class="mono-label mb-10">STEP BY STEP</p>
+
+            <div style="display:flex;flex-direction:column;gap:20px;">
+
+                <!-- Step 1 -->
+                <div class="pg-card step-card fade-up relative overflow-hidden" id="step1">
+                    <span class="material-symbols-outlined absolute right-[-5%] top-1/2 -translate-y-1/2 text-[400px] text-white/[0.03] pointer-events-none z-0 select-none">account_tree</span>
+                    <!-- Left -->
+                    <div class="step-left relative z-10">
+                        <span class="step-num z-[-1]">01</span>
+                        <h2 class="step-title">Select Your Chain and Asset</h2>
+                        <p class="step-summary">Nine chains, forty-plus tokens.</p>
+                    </div>
+                    <!-- Right -->
+                    <div class="step-right relative z-10">
+                        <div class="step-body">
+                            <p>BITVORA supports seven blockchains — Bitcoin, Ethereum, BNB Smart Chain, Tron, Solana, TON, and Litecoin. Each chain has a unique deposit address generated and maintained by the platform.</p>
+                            <p>Selecting a chain filters the token list automatically — only tokens available on that specific chain appear in the selection. The selected chain and token pair determine which RPC verifier node processes your transaction on the backend.</p>
+                            <p>The chain selector is the first decision in the flow and directly determines the deposit address you will use. Different chains for the same token — for example, USDT on Ethereum versus USDT on Tron — will have different addresses. Always verify the chain before sending.</p>
+                        </div>
+                        <div class="inner-card" style="margin-top:20px;">
+                            <span class="detail-item">7 SUPPORTED CHAINS</span>
+                            <span class="detail-item">20+ TOKENS</span>
+                            <span class="detail-item">UNIQUE ADDRESS PER CHAIN</span>
+                            <span class="detail-item">REAL-TIME FILTER BY CHAIN</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="pg-card step-card fade-up relative overflow-hidden" id="step2" style="transition-delay:0.1s;">
+                    <span class="material-symbols-outlined absolute right-[-5%] top-1/2 -translate-y-1/2 text-[400px] text-white/[0.03] pointer-events-none z-0 select-none">send</span>
+                    <div class="step-left relative z-10">
+                        <span class="step-num z-[-1]">02</span>
+                        <h2 class="step-title">Send to Our Deposit Address</h2>
+                        <p class="step-summary">Copy the address. Send from your own wallet.</p>
+                    </div>
+                    <div class="step-right relative z-10">
+                        <div class="step-body">
+                            <p>After selecting your chain and token, a deposit address is displayed alongside a QR code for convenient mobile scanning. Send the exact amount you wish to convert from your self-custody wallet to this address.</p>
+                            <p><strong style="color:rgba(200,200,216,0.9);">Important warning:</strong> Sending from a centralized exchange like Binance or Coinbase can break TXID traceability. Centralized exchanges often batch multiple withdrawals into a single on-chain transaction, making it impossible to isolate your specific transfer. Always send from a self-custody wallet such as MetaMask, Trust Wallet, Phantom, or Ledger.</p>
+                            <p>The amount sent does not need to match the quoted amount with perfect precision — there is a small tolerance window. However, rates are locked at the time of submission, and the INR payout is calculated based on the actual amount received on-chain, not the quoted amount.</p>
+                        </div>
+                        <div class="inner-card" style="margin-top:20px;">
+                            <span class="detail-item">ALWAYS SEND FROM SELF-CUSTODY WALLET</span>
+                            <span class="detail-item">VERIFY ADDRESS BEFORE SENDING</span>
+                            <span class="detail-item">QR CODE AVAILABLE FOR MOBILE</span>
+                            <span class="detail-item">AMOUNT TOLERANCE: ±0.1%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="pg-card step-card fade-up relative overflow-hidden" id="step3" style="transition-delay:0.2s;">
+                    <span class="material-symbols-outlined absolute right-[-5%] top-1/2 -translate-y-1/2 text-[400px] text-white/[0.03] pointer-events-none z-0 select-none">content_copy</span>
+                    <div class="step-left relative z-10">
+                        <span class="step-num z-[-1]">03</span>
+                        <h2 class="step-title">Submit Your TXID</h2>
+                        <p class="step-summary">Paste your transaction hash. We verify on-chain.</p>
+                    </div>
+                    <div class="step-right relative z-10">
+                        <div class="step-body">
+                            <p>A TXID — transaction ID — is a unique alphanumeric string that identifies your transaction on the blockchain. You can find it in your wallet's transaction history immediately after sending, or by searching your sending address on a blockchain explorer such as Etherscan, Tronscan, Solscan, or Blockstream.</p>
+                            <p>The backend verification process calls blockchain RPC nodes directly. It checks that the recipient address matches our platform deposit address, verifies the exact amount received, and waits for the chain's required number of confirmations. This means there is no third-party block explorer dependency — the chain itself provides the verification.</p>
+                            <p>A distributed lock mechanism prevents duplicate processing. Once a TXID is accepted into the system, a lock is acquired for that hash across all verifier threads, ensuring the same transaction cannot be processed twice even under concurrent submissions.</p>
+                            <p>Confirmation requirements vary by chain. Live data from our verification nodes is shown below:</p>
+                        </div>
+                        <!-- Live confirmations from /assets/chains -->
+                        <div class="inner-card" style="margin-top:20px;" id="step3-conf-card">
+                            <div id="step3-conf-list">
+                                <span class="detail-item skel-pulse" style="display:block;height:14px;width:60%;margin-bottom:8px;">&nbsp;</span>
+                                <span class="detail-item skel-pulse" style="display:block;height:14px;width:50%;margin-bottom:8px;">&nbsp;</span>
+                                <span class="detail-item skel-pulse" style="display:block;height:14px;width:65%;">&nbsp;</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="pg-card step-card fade-up relative overflow-hidden" id="step4" style="transition-delay:0.3s;">
+                    <span class="material-symbols-outlined absolute right-[-5%] top-1/2 -translate-y-1/2 text-[400px] text-white/[0.03] pointer-events-none z-0 select-none">payments</span>
+                    <div class="step-left relative z-10">
+                        <span class="step-num z-[-1]">04</span>
+                        <h2 class="step-title">Receive INR</h2>
+                        <p class="step-summary">Enter your UPI or bank account. Funds arrive in minutes.</p>
+                    </div>
+                    <div class="step-right relative z-10">
+                        <div class="step-body">
+                            <p>After on-chain verification completes, you enter your UPI ID or bank account number and IFSC code. The transaction moves to the payout queue and an admin processes the INR transfer manually via IMPS or UPI.</p>
+                            <p>The typical timeline is: transaction detected within seconds of confirmation, verification completes in one to two minutes depending on chain, payout queued immediately after verification, and INR transferred within ten to twenty minutes. Total flow from confirmed transaction to INR received typically takes under fifteen minutes during business hours.</p>
+                            <p>Every transaction generates a unique reference URL. You can track the exact status of your transaction in real time — from submitted to verified to payout initiated to completed. This status page remains permanently accessible via the reference URL so you always have a full audit trail.</p>
+                            <p>A payout reference number is provided after the INR transfer completes. Keep this for your records — it corresponds to the IMPS or UPI transaction from our payment account to yours.</p>
+                        </div>
+                        <div class="inner-card" style="margin-top:20px;">
+                            <span class="detail-item">UPI · IMPS · NEFT</span>
+                            <span class="detail-item">AVG PAYOUT: ~15 MIN</span>
+                            <span class="detail-item">REAL-TIME STATUS PAGE</span>
+                            <span class="detail-item">PERMANENT AUDIT TRAIL</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ══ SECTION 2: CONFIRMATION THRESHOLDS ═══════════ -->
+    <section class="page-section">
+        <div class="section-inner">
+            <div class="pg-card fade-up" style="padding:28px 20px;" id="conf-section-card">
+                <div style="margin-bottom:24px;">
+                    <p class="mono-label">CONFIRMATION THRESHOLDS</p>
+                    <p class="section-subline" style="margin-top:6px;">UPDATED IN REAL-TIME FROM OUR VERIFICATION NODES</p>
+                </div>
+                <div class="conf-grid" id="conf-grid">
+                    <!-- Skeletons while loading -->
+                    <div class="conf-card skel-pulse" style="height:120px;"></div>
+                    <div class="conf-card skel-pulse" style="height:120px;"></div>
+                    <div class="conf-card skel-pulse" style="height:120px;"></div>
+                    <div class="conf-card skel-pulse" style="height:120px;"></div>
+                    <div class="conf-card skel-pulse" style="height:120px;"></div>
+                    <div class="conf-card skel-pulse" style="height:120px;"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══ SECTION 3: FAQ ════════════════════════════════ -->
+    <section class="page-section" style="padding-bottom:120px;">
+        <div class="section-inner">
+            <div class="pg-card fade-up" style="padding:28px 20px;" id="faq-card">
+                <p class="mono-label" style="margin-bottom:24px;">FREQUENTLY ASKED</p>
+
+                <details class="faq-item">
+                    <summary>
+                        What wallets are supported?
+                        <span class="faq-plus">+</span>
+                    </summary>
+                    <p class="faq-answer">Any self-custody wallet that lets you send transactions and shows you a TXID is supported. This includes MetaMask, Trust Wallet, Phantom, Exodus, Ledger, Trezor, Atomic Wallet, Coinomi, Electrum for Bitcoin, and any other wallet where you control your private keys. The key requirement is that you must be able to send to a specific address and retrieve the TXID afterward.</p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>
+                        What happens if I send the wrong asset?
+                        <span class="faq-plus">+</span>
+                    </summary>
+                    <p class="faq-answer">Sending a different token than selected can cause your submission to fail verification, since the backend checks the specific token contract address. If this happens, contact support immediately with your TXID and the exact asset you sent. Recovery depends on the chain and asset involved — some misrouted tokens can be recovered, others cannot. Always triple-check the asset and chain before sending.</p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>
+                        Can I send from Binance or Coinbase?
+                        <span class="faq-plus">+</span>
+                    </summary>
+                    <p class="faq-answer">This is not recommended and often breaks the process. Centralized exchanges batch withdrawals, meaning your transaction may be bundled with others into a single on-chain transfer. When this happens, the TXID belongs to a different originating address, making it impossible to match your specific transfer to our deposit address. Always withdraw to a self-custody wallet first, then send from there.</p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>
+                        What if my transaction has zero confirmations?
+                        <span class="faq-plus">+</span>
+                    </summary>
+                    <p class="faq-answer">Transactions with zero confirmations are pending and unconfirmed. The backend will not process them until the minimum confirmation count for that chain is reached. You can submit your TXID immediately after sending — the system will detect the pending transaction and wait for the required confirmations automatically. You do not need to wait before submitting.</p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>
+                        How long does verification take?
+                        <span class="faq-plus">+</span>
+                    </summary>
+                    <p class="faq-answer">Verification time depends entirely on the blockchain confirmation speed. Fast chains like Solana and TON confirm in seconds. Ethereum typically takes one to three minutes. Bitcoin takes the longest — one confirmation is approximately ten minutes. Once the minimum confirmation count is reached, our backend verifier processes the result within seconds. The total verification time is almost entirely driven by the chain's block time.</p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>
+                        What if I close the browser during verification?
+                        <span class="faq-plus">+</span>
+                    </summary>
+                    <p class="faq-answer">Closing the browser does not affect verification. The backend processes your TXID independently of your browser session. Once you submit a TXID, the verification job runs server-side. You can return to your reference URL at any time to check the status. The page will reflect the current state of your transaction regardless of when you last had it open.</p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>
+                        Can I cancel a transaction after submitting?
+                        <span class="faq-plus">+</span>
+                    </summary>
+                    <p class="faq-answer">Once a TXID is submitted and verification begins, cancellation is not possible on the platform side. The underlying on-chain transaction is already irreversible by definition of how blockchains work. If you need assistance with a transaction that was submitted in error, contact support with your reference URL. We can advise on next steps based on the specific situation.</p>
+                </details>
+
+                <details class="faq-item">
+                    <summary>
+                        What is the minimum and maximum amount?
+                        <span class="faq-plus">+</span>
+                    </summary>
+                    <p class="faq-answer">There is no enforced minimum or maximum on the platform. However, very small amounts may not be economical after the network fee cost is factored in. Very large amounts may trigger additional manual review steps before payout is released. For amounts above a certain threshold, reaching out to support in advance is recommended to ensure smooth processing.</p>
+                </details>
+
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<script src="/assets/js/animations.js"></script>
+<script src="/assets/js/metallic-paint.js"></script>
+<script type="module" src="/assets/js/soft-aurora.js"></script>
+
+<script>
+    /* ══════════════════════════════════════════════════
+       CHAIN CONFIRMATION NOTES
+    ══════════════════════════════════════════════════ */
+    const CHAIN_CONF_NOTES = {
+        bitcoin:   'Bitcoin requires multiple confirmations due to its 10-minute block time and potential for reorganisations on the UTXO chain.',
+        ethereum:  'Ethereum\'s probabilistic finality requires several blocks to statistically eliminate the risk of a chain reorg.',
+        bsc:       'BNB Smart Chain has faster blocks but still requires confirmations to guard against validator-level reorganisations.',
+        tron:      'Tron uses DPoS with a fast block time of ~3 seconds, requiring sufficient confirmations to account for potential witness equivocation.',
+        solana:    'Solana\'s Tower BFT consensus provides sub-second slot times with near-instant finality, requiring minimal confirmation counts.',
+        ton:       'TON\'s BFT-based workchain achieves rapid finality with a single master chain confirmation often sufficient.',
+        litecoin:  'Litecoin shares Bitcoin\'s UTXO model with faster 2.5-minute blocks, requiring fewer confirmations for equivalent security.',
+    };
+
+    const FALLBACK_CHAINS = [
+        { chain: 'bitcoin',   required_confirmations: 2,  tokens: ['BTC'] },
+        { chain: 'ethereum',  required_confirmations: 12, tokens: ['ETH','USDT','USDC'] },
+        { chain: 'bsc',       required_confirmations: 15, tokens: ['BNB','USDT','USDC'] },
+        { chain: 'tron',      required_confirmations: 19, tokens: ['TRX','USDT'] },
+        { chain: 'solana',    required_confirmations: 1,  tokens: ['SOL','USDC'] },
+        { chain: 'ton',       required_confirmations: 1,  tokens: ['TON','USDT'] },
+        { chain: 'litecoin',  required_confirmations: 3,  tokens: ['LTC'] },
+    ];
+
+    const CHAIN_LABELS = {
+        bitcoin: 'Bitcoin', ethereum: 'Ethereum', bsc: 'BNB Smart Chain',
+        tron: 'Tron', solana: 'Solana', ton: 'TON', litecoin: 'Litecoin',
+    };
+
+    function renderConfGrid(chains) {
+        const grid = document.getElementById('conf-grid');
+        const step3List = document.getElementById('step3-conf-list');
+
+        // Render confirmation grid
+        grid.innerHTML = chains.map(c => {
+            const name = CHAIN_LABELS[c.chain] || c.chain;
+            const note = CHAIN_CONF_NOTES[c.chain] || 'Required confirmations are set to ensure transaction finality on this network.';
+            return `<div class="conf-card">
+                <span class="conf-chain-name">${name}</span>
+                <span class="conf-count">${c.required_confirmations}</span>
+                <span class="conf-count-label">Confirmations</span>
+                <span class="conf-note">${note}</span>
+            </div>`;
+        }).join('');
+
+        // Also render step 3 inline detail list
+        step3List.innerHTML = chains.map(c => {
+            const name = CHAIN_LABELS[c.chain] || c.chain;
+            return `<span class="detail-item">${name.toUpperCase()}: ${c.required_confirmations} CONFIRMATION${c.required_confirmations !== 1 ? 'S' : ''}</span>`;
+        }).join('');
+    }
+
+    /* ══════════════════════════════════════════════════
+       MOBILE STAT STRIP DIVIDERS
+    ══════════════════════════════════════════════════ */
+    function applyStatDividers() {
+        const isDesktop = window.innerWidth >= 768;
+        document.querySelectorAll('.stat-divider').forEach(d => {
+            d.classList.toggle('hidden', !isDesktop);
+            d.classList.toggle('block', isDesktop);
+        });
+    }
+    applyStatDividers();
+    window.addEventListener('resize', applyStatDividers);
+
+    /* ══════════════════════════════════════════════════
+       DATA LOADING
+    ══════════════════════════════════════════════════ */
+    window.addEventListener('DOMContentLoaded', async () => {
+
+        // Load chains for confirmation data
+        try {
+            const res = await apiFetch('/assets/chains');
+            if (res.ok && res.data && res.data.chains && res.data.chains.length > 0) {
+                renderConfGrid(res.data.chains);
+                // Update stat
+                document.getElementById('stat-chains').textContent = `${res.data.chains.length} CHAINS`;
+            } else {
+                renderConfGrid(FALLBACK_CHAINS);
+            }
+        } catch (e) {
+            console.error('Failed to load chains:', e);
+            renderConfGrid(FALLBACK_CHAINS);
+        }
+
+        // Load health for payout time + verifications
+        try {
+            const res = await apiFetch('/health');
+            if (res.ok && res.data) {
+                const d = res.data;
+                if (d.avg_payout_minutes) {
+                    document.getElementById('stat-payout').textContent = `~${Math.round(d.avg_payout_minutes)} MIN`;
+                }
+                if (d.concurrent_verifications) {
+                    document.getElementById('stat-verifications').textContent = d.concurrent_verifications;
+                }
+            }
+        } catch (e) {
+            console.error('Failed to load health data:', e);
+            // Keep static fallback values already in DOM
+        }
+
+        // Scroll animation observer
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+    });
+</script>
+
+</body>
+</html>

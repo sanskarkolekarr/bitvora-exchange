@@ -1,0 +1,20 @@
+# ════════════════════════════════════════════════════════════
+# BITVORA EXCHANGE — Cloudflare Tunnel Configuration Template
+# Replace placeholders with your actual tunnel credentials
+# ════════════════════════════════════════════════════════════
+
+# This file is a template. In production, the tunnel token is
+# passed via the TUNNEL_TOKEN environment variable in docker-compose.yml.
+# If using a credentials file instead, uncomment and configure below:
+
+# tunnel: YOUR_TUNNEL_UUID
+# credentials-file: /etc/cloudflared/credentials.json
+
+ingress:
+  # Route all traffic to the Nginx container
+  - hostname: yourdomain.com
+    service: http://nginx:80
+  - hostname: www.yourdomain.com
+    service: http://nginx:80
+  # Catch-all: return 404 for unmatched routes
+  - service: http_status:404

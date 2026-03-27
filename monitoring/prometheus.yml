@@ -1,0 +1,22 @@
+# ════════════════════════════════════════════════════════════
+# BITVORA EXCHANGE — Prometheus Configuration
+# Scrapes the FastAPI /metrics endpoint
+# ════════════════════════════════════════════════════════════
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: "bitvora-api"
+    metrics_path: "/metrics"
+    static_configs:
+      - targets: ["backend:8000"]
+        labels:
+          service: "bitvora-api"
+
+  - job_name: "redis"
+    static_configs:
+      - targets: ["redis:6379"]
+        labels:
+          service: "bitvora-redis"

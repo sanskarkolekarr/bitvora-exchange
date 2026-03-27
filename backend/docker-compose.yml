@@ -1,0 +1,49 @@
+services:
+  # ── FastAPI App (Gunicorn + Uvicorn workers) ──────────────────────
+  api:
+    build: .
+    image: bitvora-exchange-api
+    restart: always
+    # 4 workers handles ~8000+ concurrent connections
+    # (Cloudflare sits in front and does the heavy lifting)
+    command: >
+      gunicorn main:app
+        --workers 4
+        --worker-class uvicorn.workers.UvicornWorker
+        --bind 0.0.0.0:8000
+        --timeout 60
+        --access-logfile -
+        --error-logfile -
+        --log-level info
+    environment:
+      - ENVIRONMENT=development
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:8000:8000"   # Only listen on localhost — Cloudflare Tunnel connects to this
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8000/health').raise_for_status()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 1G
+        reservations:
+          cpus: "0.5"
+          memory: 256M
+
+  # ── Cloudflare Tunnel ─────────────────────────────────────────────
+  # Connects your service to the internet WITHOUT opening any ports
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: always
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      api:
+        condition: service_healthy

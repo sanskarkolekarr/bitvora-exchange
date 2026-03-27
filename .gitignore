@@ -1,0 +1,35 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.venv/
+venv/
+ENV/
+env/
+node_modules/
+
+# Sensitive Files
+backend/.env
+.env
+*.key
+*.pem
+
+# IDE / System files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Large/Temporary Data
+backend/data/
+backend/dump.json
+backend/txid_ledger_local.json
+*.log
+tx_error.txt
+err.txt
+err_v2.txt
+backend/err.txt
+backend/err_v2.txt
+backend/tx_error.txt

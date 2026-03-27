@@ -1,0 +1,37 @@
+/* Counter Styles */
+.counter-section {
+    perspective: 1000px;
+}
+
+.counter-container {
+    display: inline-flex;
+    position: relative;
+    overflow: hidden;
+    line-height: 1;
+}
+
+.counter-digit-container {
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.counter-digit {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.counter-separator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.counter-gradient-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+    background: linear-gradient(to bottom, black 0%, transparent 15%, transparent 85%, black 100%);
+}

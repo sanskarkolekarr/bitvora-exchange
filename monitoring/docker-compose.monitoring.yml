@@ -1,0 +1,48 @@
+# ════════════════════════════════════════════════════════════
+# BITVORA EXCHANGE — Monitoring Stack (Optional Add-on)
+# Prometheus + Grafana for observability
+# Usage: docker compose -f monitoring/docker-compose.monitoring.yml up -d
+# ════════════════════════════════════════════════════════════
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: bitvora-prometheus
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=30d"
+      - "--storage.tsdb.retention.size=5GB"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "127.0.0.1:9090:9090"    # Internal only — SSH tunnel to access
+    networks:
+      - bitvora-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: bitvora-grafana
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=changeme
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana-dashboard.json:/var/lib/grafana/dashboards/bitvora-dashboard.json:ro
+    ports:
+      - "127.0.0.1:3000:3000"    # Internal only — SSH tunnel to access
+    depends_on:
+      - prometheus
+    networks:
+      - bitvora-network
+
+networks:
+  bitvora-network:
+    external: true
+    name: bitvora-exchange-site_bitvora-network
+
+volumes:
+  prometheus-data:
+  grafana-data:

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Support | BITVORA EXCHANGE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://unpkg.com/lenis@1.0.45/dist/lenis.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    
+    <script src="config.js"></script>
+    <script src="/assets/js/api.js"></script>
+
+    <script src="/assets/js/tailwind-config.js"></script>
+    <style>
+        .form-card {
+            border-radius: 40px;
+            background: #0e0e12;
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 56px;
+        }
+        .form-input {
+            width: 100%;
+            border-radius: 16px;
+            background: #13131a;
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 16px 20px;
+            color: white;
+            font-family: 'Geist Mono', monospace;
+            font-size: 13px;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+        .form-input:focus {
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 0 0 1px rgba(255,255,255,0.1);
+        }
+        .form-input::placeholder {
+            color: rgba(200,200,216,0.3);
+            font-family: inherit;
+        }
+        
+        .cat-pill {
+            padding: 12px 20px;
+            border-radius: 9999px;
+            background: #13131a;
+            border: 1px solid rgba(255,255,255,0.08);
+            font-family: "Geist Mono", monospace;
+            font-size: 10px;
+            color: #C8C8D8;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+        .cat-pill.active {
+            background: white;
+            color: black;
+            border-color: white;
+            font-weight: 500;
+        }
+        
+        details > summary {
+            list-style: none;
+        }
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+    </style>
+
+    <meta name="theme-color" content="#060608">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <script src="/assets/js/components.js" defer></script>
+</head>
+<body style="-webkit-tap-highlight-color: transparent;" class="selection:bg-white selection:text-black bg-[#060608]">
+    <main>
+        <div style="padding-top: 160px; padding-bottom: 80px;" class="text-center px-4 fade-up">
+            <div class="font-mono text-[10px] uppercase tracking-[0.15em] text-[#C8C8D8] opacity-30 mb-4">ASSISTANCE</div>
+            <h1 class="font-headline text-[72px] font-medium text-white leading-tight mb-4">Support.</h1>
+            <p class="font-body text-[18px] text-[#C8C8D8] opacity-50 max-w-2xl mx-auto">Submit a request and we will respond within 24 hours. Include your transaction reference for faster resolution.</p>
+        </div>
+
+        <!-- Section 1: Contact Form -->
+        <section class="max-w-[680px] mx-auto px-4 mb-24 fade-up relative">
+            
+            <div id="form-container" class="form-card mx-auto transition-opacity duration-500">
+                <form id="support-form" class="space-y-6">
+                    <div>
+                        <input type="text" id="subj" required placeholder="DESCRIBE YOUR ISSUE BRIEFLY" class="form-input" />
+                    </div>
+                    
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="w-full md:w-1/2">
+                            <input type="text" id="ref" placeholder="TXN_XXXXXXXX (OPTIONAL)" class="form-input font-mono" />
+                        </div>
+                        <div class="w-full md:w-1/2">
+                            <input type="text" id="contact" required placeholder="EMAIL OR TELEGRAM" class="form-input" />
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="block font-mono text-[10px] text-[#C8C8D8] opacity-40 uppercase tracking-widest mb-3">CATEGORY</span>
+                        <div class="flex flex-wrap gap-2" id="cat-group">
+                            <button type="button" class="cat-pill active" data-val="TRANSACTION ISSUE">TRANSACTION ISSUE</button>
+                            <button type="button" class="cat-pill" data-val="PAYOUT DELAY">PAYOUT DELAY</button>
+                            <button type="button" class="cat-pill" data-val="WRONG ASSET">WRONG ASSET</button>
+                            <button type="button" class="cat-pill" data-val="OTHER">OTHER</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <textarea id="msg" required rows="6" class="form-input resize-none" placeholder="DESCRIBE YOUR ISSUE IN DETAIL. INCLUDE ANY RELEVANT INFORMATION."></textarea>
+                    </div>
+
+                    <div class="pt-4 text-center relative">
+                        <button type="submit" class="w-full bg-white text-black font-bold text-[12px] tracking-[0.2em] uppercase py-4 rounded-[16px] hover:bg-[#e0e0e0] transition-colors">
+                            SUBMIT REQUEST
+                        </button>
+                        <p id="error-toast" class="absolute -bottom-8 left-0 right-0 font-mono text-[11px] text-[#f43f5e] opacity-0 transition-opacity text-center mt-2">Â· SUBMISSION FAILED. TRY AGAIN OR EMAIL <span id="email-fallback"></span></p>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Success State -->
+            <div id="success-container" class="form-card mx-auto absolute inset-0 opacity-0 pointer-events-none flex flex-col items-center justify-center text-center transition-opacity duration-500" style="margin: 0 auto; max-width: 680px;">
+                <span class="font-mono text-[12px] text-[#C8C8D8] opacity-50 uppercase tracking-widest mb-4 block">TICKET SUBMITTED</span>
+                <div class="bg-white rounded-lg px-8 py-4 mb-6">
+                    <span id="ticket-id-display" class="font-mono text-[20px] text-black font-semibold uppercase tracking-widest">SUB-XYZ...</span>
+                </div>
+                <p class="font-body text-[16px] text-white opacity-80">WE WILL RESPOND WITHIN <span class="text-[#f43f5e] font-mono text-[16px]">24 HOURS</span>.</p>
+            </div>
+
+        </section>
+
+        <!-- Section 2: FAQ Accordion -->
+        <section class="max-w-[800px] mx-auto px-4 mb-32 fade-up">
+            <h2 class="font-headline text-3xl font-medium text-white mb-8 text-center">Frequently Asked Questions</h2>
+            <div class="space-y-4">
+                
+                <details class="group bg-[#0e0e12] rounded-[24px] border border-[rgba(255,255,255,0.06)] overflow-hidden">
+                    <summary class="flex justify-between items-center p-6 cursor-pointer hover:bg-[rgba(255,255,255,0.02)] transition-colors">
+                        <span class="font-headline text-[16px] text-white">How long does payout take?</span>
+                        <span class="material-symbols-outlined text-[#C8C8D8] opacity-40 group-open:rotate-180 transition-transform duration-400">expand_more</span>
+                    </summary>
+                    <div class="px-6 pb-6 pt-2 font-body text-[15px] text-[#C8C8D8] opacity-60 leading-relaxed border-t border-[rgba(255,255,255,0.04)]">
+                        After the blockchain confirms your transaction, our administrative team requires an average of 15 minutes to manually execute the INR payout. During extreme congestion this might spike up to an hour, but it is typically fully settled within the timeframe displayed on the status dashboard.
+                    </div>
+                </details>
+
+                <details class="group bg-[#0e0e12] rounded-[24px] border border-[rgba(255,255,255,0.06)] overflow-hidden">
+                    <summary class="flex justify-between items-center p-6 cursor-pointer hover:bg-[rgba(255,255,255,0.02)] transition-colors">
+                        <span class="font-headline text-[16px] text-white">What confirmations are required per chain?</span>
+                        <span class="material-symbols-outlined text-[#C8C8D8] opacity-40 group-open:rotate-180 transition-transform duration-400">expand_more</span>
+                    </summary>
+                    <div class="px-6 pb-6 pt-2 font-body text-[15px] text-[#C8C8D8] opacity-60 leading-relaxed border-t border-[rgba(255,255,255,0.04)]">
+                        Each network dictates finality requirements based on consensus parameters. Bitcoin requires 2 confirmations, Ethereum 12, Binance Smart Chain 15, and Tron 19. Solana and TON achieve near-instant finality after 1 block. Litecoin requires 3 confirmations.
+                    </div>
+                </details>
+
+                <details class="group bg-[#0e0e12] rounded-[24px] border border-[rgba(255,255,255,0.06)] overflow-hidden">
+                    <summary class="flex justify-between items-center p-6 cursor-pointer hover:bg-[rgba(255,255,255,0.02)] transition-colors">
+                        <span class="font-headline text-[16px] text-white">What if I sent from a centralized exchange?</span>
+                        <span class="material-symbols-outlined text-[#C8C8D8] opacity-40 group-open:rotate-180 transition-transform duration-400">expand_more</span>
+                    </summary>
+                    <div class="px-6 pb-6 pt-2 font-body text-[15px] text-[#C8C8D8] opacity-60 leading-relaxed border-t border-[rgba(255,255,255,0.04)]">
+                        We strongly advise against this. If you initiated the send from Binance, OKX, or Bybit directly to our deposit address, their cold/hot wallet bridging logic obfuscates your origin and bundles your request. The engine won't be able to map a solitary TXID. You will need to open a support ticket immediately.
+                    </div>
+                </details>
+
+                <details class="group bg-[#0e0e12] rounded-[24px] border border-[rgba(255,255,255,0.06)] overflow-hidden">
+                    <summary class="flex justify-between items-center p-6 cursor-pointer hover:bg-[rgba(255,255,255,0.02)] transition-colors">
+                        <span class="font-headline text-[16px] text-white">What if I entered the wrong bank account?</span>
+                        <span class="material-symbols-outlined text-[#C8C8D8] opacity-40 group-open:rotate-180 transition-transform duration-400">expand_more</span>
+                    </summary>
+                    <div class="px-6 pb-6 pt-2 font-body text-[15px] text-[#C8C8D8] opacity-60 leading-relaxed border-t border-[rgba(255,255,255,0.04)]">
+                        The payout team checks the recipient metadata via bank validators before dispatching IMPS. If the account details don't match, they pause your workflow and flag your transaction status as failed. Open a support ticket referencing your TXID to provide correct details and retrieve your funds.
+                    </div>
+                </details>
+
+                <details class="group bg-[#0e0e12] rounded-[24px] border border-[rgba(255,255,255,0.06)] overflow-hidden">
+                    <summary class="flex justify-between items-center p-6 cursor-pointer hover:bg-[rgba(255,255,255,0.02)] transition-colors">
+                        <span class="font-headline text-[16px] text-white">What if my transaction is stuck in verifying?</span>
+                        <span class="material-symbols-outlined text-[#C8C8D8] opacity-40 group-open:rotate-180 transition-transform duration-400">expand_more</span>
+                    </summary>
+                    <div class="px-6 pb-6 pt-2 font-body text-[15px] text-[#C8C8D8] opacity-60 leading-relaxed border-t border-[rgba(255,255,255,0.04)]">
+                        This indicates either you submitted a mempool transaction that is being dropped by miners due to low gas, or you've provided the incorrect TXID mismatching the actual chain hash. Give it 20 minutes, then contact support if the problem persists.
+                    </div>
+                </details>
+
+                <details class="group bg-[#0e0e12] rounded-[24px] border border-[rgba(255,255,255,0.06)] overflow-hidden">
+                    <summary class="flex justify-between items-center p-6 cursor-pointer hover:bg-[rgba(255,255,255,0.02)] transition-colors">
+                        <span class="font-headline text-[16px] text-white">Can I cancel a transaction?</span>
+                        <span class="material-symbols-outlined text-[#C8C8D8] opacity-40 group-open:rotate-180 transition-transform duration-400">expand_more</span>
+                    </summary>
+                    <div class="px-6 pb-6 pt-2 font-body text-[15px] text-[#C8C8D8] opacity-60 leading-relaxed border-t border-[rgba(255,255,255,0.04)]">
+                        You can safely navigate away from an unverified pending lock if you decide not to send the tokens. However, once you broadcast your crypto and bind the TXID, the transaction becomes irreversible due to blockchain constraints.
+                    </div>
+                </details>
+
+                <details class="group bg-[#0e0e12] rounded-[24px] border border-[rgba(255,255,255,0.06)] overflow-hidden">
+                    <summary class="flex justify-between items-center p-6 cursor-pointer hover:bg-[rgba(255,255,255,0.02)] transition-colors">
+                        <span class="font-headline text-[16px] text-white">What is the platform fee?</span>
+                        <span class="material-symbols-outlined text-[#C8C8D8] opacity-40 group-open:rotate-180 transition-transform duration-400">expand_more</span>
+                    </summary>
+                    <div class="px-6 pb-6 pt-2 font-body text-[15px] text-[#C8C8D8] opacity-60 leading-relaxed border-t border-[rgba(255,255,255,0.04)]">
+                        BITVORA Exchange does not apply withdrawal fees. The exchange quote rate inherently accommodates the backend operational and bridging threshold margins. There are no surprise final calculation hits to your portfolio.
+                    </div>
+                </details>
+
+                <details class="group bg-[#0e0e12] rounded-[24px] border border-[rgba(255,255,255,0.06)] overflow-hidden">
+                    <summary class="flex justify-between items-center p-6 cursor-pointer hover:bg-[rgba(255,255,255,0.02)] transition-colors">
+                        <span class="font-headline text-[16px] text-white">How is the INR rate calculated?</span>
+                        <span class="material-symbols-outlined text-[#C8C8D8] opacity-40 group-open:rotate-180 transition-transform duration-400">expand_more</span>
+                    </summary>
+                    <div class="px-6 pb-6 pt-2 font-body text-[15px] text-[#C8C8D8] opacity-60 leading-relaxed border-t border-[rgba(255,255,255,0.04)]">
+                        Our internal indexers fetch the global USD average for the selected token and cross-correlate against real-time OTC trading desk Rupee rates, bypassing local P2P risk premiums.
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- Section 3: Operational Status -->
+        <section class="max-w-[800px] mx-auto px-4 mb-32 fade-up">
+            <h2 class="font-headline text-[24px] text-white mb-6">Operational Status</h2>
+            <div class="bg-[#0e0e12] border border-[rgba(255,255,255,0.06)] rounded-[24px] p-6 space-y-4">
+                <div class="flex justify-between items-center p-4 bg-[#13131a] rounded-[16px] border border-[rgba(255,255,255,0.03)]">
+                    <span class="font-body text-[14px] text-[#C8C8D8] opacity-80">Blockchain Verification</span>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <span class="font-mono text-[10px] text-green-500 tracking-widest uppercase">Operational</span>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center p-4 bg-[#13131a] rounded-[16px] border border-[rgba(255,255,255,0.03)]">
+                    <span class="font-body text-[14px] text-[#C8C8D8] opacity-80">Payout Processing</span>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <span class="font-mono text-[10px] text-green-500 tracking-widest uppercase">Operational</span>
+                    </div>
+                </div>
+                <div class="flex justify-between items-center p-4 bg-[#13131a] rounded-[16px] border border-[rgba(255,255,255,0.03)]">
+                    <span class="font-body text-[14px] text-[#C8C8D8] opacity-80">Rate Engine</span>
+                    <div class="flex items-center gap-2">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <span class="font-mono text-[10px] text-green-500 tracking-widest uppercase">Routing</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', e => {
+            cursor.style.top = e.clientY + 'px';
+            cursor.style.left = e.clientX + 'px';
+        });
+
+        document.querySelectorAll('a, button, input, textarea, summary').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // Pill logic
+        let selectedCategory = "TRANSACTION ISSUE";
+        document.querySelectorAll('.cat-pill').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                selectedCategory = e.target.dataset.val;
+            });
+        });
+
+        document.getElementById('email-fallback').innerText = BITVORA_CONFIG.SUPPORT_EMAIL;
+
+        document.getElementById('support-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const errorToast = document.getElementById('error-toast');
+            
+            submitBtn.innerText = "SUBMITTING...";
+            errorToast.style.opacity = '0';
+            
+            const payload = {
+                subject: document.getElementById('subj').value + " [" + selectedCategory + "]",
+                reference: document.getElementById('ref').value || null,
+                contact: document.getElementById('contact').value,
+                message: document.getElementById('msg').value
+            };
+
+            try {
+                const res = await apiFetch('/support/submit', {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+
+                if(res.ok) {
+                    // Success
+                    document.getElementById('ticket-id-display').innerText = res.data.ticket_id || "TICKET_RECVD";
+                    
+                    document.getElementById('form-container').style.opacity = '0';
+                    document.getElementById('form-container').style.pointerEvents = 'none';
+                    
+                    setTimeout(() => {
+                        const succ = document.getElementById('success-container');
+                        succ.classList.remove('hidden');
+                        succ.style.pointerEvents = 'auto';
+                        succ.style.opacity = '1';
+                    }, 500);
+
+                } else {
+                    throw new Error("API Failure");
+                }
+            } catch(error) {
+                submitBtn.innerText = "SUBMIT REQUEST";
+                errorToast.style.opacity = '1';
+                setTimeout(() => { errorToast.style.opacity = '0'; }, 4000);
+            }
+        });
+        
+    </script>
+    <script src="/assets/js/animations.js"></script>
+    <script src="/assets/js/platform.js"></script>
+
+
+
+</body>
+</html>

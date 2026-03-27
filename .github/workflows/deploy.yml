@@ -1,0 +1,47 @@
+name: Deploy LMAO Exchange
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node for build
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install build tools
+        run: npm install -g terser cssnano-cli
+
+      - name: Build frontend assets
+        run: bash scripts/build.sh
+
+      - name: Deploy frontend to VPS
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: lmao
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "pages/,assets/,admin/,scripts/"
+          target: "/var/www/bitvoraexchange/"
+
+      - name: Deploy backend and restart services
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: lmao
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script: |
+            cd /home/lmao/bitvora-exchange
+            git pull origin main
+            docker compose up -d --build --no-deps backend worker-verifier worker-price
+            echo "Waiting for services to start..."
+            sleep 15
+            docker compose logs --tail=30 backend
+            curl -sf http://localhost:8000/health || exit 1
+            echo "Deployment successful!"

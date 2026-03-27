@@ -1,0 +1,51 @@
+.logoloop {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  width: 100%;
+}
+.logoloop.logoloop--horizontal {
+  flex-direction: row;
+}
+.logoloop.logoloop--vertical {
+  flex-direction: column;
+}
+.logoloop__track {
+  display: flex;
+  will-change: transform;
+}
+.logoloop--horizontal .logoloop__track {
+  flex-direction: row;
+}
+.logoloop--vertical .logoloop__track {
+  flex-direction: column;
+}
+.logoloop__list {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  gap: var(--logoloop-gap, 32px);
+}
+.logoloop--horizontal .logoloop__list {
+  flex-direction: row;
+  padding-right: var(--logoloop-gap, 32px);
+}
+.logoloop--vertical .logoloop__list {
+  flex-direction: column;
+  padding-bottom: var(--logoloop-gap, 32px);
+}
+.logoloop__item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.logoloop--fade.logoloop--horizontal {
+  -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+  mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+.logoloop--fade.logoloop--vertical {
+  -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+}
