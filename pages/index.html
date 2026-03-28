@@ -30,7 +30,19 @@
         darkMode: "class",
         theme: {
           extend: {
+            animation: {
+              blob: "blob 10s infinite alternate",
+            },
+            keyframes: {
+              blob: {
+                "0%": { transform: "translate(0px, 0px) scale(1)", filter: "blur(100px)" },
+                "33%": { transform: "translate(50px, -50px) scale(1.1)", filter: "blur(120px)" },
+                "66%": { transform: "translate(-20px, 30px) scale(0.9)", filter: "blur(90px)" },
+                "100%": { transform: "translate(0px, 0px) scale(1)", filter: "blur(100px)" }
+              }
+            },
             colors: {
+              // ... existing colors preserved ...
               "primary-fixed-dim": "#454747",
               "tertiary": "#e4e2e1",
               "surface-container": "#1f1f1f",
@@ -84,7 +96,7 @@
               "body": ["Inter"],
               "label": ["Inter"]
             },
-            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "3xl": "1.5rem", "full": "9999px"},
           },
         },
       }
@@ -94,21 +106,7 @@
       min-height: max(884px, 100dvh);
       overflow-x: hidden;
     }
-    .darkveil-container {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      overflow: hidden;
-      pointer-events: none;
-    }
-    .darkveil-canvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
+
     
     /* Scroll Velocity Base Styles */
     .parallax {
@@ -176,32 +174,116 @@
 </header>
 <main class="pt-24 pb-32">
 <!-- Hero Section -->
-<section class="px-6 md:px-24 pt-20 md:pt-40 flex flex-col items-start max-w-7xl mx-auto">
-<div class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container-high rounded-full mb-8">
-<span class="w-2 h-2 rounded-full bg-white"></span>
-<span class="text-[10px] font-bold tracking-widest uppercase text-zinc-400">Network Status: Operational</span>
+<div class="relative w-full overflow-hidden" style="min-height: 100vh;">
+  <!-- Siri-Apple Glass Orbs Background -->
+  <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+    <div class="absolute -top-[10%] -left-[10%] w-[50vw] h-[50vw] rounded-full bg-indigo-600/20 mix-blend-screen animate-blob"></div>
+    <div class="absolute top-[20%] right-[0%] w-[45vw] h-[45vw] rounded-full bg-violet-600/20 mix-blend-screen animate-blob" style="animation-delay: 2s"></div>
+    <div class="absolute -bottom-[20%] left-[20%] w-[60vw] h-[60vw] rounded-full bg-cyan-600/15 mix-blend-screen animate-blob" style="animation-delay: 4s"></div>
+  </div>
+  
+  <section class="relative z-10 px-6 md:px-24 pt-32 md:pt-48 flex flex-col items-start max-w-7xl mx-auto fade-up visible">
+    <div class="inline-flex items-center gap-2 px-3 py-1 bg-zinc-900/80 backdrop-blur-md rounded-full mb-8 border border-white/5 shadow-2xl">
+      <span class="w-2 h-2 rounded-full bg-green-500 animate-[pulse_2s_ease-in-out_infinite]"></span>
+      <span class="text-[10px] font-bold tracking-widest uppercase text-zinc-300">Network Status: Operational</span>
+    </div>
+    
+    <h1 class="text-6xl md:text-9xl font-headline font-bold text-white leading-[0.9] tracking-tighter mb-8 drop-shadow-2xl">
+      Turn Crypto <br/><span class="text-transparent bg-clip-text bg-gradient-to-r from-zinc-100 to-zinc-500">Into Rupees</span>
+    </h1>
+    
+    <p class="text-lg md:text-2xl font-body text-zinc-400 max-w-2xl mb-12 drop-shadow-lg">
+      Verified on-chain. Paid to your UPI instantly. Experience the ultimate exit ramp for the digital age.
+    </p>
+    
+    <div class="flex flex-col sm:flex-row gap-6 items-center">
+      <a href="exchange.html" class="bg-zinc-100 text-black px-12 py-5 rounded-full font-headline font-bold text-xl tracking-tight flex items-center gap-4 hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_40px_rgba(255,255,255,0.15)] hover:shadow-[0_0_60px_rgba(255,255,255,0.25)] hover:bg-white border-none">
+        Start Converting
+        <span class="material-symbols-outlined transition-transform group-hover:translate-x-1 group-hover:-translate-y-1">north_east</span>
+      </a>
+      
+      <div class="flex items-center gap-4 text-xs font-bold tracking-widest uppercase text-zinc-400">
+        <span class="flex items-center gap-1 bg-zinc-900/50 backdrop-blur border border-white/5 py-2 px-4 rounded-full"><span class="material-symbols-outlined text-[16px]">lock</span> SSL Secured</span>
+        <span class="flex items-center gap-1 bg-zinc-900/50 backdrop-blur border border-white/5 py-2 px-4 rounded-full"><span class="material-symbols-outlined text-[16px]">bolt</span> Instant UPI</span>
+      </div>
+    </div>
+  </section>
 </div>
-<h1 class="text-6xl md:text-9xl font-headline font-bold text-primary leading-[0.9] tracking-tighter mb-8">
-                Turn Crypto <br/> Into Rupees
-            </h1>
-<p class="text-lg md:text-2xl font-body text-outline max-w-2xl mb-12">
-                Verified on-chain. Paid to your UPI. Experience the ultimate exit ramp for the digital age.
-            </p>
-<button class="metallic-gradient text-black px-12 py-5 rounded-full font-headline font-bold text-xl tracking-tight flex items-center gap-4 hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_40px_rgba(255,255,255,0.1)]">
-                Start
-                <span class="material-symbols-outlined">north_east</span>
-</button>
+
+<!-- Scroll Velocity Section -->
+<section class="py-16 md:py-24 relative z-10 fade-up">
+  <div class="parallax">
+    <div class="scroller" id="scroller1">
+      <span>INSTANT UPI PAYOUTS</span><span>•</span>
+      <span>ZERO SLIPPAGE</span><span>•</span>
+      <span>NO CUSTODY RISK</span><span>•</span>
+      <span>BANK-GRADE SECURITY</span><span>•</span>
+      <span>INSTANT UPI PAYOUTS</span><span>•</span>
+      <span>ZERO SLIPPAGE</span><span>•</span>
+      <span>NO CUSTODY RISK</span><span>•</span>
+      <span>BANK-GRADE SECURITY</span><span>•</span>
+    </div>
+    <div class="scroller reverse text-zinc-700" id="scroller2" style="transform: translateX(-50%);">
+      <span>TIER-1 LIQUIDITY</span><span>•</span>
+      <span>24/7 AUTOMATED PROCESSING</span><span>•</span>
+      <span>GLOBAL NETWORK OPTIONS</span><span>•</span>
+      <span>TIER-1 LIQUIDITY</span><span>•</span>
+      <span>24/7 AUTOMATED PROCESSING</span><span>•</span>
+      <span>GLOBAL NETWORK OPTIONS</span><span>•</span>
+    </div>
+  </div>
+</section>
+
+<!-- How It Works Section -->
+<section class="px-6 md:px-24 mt-40 max-w-7xl mx-auto fade-up relative z-10">
+  <div class="text-center mb-24 max-w-3xl mx-auto">
+    <h2 class="text-5xl md:text-7xl font-headline font-bold text-primary tracking-tighter mb-6">Frictionless Exit.</h2>
+    <p class="text-lg text-outline">From self-custody directly to your local bank account in under a minute without manual intervention.</p>
+  </div>
+  
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+    <!-- Connecting Line (Desktop only) -->
+    <div class="hidden md:block absolute top-[48px] left-[15%] right-[15%] h-[1px] bg-gradient-to-r from-transparent via-zinc-700 to-transparent z-0"></div>
+    
+    <div class="relative z-10 flex flex-col items-center text-center group">
+      <div class="w-24 h-24 rounded-3xl bg-zinc-900/60 backdrop-blur-xl border border-white/10 flex items-center justify-center mb-6 shadow-[0_8px_32px_rgba(0,0,0,0.5)] group-hover:bg-zinc-800/80 transition-all duration-500 text-zinc-400 group-hover:text-white group-hover:-translate-y-2">
+        <span class="material-symbols-outlined text-4xl">qr_code_scanner</span>
+      </div>
+      <span class="text-[10px] font-bold tracking-[0.2em] text-outline uppercase mb-3 text-zinc-500">Phase 01</span>
+      <h3 class="text-2xl font-headline font-bold text-primary mb-3">Initiate Transfer</h3>
+      <p class="text-sm text-zinc-400 font-body px-4">Generate a unique deposit address and send your assets from any wallet.</p>
+    </div>
+    
+    <div class="relative z-10 flex flex-col items-center text-center group">
+      <div class="w-24 h-24 rounded-3xl bg-zinc-900/60 backdrop-blur-xl border border-white/10 flex items-center justify-center mb-6 shadow-[0_8px_32px_rgba(0,0,0,0.5)] group-hover:bg-zinc-800/80 transition-all duration-500 text-zinc-100 group-hover:text-white relative group-hover:-translate-y-2">
+        <div class="absolute inset-0 rounded-3xl border border-white/20 animate-ping opacity-20"></div>
+        <span class="material-symbols-outlined text-4xl">memory</span>
+      </div>
+      <span class="text-[10px] font-bold tracking-[0.2em] text-outline uppercase mb-3 text-zinc-300">Phase 02</span>
+      <h3 class="text-2xl font-headline font-bold text-primary mb-3">Network Sync</h3>
+      <p class="text-sm text-zinc-400 font-body px-4">Our nodes detect your transfer instantly and wait for minimal block confirmations.</p>
+    </div>
+    
+    <div class="relative z-10 flex flex-col items-center text-center group">
+      <div class="w-24 h-24 rounded-3xl bg-zinc-900/60 backdrop-blur-xl border border-white/10 flex items-center justify-center mb-6 shadow-[0_8px_32px_rgba(0,0,0,0.5)] group-hover:bg-zinc-800/80 transition-all duration-500 text-zinc-400 group-hover:text-white group-hover:-translate-y-2">
+        <span class="material-symbols-outlined text-4xl">account_balance</span>
+      </div>
+      <span class="text-[10px] font-bold tracking-[0.2em] text-outline uppercase mb-3 text-zinc-500">Phase 03</span>
+      <h3 class="text-2xl font-headline font-bold text-primary mb-3">Instant Settlement</h3>
+      <p class="text-sm text-zinc-400 font-body px-4">Liquidation algorithms execute your trade and disburse INR to your linked UPI ID seamlessly.</p>
+    </div>
+  </div>
 </section>
 <!-- Feature Bento Grid -->
-<section class="px-6 md:px-24 mt-40 max-w-7xl mx-auto">
-<div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+<section class="px-6 md:px-24 mt-40 max-w-7xl mx-auto fade-up">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6">
 <!-- Large Terminal Module -->
-<div class="md:col-span-8 bg-surface-container-low rounded-lg p-10 border border-outline/10 flex flex-col justify-between min-h-[500px] relative overflow-hidden group">
+<div class="md:col-span-8 bg-zinc-900/60 backdrop-blur-2xl rounded-3xl p-10 border border-white/10 flex flex-col justify-between min-h-[500px] relative overflow-hidden group shadow-2xl">
 <div class="relative z-10">
 <span class="text-[10px] font-bold tracking-[0.2em] text-outline uppercase mb-4 block">Transaction Engine</span>
 <h3 class="text-4xl font-headline font-bold text-primary mb-6">Real-time settlement <br/>infrastructure.</h3>
 </div>
-<div class="bg-black/40 backdrop-blur-xl border border-white/5 rounded-md p-6 font-mono text-xs text-zinc-500 relative z-10">
+<div class="bg-black/40 backdrop-blur-xl border border-white/5 rounded-2xl p-6 font-mono text-xs text-zinc-500 relative z-10">
 <div class="flex justify-between mb-4">
 <span class="text-zinc-100">TX_ID: 0x82...a921</span>
 <span class="text-white">STATUS: SUCCESS</span>
@@ -213,26 +295,26 @@
 <p class="text-zinc-100">&gt; Settlement complete. 120,000.00 INR dispatched.</p>
 </div>
 </div>
-<div class="absolute top-0 right-0 w-full h-full opacity-10 pointer-events-none">
-<img class="w-full h-full object-cover" data-alt="Abstract futuristic digital grid lines on a deep black background representing high speed data transfer and technology" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5Fst0bmNZZohHxilH1GwsuM8Ru264Fd_qhMY8qgUeUEGikYvfs1xqxEuVw_mSA2vzQ-T4RwwTao3iQUy_jXWBWBXXHWWMozuVIs_wwlicoJEeskAIT7yp9DkQsJWo9IB1p_7bnfBFysme0-XURHbaKItoHPXr2uGmpr206VeuZx5VVfRgv4vd1bRoyQrtyKIJ64AKlc_D5wUPrlj13PDQSIBf64WX3--KgXL-Rzlgoscw8fXKGtYI0r0xv-Qlqc1IaVw7GRiN8JqT"/>
+<div class="absolute top-0 right-0 w-full h-full opacity-10 pointer-events-none transition-opacity duration-700 group-hover:opacity-20">
+<img class="w-full h-full object-cover mix-blend-screen" data-alt="Abstract futuristic digital grid lines on a deep black background representing high speed data transfer and technology" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5Fst0bmNZZohHxilH1GwsuM8Ru264Fd_qhMY8qgUeUEGikYvfs1xqxEuVw_mSA2vzQ-T4RwwTao3iQUy_jXWBWBXXHWWMozuVIs_wwlicoJEeskAIT7yp9DkQsJWo9IB1p_7bnfBFysme0-XURHbaKItoHPXr2uGmpr206VeuZx5VVfRgv4vd1bRoyQrtyKIJ64AKlc_D5wUPrlj13PDQSIBf64WX3--KgXL-Rzlgoscw8fXKGtYI0r0xv-Qlqc1IaVw7GRiN8JqT"/>
 </div>
 </div>
 <!-- Secondary Metric Module -->
-<div class="md:col-span-4 bg-surface-container-high rounded-lg p-8 border border-outline/10 flex flex-col justify-center items-center text-center">
+<div class="md:col-span-4 bg-zinc-900/40 backdrop-blur-2xl rounded-3xl p-8 border border-white/5 flex flex-col justify-center items-center text-center shadow-2xl hover:bg-zinc-800/50 transition-colors">
 <span class="material-symbols-outlined text-5xl mb-6 text-zinc-100" style="font-variation-settings: 'FILL' 1;">speed</span>
 <h4 class="text-5xl font-headline font-bold text-primary mb-2">~45s</h4>
 <p class="text-sm font-body text-outline uppercase tracking-widest">Average payout time</p>
 </div>
 <!-- Third Row Module -->
-<div class="md:col-span-4 bg-surface-container-high rounded-lg p-8 border border-outline/10">
+<div class="md:col-span-4 bg-zinc-900/40 backdrop-blur-2xl rounded-3xl p-8 border border-white/5 shadow-2xl hover:bg-zinc-800/50 transition-colors">
 <span class="material-symbols-outlined text-3xl mb-4 text-zinc-100">verified_user</span>
 <h4 class="text-xl font-headline font-bold text-primary mb-2">Bank-Grade Security</h4>
-<p class="text-sm font-body text-outline">Multi-signature cold storage and institutional custody for every byte of data.</p>
+<p class="text-sm font-body text-zinc-400">Multi-signature cold storage and institutional custody for every byte of data.</p>
 </div>
-<div class="md:col-span-8 bg-[#0A0A0A] rounded-lg p-8 border border-outline/10 flex flex-col md:flex-row items-center gap-8 overflow-hidden">
+<div class="md:col-span-8 bg-zinc-900/40 backdrop-blur-2xl rounded-3xl p-8 border border-white/5 flex flex-col md:flex-row items-center gap-8 overflow-hidden shadow-2xl hover:bg-zinc-800/50 transition-colors">
 <div class="flex-1">
 <h4 class="text-2xl font-headline font-bold text-primary mb-2">Universal UPI Support</h4>
-<p class="text-sm font-body text-outline">Seamlessly deposit funds to GPay, PhonePe, or any BHIM-enabled bank account instantly.</p>
+<p class="text-sm font-body text-zinc-400">Seamlessly deposit funds to GPay, PhonePe, or any BHIM-enabled bank account instantly.</p>
 </div>
 <div class="flex gap-4 opacity-50">
 <span class="material-symbols-outlined text-4xl">payments</span>
@@ -243,79 +325,131 @@
 </div>
 </section>
 <!-- Dynamic Data Section -->
-<section class="px-6 md:px-24 mt-40 max-w-7xl mx-auto">
+<section class="px-6 md:px-24 mt-40 max-w-7xl mx-auto fade-up">
 <div class="flex flex-col md:flex-row justify-between items-end gap-12 mb-20">
 <div class="max-w-xl">
 <h2 class="text-5xl md:text-7xl font-headline font-bold text-primary tracking-tighter mb-6">Market Precision</h2>
 <p class="text-lg text-outline">We pull direct liquidity from the world's deepest order books to ensure you get the sharpest rate in the market.</p>
 </div>
 <div class="text-right">
-<span class="text-[10px] font-bold tracking-[0.3em] uppercase text-outline">LIVE_TICKER</span>
-<div class="text-4xl font-headline font-bold text-primary">â‚¹7,82,142.00</div>
+<span class="text-[10px] font-bold tracking-[0.3em] uppercase text-zinc-600">LIVE_TICKER</span>
+<div class="text-4xl font-headline font-bold text-primary font-mono select-all">₹7,82,142.00</div>
 <div class="text-sm text-zinc-500 font-mono">BTC / INR (+1.2%)</div>
 </div>
 </div>
-<div class="border border-outline/10 rounded-lg overflow-hidden bg-surface-container-lowest">
+<div class="border border-white/5 rounded-3xl overflow-hidden bg-zinc-900/40 backdrop-blur shadow-2xl">
 <table class="w-full text-left border-collapse">
-<thead class="bg-surface-container-low border-b border-outline/10">
+<thead class="bg-zinc-800/30 border-b border-white/5">
 <tr>
-<th class="px-8 py-5 text-[10px] font-bold tracking-widest text-outline uppercase">Asset</th>
-<th class="px-8 py-5 text-[10px] font-bold tracking-widest text-outline uppercase">Exchange Rate</th>
-<th class="px-8 py-5 text-[10px] font-bold tracking-widest text-outline uppercase">Liquidity</th>
-<th class="px-8 py-5 text-[10px] font-bold tracking-widest text-outline uppercase text-right">Action</th>
+<th class="px-8 py-5 text-[10px] font-bold tracking-widest text-zinc-500 uppercase">Asset</th>
+<th class="px-8 py-5 text-[10px] font-bold tracking-widest text-zinc-500 uppercase">Exchange Rate</th>
+<th class="px-8 py-5 text-[10px] font-bold tracking-widest text-zinc-500 uppercase">Liquidity</th>
+<th class="px-8 py-5 text-[10px] font-bold tracking-widest text-zinc-500 uppercase text-right">Action</th>
 </tr>
 </thead>
-<tbody class="divide-y divide-outline/5 font-body">
-<tr class="hover:bg-white/5 transition-colors">
+<tbody class="divide-y divide-white/5 font-body">
+<tr class="hover:bg-zinc-800/50 transition-colors">
 <td class="px-8 py-6">
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-zinc-100">currency_bitcoin</span>
 <span class="font-bold text-primary">Bitcoin</span>
 </div>
 </td>
-<td class="px-8 py-6 text-zinc-300">â‚¹7,82,142.00</td>
-<td class="px-8 py-6 text-zinc-500">Tier 1 â€¢ Deep</td>
+<td class="px-8 py-6 text-zinc-300 font-mono tracking-widest text-[13px]">₹7,82,142.00</td>
+<td class="px-8 py-6 text-zinc-500 text-[13px]">Tier 1 • Deep</td>
 <td class="px-8 py-6 text-right">
-<button class="text-xs font-bold tracking-widest text-white border-b border-white hover:opacity-70 transition-opacity">CONVERT</button>
+<button class="text-[10px] font-bold tracking-widest text-white hover:text-cyan-400 transition-colors bg-zinc-800 px-4 py-2 rounded-full">CONVERT</button>
 </td>
 </tr>
-<tr class="hover:bg-white/5 transition-colors">
+<tr class="hover:bg-zinc-800/50 transition-colors">
 <td class="px-8 py-6">
 <div class="flex items-center gap-3">
 <span class="material-symbols-outlined text-zinc-100">currency_bitcoin</span>
 <span class="font-bold text-primary">Ethereum</span>
 </div>
 </td>
-<td class="px-8 py-6 text-zinc-300">â‚¹2,45,102.50</td>
-<td class="px-8 py-6 text-zinc-500">Tier 1 â€¢ High</td>
+<td class="px-8 py-6 text-zinc-300 font-mono tracking-widest text-[13px]">₹2,45,102.50</td>
+<td class="px-8 py-6 text-zinc-500 text-[13px]">Tier 1 • High</td>
 <td class="px-8 py-6 text-right">
-<button class="text-xs font-bold tracking-widest text-white border-b border-white hover:opacity-70 transition-opacity">CONVERT</button>
+<button class="text-[10px] font-bold tracking-widest text-white hover:text-violet-400 transition-colors bg-zinc-800 px-4 py-2 rounded-full">CONVERT</button>
 </td>
 </tr>
-<tr class="hover:bg-white/5 transition-colors">
+<tr class="hover:bg-zinc-800/50 transition-colors">
 <td class="px-8 py-6">
 <div class="flex items-center gap-3">
-<span class="material-symbols-outlined text-zinc-100">stabilization</span>
+<span class="material-symbols-outlined text-zinc-100">toll</span>
 <span class="font-bold text-primary">USDT (Polygon)</span>
 </div>
 </td>
-<td class="px-8 py-6 text-zinc-300">â‚¹91.45</td>
-<td class="px-8 py-6 text-zinc-500">Tier 1 â€¢ Instant</td>
+<td class="px-8 py-6 text-zinc-300 font-mono tracking-widest text-[13px]">₹91.45</td>
+<td class="px-8 py-6 text-zinc-500 text-[13px]">Tier 1 • Instant</td>
 <td class="px-8 py-6 text-right">
-<button class="text-xs font-bold tracking-widest text-white border-b border-white hover:opacity-70 transition-opacity">CONVERT</button>
+<button class="text-[10px] font-bold tracking-widest text-white hover:text-indigo-400 transition-colors bg-zinc-800 px-4 py-2 rounded-full">CONVERT</button>
 </td>
 </tr>
 </tbody>
 </table>
 </div>
 </section>
+<!-- Trust & Volume Metrics -->
+<section class="px-6 md:px-24 mt-40 max-w-7xl mx-auto fade-up">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="p-10 border border-white/5 rounded-3xl bg-zinc-900/40 backdrop-blur text-center group hover:bg-zinc-800/60 transition-all shadow-xl">
+            <div class="text-4xl md:text-6xl font-headline font-bold text-primary mb-2 tracking-tighter">₹10Cr+</div>
+            <div class="text-sm font-label text-zinc-500 uppercase tracking-widest font-bold">Volume Processed</div>
+        </div>
+        <div class="p-10 border border-white/5 rounded-3xl bg-zinc-900/40 backdrop-blur text-center group hover:bg-zinc-800/60 transition-all shadow-xl">
+            <div class="text-4xl md:text-6xl font-headline font-bold text-primary mb-2 tracking-tighter">&lt; 45s</div>
+            <div class="text-sm font-label text-zinc-500 uppercase tracking-widest font-bold">Average Payout Time</div>
+        </div>
+        <div class="p-10 border border-white/5 rounded-3xl bg-zinc-900/40 backdrop-blur text-center group hover:bg-zinc-800/60 transition-all shadow-xl">
+            <div class="text-4xl md:text-6xl font-headline font-bold text-primary mb-2 tracking-tighter">99.9%</div>
+            <div class="text-sm font-label text-zinc-500 uppercase tracking-widest font-bold">System Uptime</div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="px-6 md:px-24 mt-40 max-w-3xl mx-auto fade-up">
+    <h2 class="text-4xl md:text-6xl font-headline font-bold text-primary tracking-tighter mb-12 text-center">Frequently Asked.</h2>
+    <div class="space-y-4">
+        <details class="group border border-white/5 rounded-2xl bg-zinc-900/40 backdrop-blur marker:content-[''] cursor-pointer shadow-lg">
+            <summary class="flex justify-between items-center p-6 font-headline text-lg font-bold text-primary select-none group-open:text-zinc-400">
+                What networks do you support?
+                <span class="material-symbols-outlined transition-transform group-open:rotate-45">add</span>
+            </summary>
+            <div class="px-6 pb-6 text-zinc-400 font-body text-sm leading-relaxed">
+                We currently support major networks including TRC20, ERC20, Polygon, and Lightning Network to ensure the lowest fees and fastest confirmation times.
+            </div>
+        </details>
+        <details class="group border border-white/5 rounded-2xl bg-zinc-900/40 backdrop-blur marker:content-[''] cursor-pointer shadow-lg">
+            <summary class="flex justify-between items-center p-6 font-headline text-lg font-bold text-primary select-none group-open:text-zinc-400">
+                Are there any hidden fees?
+                <span class="material-symbols-outlined transition-transform group-open:rotate-45">add</span>
+            </summary>
+            <div class="px-6 pb-6 text-zinc-400 font-body text-sm leading-relaxed">
+                Zero slippage. Zero hidden fees. You get exactly what you see quoted on our live market ticker. Our dynamic exchange rate accounts for all costs upfront.
+            </div>
+        </details>
+        <details class="group border border-white/5 rounded-2xl bg-zinc-900/40 backdrop-blur marker:content-[''] cursor-pointer shadow-lg">
+            <summary class="flex justify-between items-center p-6 font-headline text-lg font-bold text-primary select-none group-open:text-zinc-400">
+                Is my crypto held in custody?
+                <span class="material-symbols-outlined transition-transform group-open:rotate-45">add</span>
+            </summary>
+            <div class="px-6 pb-6 text-zinc-400 font-body text-sm leading-relaxed">
+                We are entirely non-custodial. We do not hold your funds. You send crypto directly from your personal wallet, and it is instantly liquidated and sent to your bank via UPI.
+            </div>
+        </details>
+    </div>
+</section>
+
 <!-- CTA Section -->
-<section class="px-6 md:px-24 mt-60 text-center max-w-4xl mx-auto">
+<section class="px-6 md:px-24 mt-40 mb-20 text-center max-w-4xl mx-auto fade-up">
 <h2 class="text-5xl md:text-8xl font-headline font-bold text-primary tracking-tighter mb-10">Scale your wealth.</h2>
 <p class="text-xl text-outline mb-12">The bridge between digital assets and local spending power is now open. Join the elite network.</p>
-<div class="flex flex-col md:flex-row gap-4 justify-center">
-<button class="metallic-gradient text-black px-12 py-5 rounded-full font-headline font-bold text-lg hover:scale-105 active:scale-95 transition-all">Start On-boarding</button>
-<button class="bg-black border border-outline text-primary px-12 py-5 rounded-full font-headline font-bold text-lg hover:bg-white hover:text-black transition-all">Documentation</button>
+<div class="flex flex-col md:flex-row gap-6 justify-center">
+<button class="bg-zinc-100 text-black px-12 py-5 rounded-full font-headline font-bold text-lg hover:scale-105 active:scale-95 transition-all shadow-[0_4px_14px_0_rgb(255,255,255,39%)] hover:shadow-[0_6px_20px_rgba(255,255,255,23%)] hover:bg-white border-none">Start On-boarding</button>
+<button class="bg-zinc-900/40 backdrop-blur text-primary px-12 py-5 rounded-full font-headline font-bold text-lg hover:bg-zinc-800 transition-all shadow-xl">Documentation</button>
 </div>
 </section>
 </main>
@@ -376,4 +510,53 @@
 <span class="font-label text-[10px] font-medium uppercase tracking-widest mt-1">Profile</span>
 </a>
 </nav>
+
+<script>
+// 2. ScrollVelocity Marquee Setup
+let lastScrollY = window.scrollY;
+let scrollVelocity = 0;
+const scrollers = [
+  { el: document.getElementById('scroller1'), baseSpeed: 1, pos: 0, dir: -1 },
+  { el: document.getElementById('scroller2'), baseSpeed: 1, pos: 0, dir: 1 }
+];
+
+const renderMarquee = () => {
+  const scrollY = window.scrollY;
+  const deltaScroll = scrollY - lastScrollY;
+  
+  // Calculate a smooth velocity multiplier
+  scrollVelocity += (deltaScroll - scrollVelocity) * 0.1;
+  lastScrollY = scrollY;
+  
+  const vFactor = Math.abs(scrollVelocity) * 0.05 + 1;
+  const scrollDir = Math.sign(scrollVelocity) || 1;
+
+  scrollers.forEach(s => {
+    if (!s.el) return;
+    s.pos += (s.baseSpeed * s.dir * vFactor * scrollDir) * 1.5;
+    
+    // reset position if it scrolls too far out (wrap around)
+    // using scrollWidth / 2 achieves a perfect seamless infinite loop
+    const resetPoint = s.el.scrollWidth / 2;
+    if (s.pos < -resetPoint) s.pos = 0;
+    if (s.pos > resetPoint) s.pos = 0;
+    
+    s.el.style.transform = `translateX(${s.pos}px)`;
+  });
+  
+  requestAnimationFrame(renderMarquee);
+};
+requestAnimationFrame(renderMarquee);
+
+// 3. Fade-up Animations via IntersectionObserver
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+</script>
 </body></html>

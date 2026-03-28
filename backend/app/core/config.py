@@ -92,7 +92,7 @@ class Settings(BaseSettings):
     DB_POOL_SIZE: int = 20
     DB_MAX_OVERFLOW: int = 40
     DB_POOL_TIMEOUT: int = 30
-    DB_POOL_RECYCLE: int = 1800
+    DB_POOL_RECYCLE: int = 300
 
     # ── Redis tuning ─────────────────────────────────────────────
     REDIS_MAX_CONNECTIONS: int = 50
