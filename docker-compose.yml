@@ -19,6 +19,8 @@ services:
     depends_on:
       redis:
         condition: service_healthy
+      postgres:
+        condition: service_healthy
     healthcheck:
       test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8000/health').raise_for_status()"]
       interval: 30s
@@ -64,6 +66,27 @@ services:
     networks:
       - bitvora-network
 
+  # ── PostgreSQL — Database ──────────────────────────────────
+  postgres:
+    image: postgres:15-alpine
+    container_name: bitvora-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password123
+      POSTGRES_DB: bitvora
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d bitvora"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - bitvora-network
+
   # ── Nginx — Static Files & Reverse Proxy ───────────────────
   nginx:
     image: nginx:alpine
@@ -74,7 +97,7 @@ services:
       - "443:443"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
-      - /var/www/bitvoraexchange:/var/www/bitvoraexchange:ro
+      - ./:/var/www/bitvoraexchange:ro
     depends_on:
       backend:
         condition: service_healthy
@@ -82,58 +105,6 @@ services:
       resources:
         limits:
           cpus: "0.5"
-          memory: 256M
-    networks:
-      - bitvora-network
-
-  # ── Verification Workers (separate from API) ───────────────
-  worker-verifier:
-    build: ./backend
-    image: bitvora-exchange-api
-    container_name: bitvora-worker-verifier
-    restart: always
-    command: ["python", "worker_main.py"]
-    env_file:
-      - ./backend/.env
-    environment:
-      - REDIS_URL=redis://redis:6379
-    depends_on:
-      redis:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "1.5"
-          memory: 1536M
-        reservations:
-          cpus: "0.25"
-          memory: 256M
-    logging:
-      driver: json-file
-      options:
-        max-size: "50m"
-        max-file: "5"
-    networks:
-      - bitvora-network
-
-  # ── Price Manager Worker ───────────────────────────────────
-  worker-price:
-    build: ./backend
-    image: bitvora-exchange-api
-    container_name: bitvora-worker-price
-    restart: always
-    command: ["python", "-c", "import asyncio; from services.price_manager import price_manager_worker; asyncio.run(price_manager_worker())"]
-    env_file:
-      - ./backend/.env
-    environment:
-      - REDIS_URL=redis://redis:6379
-    depends_on:
-      redis:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          cpus: "0.25"
           memory: 256M
     networks:
       - bitvora-network
@@ -162,4 +133,6 @@ networks:
 
 volumes:
   redis-data:
+    driver: local
+  postgres-data:
     driver: local

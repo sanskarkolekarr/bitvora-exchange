@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KINETIC | Live Transaction Tracker</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=container-queries"></script>
+    <script src="/assets/js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <script src="config.js"></script>
+    <script src="/assets/js/api.js"></script>
+
+    <meta name="theme-color" content="#000000">
+    <style>
+        .page-container {
+            position: relative; z-index: 1;
+            min-height: 100dvh;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 120px 20px 100px;
+        }
+        .status-card {
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 4px;
+            width: 100%; max-width: 580px;
+            padding: 40px;
+            opacity: 0; transform: translateY(8px);
+            animation: fadeUp 0.4s ease forwards;
+        }
+        @media (max-width: 600px) { .status-card { padding: 28px 20px; } }
+        .header-area { text-align: center; margin-bottom: 40px; }
+        .live-badge {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.08);
+            padding: 4px 14px; border-radius: 2px;
+            font-family: 'DM Mono', monospace;
+            font-size: 9px; font-weight: 700;
+            color: #E5E5E5; letter-spacing: 0.15em;
+            text-transform: uppercase; margin-bottom: 16px;
+        }
+        .live-badge .dot { width: 6px; height: 6px; background: #E5E5E5; border-radius: 2px; animation: pulse-dot 1.5s infinite; }
+        .main-amount { font-family: 'Space Grotesk', sans-serif; font-size: 42px; font-weight: 700; color: #E5E5E5; line-height: 1.1; margin-bottom: 8px; }
+        .sub-amount { font-family: 'DM Mono', monospace; font-size: 12px; color: rgba(255,255,255,0.3); letter-spacing: 0.08em; }
+        .tracker-container { position: relative; margin-bottom: 48px; }
+        .step { display: flex; gap: 20px; position: relative; padding-bottom: 32px; }
+        .step:last-child { padding-bottom: 0; }
+        .step-line { position: absolute; left: 17px; top: 38px; bottom: -8px; width: 2px; background: rgba(255,255,255,0.04); z-index: 1; }
+        .step:last-child .step-line { display: none; }
+        .step-line-fill { position: absolute; top: 0; left: 0; width: 100%; background: #E5E5E5; height: 0%; transition: height 0.4s ease; }
+        .step-icon-wrapper {
+            position: relative; z-index: 2;
+            width: 36px; height: 36px; border-radius: 2px;
+            background: #1A1A1A; border: 1px solid rgba(255,255,255,0.06);
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0; transition: all 0.2s ease;
+        }
+        .step-icon-wrapper .material-symbols-outlined { font-size: 18px !important; color: rgba(255,255,255,0.2); transition: color 0.2s ease; }
+        .step.completed .step-icon-wrapper { background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.15); }
+        .step.completed .step-icon-wrapper .material-symbols-outlined { color: #E5E5E5; }
+        .step.completed-success .step-icon-wrapper { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+        .step.completed-success .step-icon-wrapper .material-symbols-outlined { color: #fff; }
+        .step.active .step-icon-wrapper {
+            background: #E5E5E5; border-color: #E5E5E5;
+            box-shadow: 0 0 0 4px rgba(255,255,255,0.08);
+            animation: pulse-ring 2s infinite;
+        }
+        .step.active .step-icon-wrapper .material-symbols-outlined { color: #000; }
+        .step.failed .step-icon-wrapper { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); }
+        .step.failed .step-icon-wrapper .material-symbols-outlined { color: rgba(255,255,255,0.3); }
+        .step-content { display: flex; flex-direction: column; justify-content: center; flex-grow: 1; }
+        .step-title { font-family: 'Space Grotesk', sans-serif; font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.3); margin-bottom: 2px; transition: color 0.2s ease; }
+        .step.active .step-title, .step.completed .step-title, .step.completed-success .step-title { color: #E5E5E5; }
+        .step.failed .step-title { color: rgba(255,255,255,0.3); }
+        .step-time { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.15); text-transform: uppercase; letter-spacing: 0.12em; }
+        .step.active .step-time { color: rgba(255,255,255,0.4); }
+        .details-box { background: #050505; border: 1px solid rgba(255,255,255,0.04); border-radius: 4px; overflow: hidden; }
+        .details-row {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 16px 24px;
+            font-family: 'DM Mono', monospace; font-size: 11px;
+        }
+        .details-row:nth-child(even) { background: rgba(255,255,255,0.01); }
+        .details-label { color: rgba(255,255,255,0.25); text-transform: uppercase; letter-spacing: 0.08em; font-size: 9px; }
+        .details-val { color: #E5E5E5; text-align: right; }
+        .details-val a { color: rgba(255,255,255,0.6); text-decoration: underline; text-underline-offset: 3px; }
+        .details-val a:hover { color: #E5E5E5; }
+
+        .success-banner {
+            display: none;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 4px; padding: 24px; text-align: center;
+            margin-bottom: 32px; animation: fadeUp 0.4s ease;
+        }
+        .success-banner h3 { font-family: 'Space Grotesk', sans-serif; font-size: 16px; color: #E5E5E5; font-weight: 700; margin-bottom: 6px; }
+        .success-banner p { font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.4); letter-spacing: 0.08em; }
+
+        .error-state {
+            display: none; text-align: center;
+            background: #0A0A0A;
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 4px; padding: 40px;
+            width: 100%; max-width: 580px;
+        }
+        .error-state .material-symbols-outlined { font-size: 48px !important; color: rgba(255,255,255,0.15); margin-bottom: 16px; }
+
+        .btn-new-convert {
+            display: block; width: 100%; text-align: center;
+            background: linear-gradient(135deg, #E5E5E5 0%, #6E6E6E 50%, #2A2A2A 100%);
+            color: #000; padding: 18px; border-radius: 2px;
+            font-family: 'Space Grotesk', sans-serif; font-size: 11px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.15em;
+            text-decoration: none; margin-top: 32px;
+            transition: all 0.1s ease-in;
+        }
+        .btn-new-convert:hover { opacity: 0.9; }
+        .btn-new-convert:active { transform: scale(0.98); }
+
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+        @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(229,229,229,0.2); } 100% { box-shadow: 0 0 0 10px rgba(229,229,229,0); } }
+    </style>
+</head>
+<body class="bg-black text-on-surface" style="-webkit-tap-highlight-color:transparent;">
+
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full border-b border-zinc-800/50 bg-black z-50 flex justify-between items-center px-6 py-4">
+    <a href="index.html" class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-zinc-100" style="font-variation-settings:'FILL' 1;">toll</span>
+        <span class="text-xl font-headline font-bold tracking-tighter text-zinc-100">KINETIC</span>
+    </a>
+    <nav class="hidden md:flex gap-4 items-center">
+        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="index.html">Home</a>
+        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="exchange.html">Exchange</a>
+        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="dashboard.html">Dashboard</a>
+        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="profile.html">Profile</a>
+        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="support.html">Support</a>
+    </nav>
+    <a href="profile.html" class="px-5 py-1.5 bg-zinc-900 border border-zinc-800 text-zinc-100 text-[10px] font-bold tracking-widest uppercase">Profile</a>
+</header>
+
+<div class="page-container">
+
+    <!-- ERROR CARD -->
+    <div id="error-card" class="error-state">
+        <span class="material-symbols-outlined">error_outline</span>
+        <div class="font-headline text-xl font-bold text-on-surface mb-2">Transaction Not Found</div>
+        <p class="font-mono text-xs text-zinc-600 mb-6 tracking-wider uppercase">We couldn't load the details for this reference code.</p>
+        <a href="dashboard.html" class="btn-secondary inline-flex items-center gap-2 px-6 py-3 no-underline text-[10px]">Return to Dashboard</a>
+    </div>
+
+    <!-- STATUS CARD -->
+    <div id="status-card" class="status-card" style="display:none;">
+        <div class="header-area">
+            <div class="live-badge" id="live-badge"><div class="dot"></div>Live Tracking</div>
+            <div class="main-amount" id="sum-inr">₹...</div>
+            <div class="sub-amount" id="sum-crypto">...</div>
+        </div>
+
+        <div class="success-banner" id="success-banner">
+            <h3>Payout Successful</h3>
+            <p>Funds have been dispatched to your bank account.</p>
+        </div>
+
+        <div id="fail-banner" style="display:none;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.06);border-radius:4px;padding:24px;text-align:center;margin-bottom:32px;animation:fadeUp 0.4s ease;">
+            <h3 style="font-family:'Space Grotesk',sans-serif;font-size:16px;color:rgba(255,255,255,0.5);font-weight:700;margin-bottom:6px;">Verification Failed</h3>
+            <p id="fail-message" style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:0.08em;text-transform:uppercase;">Transaction could not be verified.</p>
+        </div>
+
+        <div class="tracker-container">
+            <div class="step" id="step-1">
+                <div class="step-line"><div class="step-line-fill" id="line-1"></div></div>
+                <div class="step-icon-wrapper"><span class="material-symbols-outlined" id="icon-1">data_object</span></div>
+                <div class="step-content">
+                    <div class="step-title">Order Created</div>
+                    <div class="step-time" id="time-1">Pending</div>
+                </div>
+            </div>
+            <div class="step" id="step-2">
+                <div class="step-line"><div class="step-line-fill" id="line-2"></div></div>
+                <div class="step-icon-wrapper"><span class="material-symbols-outlined" id="icon-2">call_received</span></div>
+                <div class="step-content">
+                    <div class="step-title">Deposit Detected</div>
+                    <div class="step-time" id="time-2">Waiting for network</div>
+                </div>
+            </div>
+            <div class="step" id="step-3">
+                <div class="step-line"><div class="step-line-fill" id="line-3"></div></div>
+                <div class="step-icon-wrapper"><span class="material-symbols-outlined" id="icon-3">security</span></div>
+                <div class="step-content">
+                    <div class="step-title" id="title-3">Network Confirmed</div>
+                    <div class="step-time" id="time-3">Awaiting blocks</div>
+                </div>
+            </div>
+            <div class="step" id="step-4">
+                <div class="step-line"><div class="step-line-fill" id="line-4"></div></div>
+                <div class="step-icon-wrapper"><span class="material-symbols-outlined" id="icon-4">payments</span></div>
+                <div class="step-content">
+                    <div class="step-title">INR Dispensed</div>
+                    <div class="step-time" id="time-4">Not reached</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="details-box">
+            <div class="details-row">
+                <span class="details-label">Reference</span>
+                <span class="details-val" style="display:flex;align-items:center;gap:8px;">
+                    <span id="det-ref" style="font-family:monospace;">...</span>
+                    <span class="material-symbols-outlined" style="font-size:14px;cursor:pointer;opacity:0.4;" onclick="navigator.clipboard.writeText(document.getElementById('det-ref').innerText).then(()=>this.style.color='#E5E5E5')" title="Copy">content_copy</span>
+                </span>
+            </div>
+            <div class="details-row">
+                <span class="details-label">TX Hash</span>
+                <span class="details-val" style="display:flex;align-items:center;gap:8px;">
+                    <a href="#" id="det-txid" target="_blank">...</a>
+                    <span class="material-symbols-outlined" id="copy-txid" style="font-size:14px;cursor:pointer;opacity:0.4;" title="Copy">content_copy</span>
+                </span>
+            </div>
+            <div class="details-row">
+                <span class="details-label">Rate</span>
+                <span class="details-val" id="det-rate">...</span>
+            </div>
+            <div class="details-row">
+                <span class="details-label">Destination</span>
+                <span class="details-val" id="det-bank">...</span>
+            </div>
+        </div>
+
+        <a href="exchange.html" class="btn-new-convert">Convert More Crypto</a>
+    </div>
+
+</div>
+
+<!-- Bottom Mobile Nav -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center py-3 bg-black/92 backdrop-blur-md border-t border-zinc-800/50 pb-safe">
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40" href="index.html">
+        <span class="material-symbols-outlined">home_app_logo</span>
+        <span class="font-label text-[9px] font-medium uppercase tracking-widest mt-1">Home</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40" href="dashboard.html">
+        <span class="material-symbols-outlined">grid_view</span>
+        <span class="font-label text-[9px] font-medium uppercase tracking-widest mt-1">Dashboard</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-zinc-100 opacity-100" href="tracker.html">
+        <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">monitoring</span>
+        <span class="font-label text-[9px] font-medium uppercase tracking-widest mt-1">Tracker</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40" href="profile.html">
+        <span class="material-symbols-outlined">person</span>
+        <span class="font-label text-[9px] font-medium uppercase tracking-widest mt-1">Profile</span>
+    </a>
+</nav>
+
+<script>
+    requireAuth();
+    const urlParams = new URLSearchParams(window.location.search);
+    const ref = urlParams.get('ref');
+    if (!ref) { window.location.href = 'dashboard.html'; }
+    let pInterval = null;
+
+    function formatTime(ts) {
+        if (!ts) return 'Pending';
+        const d = new Date(ts);
+        return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true }) +
+               ' · ' + d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+    }
+
+    function truncateStr(str, max) {
+        if (!str) return '...';
+        if (str.length <= max) return str;
+        return str.substring(0, max/2 - 1) + '...' + str.slice(-(max/2 - 1));
+    }
+
+    function updateUI(tx) {
+        document.getElementById('sum-inr').textContent = tx.amount_inr ? `₹${tx.amount_inr.toLocaleString('en-IN')}` : 'Calculating...';
+        document.getElementById('sum-crypto').textContent = `${tx.amount_crypto} ${tx.asset.toUpperCase()} on ${tx.chain.toUpperCase()}`;
+        document.getElementById('det-ref').textContent = tx.reference;
+
+        const txLink = document.getElementById('det-txid');
+        const copyTxid = document.getElementById('copy-txid');
+        if (tx.txid) {
+            txLink.textContent = truncateStr(tx.txid, 16);
+            copyTxid.onclick = () => {
+                navigator.clipboard.writeText(tx.txid).then(() => {
+                    copyTxid.style.color = '#E5E5E5';
+                    setTimeout(() => copyTxid.style.color = '', 2000);
+                });
+            };
+            if (tx.explorer_url) { txLink.href = tx.explorer_url; txLink.style.pointerEvents = 'auto'; }
+        } else {
+            txLink.textContent = 'Awaiting Deposit...';
+            txLink.removeAttribute('href');
+            txLink.style.pointerEvents = 'none';
+            copyTxid.style.display = 'none';
+        }
+
+        if (tx.exchange_rate) {
+            document.getElementById('det-rate').textContent = `1 ${tx.asset.toUpperCase()} = ₹${tx.exchange_rate.toLocaleString('en-IN')}`;
+        }
+        document.getElementById('det-bank').textContent = tx.payout_destination_masked || tx.payout_destination || '...';
+
+        const S = tx.status;
+        let activeIdx = 1;
+        let step1 = 'completed', step2 = '', step3 = '', step4 = '';
+
+        if (S === 'failed') {
+            activeIdx = -1; step1 = 'failed';
+            document.getElementById('icon-1').textContent = 'cancel';
+            document.getElementById('live-badge').innerHTML = '<span class="material-symbols-outlined" style="font-size:14px!important;">error</span> Failed';
+            document.getElementById('live-badge').style.color = 'rgba(255,255,255,0.3)';
+            document.getElementById('live-badge').style.borderColor = 'rgba(255,255,255,0.06)';
+            document.getElementById('live-badge').style.background = 'rgba(255,255,255,0.02)';
+            document.getElementById('time-1').textContent = `FAILED at ` + formatTime(tx.updated_at || tx.created_at);
+            document.getElementById('fail-banner').style.display = 'block';
+            document.getElementById('fail-message').textContent = tx.error_message || "Transaction verification failed.";
+            if (pInterval) clearInterval(pInterval);
+        } else {
+            if (S === 'pending') activeIdx = 1;
+            else if (S === 'processing') activeIdx = 2;
+            else if (S === 'confirmed') activeIdx = 3;
+            else if (S === 'paid') activeIdx = 4;
+
+            document.getElementById('icon-1').textContent = 'check';
+            document.getElementById('time-1').textContent = formatTime(tx.created_at);
+
+            if (activeIdx === 1) {
+                step2 = 'active';
+                document.getElementById('icon-2').textContent = 'hourglass_empty';
+                document.getElementById('time-2').textContent = 'Waiting for network';
+            } else if (activeIdx >= 2) {
+                step2 = 'completed';
+                document.getElementById('icon-2').textContent = 'check';
+                document.getElementById('time-2').textContent = 'Detected';
+            }
+
+            document.getElementById('title-3').textContent = 'Network Confirmed';
+            if (activeIdx <= 2) {
+                step3 = activeIdx === 2 ? 'active' : '';
+                if (activeIdx === 2) {
+                    document.getElementById('icon-3').textContent = 'sync';
+                    document.getElementById('time-3').textContent = 'Processing verification...';
+                }
+            } else {
+                step3 = 'completed';
+                document.getElementById('icon-3').textContent = 'check';
+                document.getElementById('time-3').textContent = formatTime(tx.verified_at || tx.updated_at);
+            }
+
+            if (activeIdx === 3) {
+                step4 = 'active';
+                document.getElementById('icon-4').textContent = 'account_balance';
+                document.getElementById('time-4').textContent = 'Queued for manual payout...';
+            } else if (activeIdx === 4) {
+                step4 = 'completed-success';
+                document.getElementById('icon-4').textContent = 'done_all';
+                document.getElementById('time-4').textContent = formatTime(tx.paid_at || tx.updated_at);
+                document.getElementById('success-banner').style.display = 'block';
+                const lb = document.getElementById('live-badge');
+                lb.innerHTML = '<span class="material-symbols-outlined" style="font-size:14px!important;">task_alt</span> Completed';
+                lb.style.borderColor = 'rgba(255,255,255,0.15)';
+                lb.style.color = '#E5E5E5';
+                if (pInterval) clearInterval(pInterval);
+            }
+        }
+
+        document.getElementById('step-1').className = 'step ' + step1;
+        document.getElementById('step-2').className = 'step ' + step2;
+        document.getElementById('step-3').className = 'step ' + step3;
+        document.getElementById('step-4').className = 'step ' + step4;
+        document.getElementById('line-1').style.height = activeIdx >= 2 ? '100%' : '0%';
+        document.getElementById('line-2').style.height = activeIdx >= 3 ? '100%' : '0%';
+        document.getElementById('line-3').style.height = activeIdx >= 4 ? '100%' : '0%';
+    }
+
+    async function fetchStatus() {
+        const res = await apiFetch(`/status/${ref}`);
+        if (!res.ok) {
+            document.getElementById('error-card').style.display = 'block';
+            document.getElementById('status-card').style.display = 'none';
+            if (pInterval) clearInterval(pInterval);
+            return;
+        }
+        document.getElementById('error-card').style.display = 'none';
+        document.getElementById('status-card').style.display = 'block';
+        updateUI(res.data);
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+        await fetchStatus();
+        if (!pInterval) pInterval = setInterval(fetchStatus, 5000);
+    });
+</script>
+</body>
+</html>

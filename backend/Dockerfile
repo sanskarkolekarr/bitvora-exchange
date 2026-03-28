@@ -21,7 +21,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
 # --limit-concurrency 1000: max simultaneous connections per worker
 # --backlog 2048: OS-level connection queue
 # --timeout-keep-alive 5: close idle connections faster
-CMD ["uvicorn", "main:app", \
+CMD ["uvicorn", "app.main:app", \
      "--host", "0.0.0.0", \
      "--port", "8000", \
      "--workers", "4", \

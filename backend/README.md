@@ -104,8 +104,7 @@ backend/
 │           ├── tron.py              # TRX, TRC20
 │           ├── solana.py            # SOL, SPL
 │           ├── bitcoin.py           # BTC
-│           ├── litecoin.py          # LTC
-│           └── ton.py               # TON, Jetton
+│           └── litecoin.py          # LTC
 │
 ├── models/
 │   ├── transaction.py               # Request/response schemas
@@ -138,7 +137,6 @@ backend/
 | BSC       | `https://bsc-dataseed.binance.org`        | ~10 req/s        |
 | Tron      | `https://api.trongrid.io`                 | 15 req/s free    |
 | Solana    | `https://api.mainnet-beta.solana.com`     | ~10 req/s        |
-| TON       | `https://toncenter.com/api/v2`            | 1 req/s free     |
 | Bitcoin   | `https://blockstream.info/api`            | ~10 req/s        |
 | Litecoin  | `https://api.blockcypher.com/v1/ltc/main` | ~10 req/s        |
 
@@ -179,7 +177,6 @@ User submits TXID
 | BSC       | 15            | ~45 sec      |
 | Tron      | 19            | ~1 min       |
 | Solana    | 1 (finalized) | ~instant     |
-| TON       | 1 (finalized) | ~5 sec       |
 | Bitcoin   | 2             | ~20 min      |
 | Litecoin  | 3             | ~7.5 min     |
 

@@ -172,3 +172,8 @@ function signOut() {
     localStorage.removeItem('bitvora_refresh_token');
     window.location.replace('/pages/signin.html');
 }
+
+// Hide Telegram WebApp Back Button if injected
+if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.BackButton) {
+    window.Telegram.WebApp.BackButton.hide();
+}

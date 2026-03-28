@@ -1,20 +1,36 @@
 # ════════════════════════════════════════════════════════════
-# BITVORA EXCHANGE — Cloudflare Tunnel Configuration Template
-# Replace placeholders with your actual tunnel credentials
+# BITVORA EXCHANGE — Cloudflare Tunnel Ingress Configuration
 # ════════════════════════════════════════════════════════════
-
-# This file is a template. In production, the tunnel token is
-# passed via the TUNNEL_TOKEN environment variable in docker-compose.yml.
-# If using a credentials file instead, uncomment and configure below:
-
-# tunnel: YOUR_TUNNEL_UUID
+#
+# NOTE: When using token-based auth (TUNNEL_TOKEN in docker-compose.yml),
+# ingress rules are managed in the Cloudflare Zero Trust Dashboard.
+# Configure these SAME rules in the dashboard under:
+#   Zero Trust → Networks → Tunnels → [bitvora-tunnel] → Public Hostname
+#
+# If using credentials-file auth instead, uncomment the lines below
+# and mount this config into the cloudflared container.
+#
+# tunnel: <YOUR_TUNNEL_UUID>
 # credentials-file: /etc/cloudflared/credentials.json
 
 ingress:
-  # Route all traffic to the Nginx container
-  - hostname: yourdomain.com
+  # ── API Backend (FastAPI) ─────────────────────────────────
+  # In Docker: routes to the 'backend' service on port 8000
+  # On host:   routes to localhost:8000
+  - hostname: api.bitvora.in
+    service: http://backend:8000
+    originRequest:
+      noTLSVerify: true
+      connectTimeout: 10s
+
+  # ── Frontend (Nginx) ──────────────────────────────────────
+  # In Docker: routes to the 'nginx' service on port 80
+  # On host:   routes to localhost:80
+  - hostname: bitvora.in
     service: http://nginx:80
-  - hostname: www.yourdomain.com
+
+  - hostname: www.bitvora.in
     service: http://nginx:80
-  # Catch-all: return 404 for unmatched routes
+
+  # ── Catch-all: 404 for unmatched hostnames ────────────────
   - service: http_status:404

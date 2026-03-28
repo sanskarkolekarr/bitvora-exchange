@@ -1,10 +1,58 @@
-// tailwind-config.js
+// KINETIC MONOLITH — Tailwind Configuration
+// Design System: Digital Brutalist / Achromatic / Metallic
 tailwind.config = {
+    darkMode: "class",
     theme: {
-        fontFamily: {
-            headline: ["Geist", "sans-serif"],
-            body: ["Manrope", "sans-serif"],
-            mono: ["Geist Mono", "monospace"]
-        }
-    }
-}
+        extend: {
+            colors: {
+                "deep-void": "#000000",
+                "secondary-base": "#050505",
+                "component-surface": "#0A0A0A",
+                "deep-ui": "#1A1A1A",
+                "primary-highlight": "#E5E5E5",
+                "subdued-text": "#A1A1A1",
+                "structural-border": "#3A3A3A",
+                "primary-fixed-dim": "#454747",
+                "tertiary": "#e4e2e1",
+                "surface-container": "#1f1f1f",
+                "secondary-fixed": "#c7c6c6",
+                "on-primary-container": "#000000",
+                "surface-container-low": "#1b1b1b",
+                "surface-bright": "#393939",
+                "primary-container": "#d4d4d4",
+                "on-primary": "#1a1c1c",
+                "background": "#000000",
+                "secondary-container": "#464747",
+                "surface-tint": "#c6c6c6",
+                "surface-container-high": "#2a2a2a",
+                "outline-variant": "#474747",
+                "surface-container-highest": "#353535",
+                "surface-variant": "#353535",
+                "surface": "#000000",
+                "primary-fixed": "#5d5f5f",
+                "outline": "#3A3A3A",
+                "on-surface": "#E5E5E5",
+                "on-surface-variant": "#A1A1A1",
+                "surface-container-lowest": "#050505",
+                "secondary": "#c7c6c6",
+                "primary": "#ffffff",
+                "surface-dim": "#131313",
+                "error": "#ffb4ab",
+            },
+            fontFamily: {
+                "headline": ["Space Grotesk", "sans-serif"],
+                "body": ["Inter", "sans-serif"],
+                "label": ["Inter", "sans-serif"],
+                "mono": ["'DM Mono'", "monospace"],
+            },
+            borderRadius: {
+                "DEFAULT": "2px",
+                "sm": "2px",
+                "md": "4px",
+                "lg": "4px",
+                "xl": "4px",
+                "full": "9999px"
+            },
+        },
+    },
+};

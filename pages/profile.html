@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KINETIC | Profile Settings</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=container-queries"></script>
+    <script src="/assets/js/tailwind-config.js"></script>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <script src="config.js"></script>
+    <script src="/assets/js/api.js"></script>
+    <script>requireAuth();</script>
+    <meta name="theme-color" content="#000000">
+    <style>
+        .card {
+            background: #0A0A0A; border: 1px solid rgba(255,255,255,0.04);
+            border-radius: 4px; padding: 32px; margin-bottom: 20px;
+            opacity:0; transform:translateY(8px); animation: fadeUp 0.4s ease forwards;
+        }
+        .card-header {
+            font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.2em;
+            text-transform: uppercase; color: #A1A1A1; margin-bottom: 24px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .input-label { display: block; font-family: 'DM Mono', monospace; font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 8px; }
+        .input-field {
+            width: 100%; padding: 14px 16px; background: #1A1A1A; border: none;
+            border-bottom: 2px solid #3A3A3A; font-family: 'DM Mono', monospace;
+            font-size: 14px; color: #E5E5E5; outline: none; transition: border-color 0.1s; border-radius:0;
+        }
+        .input-field:focus { border-image: linear-gradient(135deg, #E5E5E5, #6E6E6E, #2A2A2A) 1; }
+        .input-field:disabled { opacity: 0.4; cursor: not-allowed; }
+        .input-field::placeholder { color: rgba(255,255,255,0.12); }
+        .alert-box { padding: 12px 16px; border-radius: 2px; font-family: 'DM Mono', monospace; font-size: 11px; margin-top: 16px; display: none; }
+        .alert-success { background: rgba(255,255,255,0.04); color: #E5E5E5; border: 1px solid rgba(255,255,255,0.1); }
+        .alert-error { background: rgba(255,255,255,0.02); color: rgba(255,255,255,0.4); border: 1px solid rgba(255,255,255,0.06); }
+        @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="bg-black text-on-surface" style="-webkit-tap-highlight-color:transparent;">
+
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full border-b border-zinc-800/50 bg-black z-50 flex justify-between items-center px-6 py-4">
+    <a href="index.html" class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-zinc-100" style="font-variation-settings:'FILL' 1;">toll</span>
+        <span class="text-xl font-headline font-bold tracking-tighter text-zinc-100">KINETIC</span>
+    </a>
+    <nav class="hidden md:flex gap-4 items-center">
+        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="index.html">Home</a>
+        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="exchange.html">Exchange</a>
+        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="dashboard.html">Dashboard</a>
+        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-100 opacity-100" href="profile.html">Profile</a>
+        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="support.html">Support</a>
+    </nav>
+    <button onclick="localStorage.removeItem('bitvora_session');window.location.href='signin.html'" class="px-5 py-1.5 bg-zinc-900 border border-zinc-800 text-zinc-100 text-[10px] font-bold tracking-widest uppercase cursor-pointer">Sign Out</button>
+</header>
+
+<div class="max-w-[800px] mx-auto px-5 pt-28 pb-32">
+    <div class="font-mono text-[9px] tracking-[0.3em] text-zinc-600 uppercase mb-2">BITVORA CORE / ACCOUNT</div>
+    <h1 class="text-4xl font-headline font-bold tracking-tighter text-on-surface mb-2">Profile Settings</h1>
+    <p class="text-[11px] font-mono text-zinc-600 tracking-wider uppercase mb-10">Manage your account and payout destinations.</p>
+
+    <!-- Account Info -->
+    <div class="card" style="animation-delay:0.1s;">
+        <div class="card-header"><span class="material-symbols-outlined text-[16px]">person</span> Account Details</div>
+        <div class="mb-5">
+            <label class="input-label">Email Address / Username</label>
+            <input type="text" id="acc-email" class="input-field" disabled value="Loading...">
+        </div>
+        <div>
+            <label class="input-label">Account Status</label>
+            <div id="acc-status" class="inline-flex items-center gap-2 px-4 py-2 bg-zinc-900 border border-zinc-800 font-mono text-[10px] tracking-widest text-on-surface" style="border-radius:2px;">ACTIVE</div>
+        </div>
+    </div>
+
+    <!-- Default Payout -->
+    <div class="card" style="animation-delay:0.2s;">
+        <div class="card-header"><span class="material-symbols-outlined text-[16px]">account_balance</span> Default Payout Destination</div>
+        <div class="mb-5">
+            <label class="input-label">UPI ID / Bank Account</label>
+            <input type="text" id="upi-input" class="input-field" placeholder="Enter your UPI ID...">
+        </div>
+        <button class="btn-primary flex items-center gap-2 text-[10px] px-6 py-3" id="save-upi-btn" onclick="saveUPI()">
+            <span class="material-symbols-outlined text-[16px]">save</span> Save Changes
+        </button>
+        <div id="upi-msg" class="alert-box"></div>
+    </div>
+
+    <!-- Danger Zone -->
+    <div class="card" style="animation-delay:0.3s;">
+        <div class="card-header"><span class="material-symbols-outlined text-[16px]">warning</span> Session</div>
+        <button onclick="localStorage.removeItem('bitvora_session');localStorage.removeItem('bitvora_refresh_token');window.location.href='signin.html'" class="btn-secondary flex items-center gap-2 text-[10px] px-6 py-3">
+            <span class="material-symbols-outlined text-[16px]">logout</span> Sign Out of All Devices
+        </button>
+    </div>
+</div>
+
+<!-- Bottom Mobile Nav -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center py-3 bg-black/92 backdrop-blur-md border-t border-zinc-800/50 pb-safe">
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40" href="index.html"><span class="material-symbols-outlined">home_app_logo</span><span class="font-label text-[9px] font-medium uppercase tracking-widest mt-1">Home</span></a>
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40" href="dashboard.html"><span class="material-symbols-outlined">grid_view</span><span class="font-label text-[9px] font-medium uppercase tracking-widest mt-1">Dashboard</span></a>
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40" href="tracker.html"><span class="material-symbols-outlined">monitoring</span><span class="font-label text-[9px] font-medium uppercase tracking-widest mt-1">Tracker</span></a>
+    <a class="flex flex-col items-center justify-center text-zinc-100 opacity-100" href="profile.html"><span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">person</span><span class="font-label text-[9px] font-medium uppercase tracking-widest mt-1">Profile</span></a>
+</nav>
+
+<script>
+    async function loadProfile() {
+        const user = getCurrentUser();
+        if (user) { document.getElementById('acc-email').value = user.username || user.email || 'User'; }
+        const statsRes = await apiFetch('/user/stats');
+        if (statsRes.ok && statsRes.data) {
+            document.getElementById('upi-input').value = statsRes.data.default_upi || '';
+            if (statsRes.data.is_banned) {
+                const statusEl = document.getElementById('acc-status');
+                statusEl.textContent = 'BANNED';
+                statusEl.style.color = 'rgba(255,255,255,0.3)';
+                statusEl.style.borderColor = 'rgba(255,255,255,0.06)';
+            }
+        }
+    }
+    async function saveUPI() {
+        const upi = document.getElementById('upi-input').value.trim();
+        const btn = document.getElementById('save-upi-btn');
+        const msg = document.getElementById('upi-msg');
+        if (!upi) { msg.textContent = 'Please enter a valid UPI ID.'; msg.className = 'alert-box alert-error'; msg.style.display = 'block'; return; }
+        btn.disabled = true;
+        btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[16px]">progress_activity</span> Saving...';
+        const res = await apiFetch('/user/update-upi', { method: 'POST', body: JSON.stringify({ upi_id: upi }) });
+        if (res.ok) { msg.textContent = 'Payout destination updated successfully.'; msg.className = 'alert-box alert-success'; msg.style.display = 'block'; }
+        else { msg.textContent = res.error || 'Failed to update payout destination.'; msg.className = 'alert-box alert-error'; msg.style.display = 'block'; }
+        btn.disabled = false;
+        btn.innerHTML = '<span class="material-symbols-outlined text-[16px]">save</span> Save Changes';
+        setTimeout(() => { msg.style.display = 'none'; }, 4000);
+    }
+    window.addEventListener('DOMContentLoaded', loadProfile);
+</script>
+</body>
+</html>

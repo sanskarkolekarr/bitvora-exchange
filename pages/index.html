@@ -1,1078 +1,379 @@
 <!DOCTYPE html>
-<html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>BITVORA EXCHANGE</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500&family=DM+Mono:wght@400;700&family=Manrope:wght@300;400;700&display=swap"
-        rel="stylesheet" />
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-        rel="stylesheet" />
-    <script src="https://unpkg.com/lenis@1.0.45/dist/lenis.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <link rel="stylesheet" href="/assets/css/styles.css">
-    <script src="config.js"></script>
-    <script src="/assets/js/api.js"></script>
-    <link rel="stylesheet" href="/assets/css/counter.css">
-    <script src="/assets/js/counter.js" defer></script>
-    <link rel="stylesheet" href="/assets/css/logoloop.css">
-    <script src="/assets/js/logoloop.js" defer></script>
-    <script src="/assets/js/scroll-stack.js" defer></script>
-    <script src="/assets/js/tailwind-config.js"></script>
-
-    <meta name="theme-color" content="#060608">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-    <script src="/assets/js/components.js" defer></script>
-</head>
-
-<body style="background-color: #000000; color: #ffffff; -webkit-tap-highlight-color: transparent;"
-    class="selection:bg-white selection:text-black">
-    <main>
-
-
-        <!-- Hero Section Restyled -->
-        <section
-            class="max-w-screen-2xl mx-auto md:w-full px-6 md:px-12 pt-32 md:pt-48 min-h-[95vh] flex flex-col items-center relative z-10 text-center overflow-hidden">
-            <!-- Exact Original Floating Icons Container -->
-            <div
-                class="absolute inset-0 z-[1] w-full h-full pointer-events-none select-none flex justify-center items-center">
-                <!-- Top Left - Bitcoin -->
-                <div
-                    class="absolute top-[15%] left-[10%] md:left-[20%] animate-[float_8s_ease-in-out_infinite_0s] -rotate-12">
-                    <img loading="lazy"
-                        src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/btc.svg"
-                        alt="BTC" class="w-20 h-20 md:w-28 md:h-28 drop-shadow-[0_0_30px_rgba(247,147,26,0.6)]" />
-                </div>
-
-                <!-- Top Right - Ethereum -->
-                <div
-                    class="absolute top-[20%] right-[10%] md:right-[20%] animate-[float_9s_ease-in-out_infinite_1.5s] rotate-[15deg] blur-[1px]">
-                    <img loading="lazy"
-                        src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/eth.svg"
-                        alt="ETH" class="w-24 h-24 md:w-32 md:h-32 drop-shadow-[0_0_30px_rgba(98,126,234,0.6)]" />
-                </div>
-
-                <!-- Bottom Left - Solana -->
-                <div
-                    class="absolute bottom-[20%] left-[15%] animate-[float_7s_ease-in-out_infinite_1s] rotate-[20deg] blur-[2px]">
-                    <img loading="lazy"
-                        src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/sol.svg"
-                        alt="SOL" class="w-16 h-16 md:w-24 md:h-24 drop-shadow-[0_0_24px_rgba(20,241,149,0.5)]" />
-                </div>
-
-                <!-- Bottom Right - Tether -->
-                <div
-                    class="absolute bottom-[25%] right-[15%] animate-[float_8.5s_ease-in-out_infinite_0.5s] -rotate-[10deg]">
-                    <img loading="lazy"
-                        src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/usdt.svg"
-                        alt="USDT" class="w-20 h-20 md:w-28 md:h-28 drop-shadow-[0_0_30px_rgba(38,161,123,0.6)]" />
-                </div>
-
-                <!-- Far Right - Polygon -->
-                <div
-                    class="absolute top-[50%] -right-10 md:right-10 animate-[float_10s_ease-in-out_infinite_0.2s] rotate-[-25deg] blur-[3px]">
-                    <img loading="lazy"
-                        src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/matic.svg"
-                        alt="MATIC" class="w-24 h-24 md:w-32 md:h-32 drop-shadow-[0_0_30px_rgba(130,71,229,0.5)]" />
-                </div>
-
-                <!-- Far Left - BNB -->
-                <div
-                    class="absolute top-[45%] -left-10 md:left-5 animate-[float_7.5s_ease-in-out_infinite_2s] rotate-[15deg] blur-[1px]">
-                    <img loading="lazy"
-                        src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/bnb.svg"
-                        alt="BNB" class="w-16 h-16 md:w-24 md:h-24 drop-shadow-[0_0_24px_rgba(243,186,47,0.5)]" />
-                </div>
-            </div>
-
-            <!-- Recent Settlements Marquee -->
-            <div class="mb-10 w-full max-w-4xl overflow-hidden relative z-10 pointer-events-none h-6 flex items-center">
-                <div class="flex whitespace-nowrap animate-marquee gap-16" id="recent-payouts-marquee">
-                    <!-- filled via JS, initially invisible -->
-                </div>
-            </div>
-
-            <div class="mb-8 inline-flex items-center gap-3 bg-[#0e0e12] border border-[rgba(255,255,255,0.08)] rounded-full px-5 py-2.5 font-mono text-[11px] uppercase text-white tracking-[0.15em] shadow-[0_4px_24px_rgba(0,0,0,0.4)] relative z-10"
-                id="top-rate-banner">
-                <span class="w-2 h-2 rounded-full bg-[#22c55e] shadow-[0_0_8px_#22c55e]"></span>
-                <span class="opacity-50">LIVE P2P RATE:</span> <span class="font-bold tracking-widest"
-                    id="top-rate-value">FETCHING...</span>
-            </div>
-
-            <p id="hero-rate-display"
-                class="font-mono text-[10px] uppercase tracking-[0.3em] text-[#C8C8D8] opacity-60 mb-6 font-bold flex items-center justify-center gap-3 w-full relative z-10">
-                CRYPTO <span class="material-symbols-outlined text-[10px]">arrow_forward</span> INR
-            </p>
-
-            <h1
-                class="text-6xl sm:text-7xl md:text-8xl lg:text-[110px] font-headline tracking-tighter text-white leading-[1.05] relative z-10 drop-shadow-[0_0_20px_rgba(255,255,255,0.1)]">
-                <span class="block">Turn Crypto</span>
-                <span class="block text-gradient">Into Rupees.</span>
-            </h1>
-
-            <p
-                class="mt-8 text-base md:text-xl font-body text-[#C8C8D8] opacity-70 max-w-xl font-light leading-relaxed mx-auto">
-                Instant settlements, zero friction.<br />Verified on-chain. Settled in minutes.
-            </p>
-
-            <a id="hero-cta" href="signin.html"
-                class="mt-12 bg-white text-black px-12 py-5 rounded-full text-sm font-bold uppercase tracking-[0.2em] shadow-[0_0_50px_rgba(255,255,255,0.2)] hover:shadow-[0_0_80px_rgba(255,255,255,0.4)] hover:bg-[#e0e0e0] hover:-translate-y-1 transition-all duration-400 z-10 relative">
-                GET STARTED
-            </a>
-
-            <!-- Stats Bar / Pill -->
-            <div class="mt-auto pb-10 flex justify-center w-full relative z-10">
-                <div
-                    class="bg-black/40 backdrop-blur-2xl border border-white/5 md:rounded-[40px] rounded-[32px] py-8 md:py-10 px-8 md:px-16 flex flex-col md:flex-row justify-between items-center w-full max-w-4xl shadow-[0_40px_80px_rgba(0,0,0,0.8)] gap-8 md:gap-0">
-                    <div class="flex flex-col items-center flex-1">
-                        <span id="stat-volume-front"
-                            class="text-3xl md:text-4xl font-headline text-white tracking-tight">₹0 Cr+</span>
-                        <span
-                            class="font-mono text-[8px] md:text-[9px] uppercase tracking-[0.25em] text-[#C8C8D8] opacity-40 mt-3">PROCESSED</span>
-                    </div>
-
-                    <div class="hidden md:block w-[1px] h-16 bg-white/5"></div>
-                    <div class="w-16 h-[1px] md:hidden bg-white/5"></div>
-
-                    <div class="flex flex-col items-center flex-1 gap-1">
-                        <span id="stat-time-front"
-                            class="text-2xl md:text-3xl font-headline text-white tracking-tight">~15 Min</span>
-                        <span
-                            class="font-mono text-[8px] md:text-[9px] uppercase tracking-[0.25em] text-[#C8C8D8] opacity-40 mt-3">AVG
-                            PAYOUT</span>
-                    </div>
-
-                    <div class="hidden md:block w-[1px] h-16 bg-white/5"></div>
-                    <div class="w-16 h-[1px] md:hidden bg-white/5"></div>
-
-                    <div class="flex flex-col items-center flex-1 gap-1">
-                        <span id="stat-assets-front"
-                            class="text-2xl md:text-3xl font-headline text-white tracking-tight">4 Assets</span>
-                        <span
-                            class="font-mono text-[8px] md:text-[9px] uppercase tracking-[0.25em] text-[#C8C8D8] opacity-40 mt-3">SUPPORTED</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- How It Works Section (Vertical Stack) -->
-        <section id="how-it-works" class="py-32 w-full bg-black relative">
-            <div class="mb-20 text-center max-w-screen-2xl mx-auto px-6 md:px-12 w-full">
-                <label
-                    class="font-mono text-[10px] font-bold uppercase tracking-[0.25em] text-[#C8C8D8] opacity-40 block mb-4">PROTOCOL</label>
-                <h2 class="text-4xl md:text-6xl font-headline text-white tracking-tight">How It Works</h2>
-            </div>
-
-            <div class="scroll-stack-scroller w-full px-6 flex flex-col items-center">
-                <div class="scroll-stack-inner w-full max-w-6xl mx-auto flex flex-col items-center">
-
-                    <!-- Card 1 -->
-                    <div
-                        class="scroll-stack-card w-full min-h-[450px] md:h-[550px] bg-[rgba(12,12,15,0.6)] backdrop-blur-xl border border-[rgba(255,255,255,0.06)] rounded-[40px] p-8 md:p-16 flex flex-col md:flex-row items-center justify-between relative overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.8)] group">
-                        <!-- Glow Background -->
-                        <div
-                            class="absolute -right-32 -top-32 w-[500px] h-[500px] bg-purple-600/20 blur-[120px] rounded-full pointer-events-none group-hover:bg-purple-600/30 transition-colors duration-700">
-                        </div>
-
-                        <!-- Left Content -->
-                        <div class="w-full md:w-1/2 flex flex-col gap-6 relative z-10">
-                            <span
-                                class="text-7xl md:text-9xl font-mono text-white opacity-[0.03] font-bold absolute -top-8 -left-4 pointer-events-none">01</span>
-                            <div class="relative mt-12 md:mt-8">
-                                <h3 class="text-4xl md:text-5xl font-headline text-white leading-tight mb-6">Send Crypto
-                                    to<br>Our Vault</h3>
-                                <p class="text-[#C8C8D8] opacity-70 leading-relaxed font-body text-base md:text-lg">
-                                    Initiate a smooth transfer from your preferred wallet to our high-security vault
-                                    address. We automatically detect deposits across 20+ supported blockchains
-                                    immediately. No sign-ups required.
-                                </p>
-                                <ul class="flex flex-col gap-4 mt-8">
-                                    <li
-                                        class="flex items-center gap-4 text-sm md:text-base text-white opacity-90 font-mono">
-                                        <span class="material-symbols-outlined text-purple-400 text-xl">bolt</span>
-                                        Lightning Fast Detection
-                                    </li>
-                                    <li
-                                        class="flex items-center gap-4 text-sm md:text-base text-white opacity-90 font-mono">
-                                        <span class="material-symbols-outlined text-purple-400 text-xl">lock</span>
-                                        Bank-Grade Security
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <!-- Right Graphic -->
-                        <div
-                            class="w-full md:w-1/2 flex justify-center items-center mt-12 md:mt-0 relative z-10 pb-8 md:pb-0">
-                            <!-- Premium 3D Icon Container -->
-                            <div class="relative w-48 h-48 md:w-72 md:h-72 flex items-center justify-center">
-                                <div
-                                    class="absolute inset-0 bg-gradient-to-tr from-purple-600 to-blue-500 rounded-full blur-3xl opacity-30 animate-pulse">
-                                </div>
-                                <div
-                                    class="relative w-36 h-36 md:w-56 md:h-56 bg-gradient-to-tr from-purple-500 to-indigo-500 rounded-[2.5rem] flex items-center justify-center rotate-12 shadow-[0_20px_50px_rgba(168,85,247,0.3)] border border-white/20 backdrop-blur-xl group-hover:rotate-0 transition-transform duration-700">
-                                    <span
-                                        class="material-symbols-outlined text-white text-[80px] md:text-[120px] drop-shadow-2xl">account_balance_wallet</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card 2 -->
-                    <div
-                        class="scroll-stack-card w-full min-h-[450px] md:h-[550px] bg-[rgba(12,12,15,0.6)] backdrop-blur-xl border border-[rgba(255,255,255,0.06)] rounded-[40px] p-8 md:p-16 flex flex-col md:flex-row items-center justify-between relative overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.8)] group">
-                        <!-- Glow Background -->
-                        <div
-                            class="absolute -left-32 -bottom-32 w-[500px] h-[500px] bg-emerald-500/15 blur-[120px] rounded-full pointer-events-none group-hover:bg-emerald-500/25 transition-colors duration-700">
-                        </div>
-
-                        <!-- Left Graphic -->
-                        <div
-                            class="w-full md:w-1/2 flex justify-center items-center mb-12 md:mb-0 relative z-10 order-2 md:order-1 pt-8 md:pt-0">
-                            <!-- Premium 3D Icon Container -->
-                            <div class="relative w-48 h-48 md:w-72 md:h-72 flex items-center justify-center">
-                                <div
-                                    class="absolute inset-0 bg-gradient-to-tr from-emerald-500 to-cyan-500 rounded-full blur-3xl opacity-30 animate-pulse">
-                                </div>
-                                <div
-                                    class="relative w-36 h-36 md:w-56 md:h-56 bg-gradient-to-tr from-emerald-400 to-teal-600 rounded-full flex items-center justify-center -rotate-12 shadow-[0_20px_50px_rgba(16,185,129,0.3)] border border-white/20 backdrop-blur-xl group-hover:rotate-0 transition-transform duration-700">
-                                    <span
-                                        class="material-symbols-outlined text-white text-[80px] md:text-[120px] drop-shadow-2xl">verified</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Right Content -->
-                        <div class="w-full md:w-1/2 flex flex-col gap-6 relative z-10 order-1 md:order-2 pl-0 md:pl-10">
-                            <span
-                                class="text-7xl md:text-9xl font-mono text-white opacity-[0.03] font-bold absolute -top-8 right-0 pointer-events-none text-right">02</span>
-                            <div class="relative mt-12 md:mt-8 text-left md:text-right">
-                                <h3 class="text-4xl md:text-5xl font-headline text-white leading-tight mb-6">Submit
-                                    Your<br>TXID</h3>
-                                <p
-                                    class="text-[#C8C8D8] opacity-70 leading-relaxed font-body text-base md:text-lg ml-auto">
-                                    Input the transaction hash generated by your wallet. Our institutional-grade nodes
-                                    instantly verify the confirmation status on-chain. Zero intermediaries, pure native
-                                    verification.
-                                </p>
-                                <ul class="flex flex-col items-start md:items-end gap-4 mt-8">
-                                    <li
-                                        class="flex items-center gap-4 text-sm md:text-base text-white opacity-90 font-mono text-right">
-                                        <span
-                                            class="md:hidden material-symbols-outlined text-emerald-400 text-xl">search_check</span>
-                                        Seamless Tracking <span
-                                            class="hidden md:block material-symbols-outlined text-emerald-400 text-xl">search_check</span>
-                                    </li>
-                                    <li
-                                        class="flex items-center gap-4 text-sm md:text-base text-white opacity-90 font-mono text-right">
-                                        <span
-                                            class="md:hidden material-symbols-outlined text-emerald-400 text-xl">public</span>
-                                        100% On-Chain Proof <span
-                                            class="hidden md:block material-symbols-outlined text-emerald-400 text-xl">public</span>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Card 3 -->
-                    <div
-                        class="scroll-stack-card w-full min-h-[450px] md:h-[550px] bg-[rgba(12,12,15,0.6)] backdrop-blur-xl border border-[rgba(255,255,255,0.06)] rounded-[40px] p-8 md:p-16 flex flex-col md:flex-row items-center justify-between relative overflow-hidden shadow-[0_30px_60px_rgba(0,0,0,0.8)] group">
-                        <!-- Glow Background -->
-                        <div
-                            class="absolute -right-32 top-10 w-[500px] h-[500px] bg-rose-500/15 blur-[120px] rounded-full pointer-events-none group-hover:bg-rose-500/25 transition-colors duration-700">
-                        </div>
-
-                        <!-- Left Content -->
-                        <div class="w-full md:w-1/2 flex flex-col gap-6 relative z-10">
-                            <span
-                                class="text-7xl md:text-9xl font-mono text-white opacity-[0.03] font-bold absolute -top-8 -left-4 pointer-events-none">03</span>
-                            <div class="relative mt-12 md:mt-8">
-                                <h3 class="text-4xl md:text-5xl font-headline text-white leading-tight mb-6">Receive
-                                    INR<br>Instantly</h3>
-                                <p class="text-[#C8C8D8] opacity-70 leading-relaxed font-body text-base md:text-lg">
-                                    Liquidity is released flawlessly to your registered IMPS/UPI bank account within 15
-                                    minutes. Experience the industry's fastest fiat off-ramp settlement without limits.
-                                </p>
-                                <ul class="flex flex-col gap-4 mt-8">
-                                    <li
-                                        class="flex items-center gap-4 text-sm md:text-base text-white opacity-90 font-mono">
-                                        <span class="material-symbols-outlined text-rose-400 text-xl">payments</span>
-                                        Zero Hidden Fees
-                                    </li>
-                                    <li
-                                        class="flex items-center gap-4 text-sm md:text-base text-white opacity-90 font-mono">
-                                        <span
-                                            class="material-symbols-outlined text-rose-400 text-xl">account_balance</span>
-                                        Direct Bank Routing
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-
-                        <!-- Right Graphic -->
-                        <div
-                            class="w-full md:w-1/2 flex justify-center items-center mt-12 md:mt-0 relative z-10 pb-8 md:pb-0">
-                            <!-- Premium 3D Icon Container -->
-                            <div class="relative w-48 h-48 md:w-72 md:h-72 flex items-center justify-center">
-                                <div
-                                    class="absolute inset-0 bg-gradient-to-tr from-orange-500 to-rose-600 rounded-full blur-3xl opacity-30 animate-pulse">
-                                </div>
-                                <div class="relative w-36 h-36 md:w-56 md:h-56 bg-gradient-to-br from-amber-400 to-rose-600 rounded-2xl flex items-center justify-center rotate-6 shadow-[0_20px_50px_rgba(225,29,72,0.3)] border border-white/30 backdrop-blur-xl group-hover:-rotate-6 transition-transform duration-700"
-                                    style="clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);">
-                                    <span
-                                        class="material-symbols-outlined text-white text-[80px] md:text-[120px] drop-shadow-2xl">currency_rupee</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="scroll-stack-end h-[10vh] w-full mt-10 pointer-events-none"></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Why Choose Us Section -->
-        <section id="why-us"
-            class="py-20 px-6 md:px-12 max-w-screen-2xl w-full mx-auto flex flex-col justify-center min-h-[90vh]">
-            <div class="mb-14 text-center md:text-left">
-                <label
-                    class="font-mono text-[10px] uppercase tracking-[0.25em] text-[#C8C8D8] opacity-40 block mb-3">WHY
-                    BITVORA EXCHANGE</label>
-                <h2 class="text-4xl md:text-5xl lg:text-6xl font-headline text-white tracking-tight">Built Different.
-                </h2>
-            </div>
-
-            <div class="bento-card-grid flex-1 w-full" id="magic-bento-grid"
-                style="grid-template-columns: repeat(2, 1fr) !important; grid-auto-rows: minmax(400px, 1fr); display: grid; gap: 2rem;">
-                <!-- Card 1: Privacy -->
-                <div class="magic-bento-card particle-container">
-                    <div class="magic-bento-card__header flex items-center gap-3">
-                        <span class="material-symbols-outlined text-[18px] text-[#8400ff] opacity-80">lock</span>
-                        <div class="magic-bento-card__label">Privacy</div>
-                    </div>
-                    <div class="absolute inset-0 pointer-events-none overflow-hidden rounded-[32px] z-0">
-                        <!-- Top right purple glow -->
-                        <div
-                            class="absolute -top-10 -right-10 w-64 h-64 bg-purple-600 rounded-full mix-blend-screen filter blur-[80px] opacity-40 animate-pulse">
-                        </div>
-
-                        <!-- Massive Background Icon -->
-                        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[60%] opacity-5">
-                            <span class="material-symbols-outlined text-[280px]"
-                                style="font-variation-settings: 'FILL' 1;">fingerprint</span>
-                        </div>
-
-                        <!-- Floating Data Snippets -->
-                        <div
-                            class="absolute top-[30%] left-[20%] font-mono text-[#8400ff] text-[10px] tracking-[0.2em] opacity-30 rotate-90">
-                            0xENCRYPTED</div>
-                        <div
-                            class="absolute top-[60%] right-[10%] font-mono text-[#8400ff] text-[10px] tracking-[0.2em] opacity-20">
-                            NO_LOG_SAVED</div>
-                    </div>
-                    <div class="magic-bento-card__content mt-auto z-10 relative">
-                        <h3
-                            class="magic-bento-card__title font-headline text-3xl md:text-4xl font-medium tracking-wide text-white mb-3">
-                            No KYC. Ever.</h3>
-                        <p
-                            class="magic-bento-card__description font-body text-[15px] md:text-[17px] text-[#C8C8D8] opacity-60 leading-relaxed max-w-xl">
-                            No accounts, no identity verification. Every transaction is 100% anonymous and on-chain. We
-                            don't want your data, we just want to settle your transaction fast.</p>
-                    </div>
-                </div>
-
-                <!-- Card 2: Security -->
-                <div class="magic-bento-card particle-container justify-end h-full w-full">
-                    <div class="magic-bento-card__header flex items-center gap-4">
-                        <span
-                            class="material-symbols-outlined text-[24px] text-emerald-500 opacity-80">verified_user</span>
-                        <div class="magic-bento-card__label text-base">On-Chain</div>
-                    </div>
-                    <div
-                        class="absolute inset-0 pointer-events-none overflow-hidden rounded-[32px] flex items-center justify-end pr-16 z-0">
-                        <!-- Emerald Glow -->
-                        <div
-                            class="absolute bottom-0 right-0 w-80 h-80 bg-emerald-600 rounded-full mix-blend-screen filter blur-[100px] opacity-20">
-                        </div>
-
-                        <!-- Stacked glowing boxes / nodes -->
-                        <div
-                            class="relative w-full h-full flex items-center justify-center translate-y-[-10%] opacity-40">
-                            <div
-                                class="absolute w-40 h-40 border-[2px] border-emerald-500/20 rounded-[40px] rotate-12 shadow-[0_0_80px_rgba(16,185,129,0.3)] animate-[spin_20s_linear_infinite]">
-                            </div>
-                            <div
-                                class="absolute w-24 h-24 border border-emerald-500/40 rounded-[20px] -rotate-12 shadow-[0_0_40px_rgba(16,185,129,0.5)] animate-[spin_15s_linear_infinite_reverse]">
-                            </div>
-
-                            <!-- Checkmark in center -->
-                            <div class="absolute opacity-50 text-emerald-500">
-                                <span
-                                    class="material-symbols-outlined text-[48px] drop-shadow-[0_0_20px_rgba(16,185,129,1)]"
-                                    style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                            </div>
-                        </div>
-
-                        <!-- Simulated Node Data Strip -->
-                        <div
-                            class="absolute bottom-[40%] left-[10%] font-mono text-emerald-500 text-[10px] tracking-[0.2em] opacity-30 flex flex-col gap-2">
-                            <span>NODE_SYNC...</span>
-                            <span>BLOCK_VERIFIED</span>
-                        </div>
-                    </div>
-                    <div class="magic-bento-card__content mt-auto z-10 relative">
-                        <h3
-                            class="magic-bento-card__title font-headline text-3xl md:text-4xl font-medium tracking-wide text-white mb-3">
-                            Direct Verification.</h3>
-                        <p
-                            class="magic-bento-card__description font-body text-[15px] md:text-[17px] text-[#C8C8D8] opacity-60 leading-relaxed max-w-xl">
-                            We verify your TXID directly against the blockchain nodes. No third-party middlemen
-                            involved. True trustless architecture scaling natively to handle enterprise volume.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Live Transaction Ticker Section -->
-        <section class="py-24 px-6 md:px-12 w-full bg-black relative overflow-hidden border-y border-white/5">
-            <div class="max-w-screen-xl mx-auto flex flex-col items-center text-center">
-                <label
-                    class="font-mono text-[10px] uppercase tracking-[0.25em] text-[#C8C8D8] opacity-60 block mb-6">GLOBAL
-                    LIQUIDITY DEPTH</label>
-                <h2 class="text-3xl md:text-4xl font-headline text-white/90 tracking-tight mb-12">Total Network Volume
-                </h2>
-
-                <div id="live-transaction-counter" class="relative group cursor-default">
-                    <!-- JS hydration happens here -->
-                </div>
-
-                <p class="font-body text-[14px] text-[#C8C8D8]/50 mt-12 max-w-lg leading-relaxed">
-                    Visualizing 1:1 on-chain settlement activity across the BITVORA network. <br> Every 10 minutes, the
-                    global state is synchronized natively for absolute precision.
-                </p>
-
-                <div class="flex gap-4 mt-8">
-                    <div
-                        class="flex items-center gap-2 px-3 py-1 bg-emerald-500/5 rounded-full border border-emerald-500/20">
-                        <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
-                        <span class="text-[9px] font-mono text-emerald-500 uppercase tracking-widest">LIVE SYNC
-                            ACTIVE</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Ambient side glows -->
-            <div
-                class="absolute left-[-10%] top-1/2 -translate-y-1/2 w-[40%] h-[80%] bg-purple-500/5 blur-[120px] rounded-full pointer-events-none">
-            </div>
-            <div
-                class="absolute right-[-10%] top-1/2 -translate-y-1/2 w-[40%] h-[80%] bg-emerald-500/5 blur-[120px] rounded-full pointer-events-none">
-            </div>
-        </section>
-
-        <!-- Supported Assets Section -->
-        <section id="assets" class="bg-black py-32 w-full relative overflow-hidden">
-            <div class="max-w-screen-2xl mx-auto px-6 md:px-12 mb-16 text-center z-10 relative">
-                <label
-                    class="font-mono text-[10px] uppercase tracking-[0.25em] text-[#C8C8D8] opacity-40 block mb-4">SUPPORTED
-                    ASSETS</label>
-                <h2 class="text-5xl md:text-6xl font-headline text-white tracking-tight mb-8">Every Major
-                    Chain.<br />Every Major Token.</h2>
-                <p class="font-body text-[#C8C8D8] opacity-50 text-lg max-w-2xl mx-auto">
-                    Our high-precision routing engine supports direct settlement across dozens of blockchains and over
-                    100+ native and bridged assets.
-                </p>
-            </div>
-
-            <!-- Horizontal Logo Loops Container using Vanilla JS LogoLoop -->
-            <div class="relative w-full flex flex-col gap-10" style="padding-bottom: 2rem;">
-                <!-- Loop 1: Left -->
-                <div class="logoloop logoloop--horizontal logoloop--fade w-full relative overflow-hidden" id="loop-left"
-                    style="mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);">
-                    <div class="logoloop__track flex flex-row w-max will-change-transform">
-                        <ul class="logoloop__list flex flex-row list-none m-0 p-0 pr-14 items-center">
-                            <li class="logoloop__item flex items-center justify-center shrink-0">
-                                <div class="flex flex-col items-center gap-3 w-28">
-                                    <div
-                                        class="w-20 h-20 rounded-2xl bg-[#13131a] border border-[#2a2a35] flex items-center justify-center p-4">
-                                        <img loading="lazy"
-                                            src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/btc.svg"
-                                            alt="BTC" class="w-full h-full object-contain">
-                                    </div>
-                                    <span
-                                        class="font-mono text-[10px] tracking-widest text-[#C8C8D8] uppercase">Bitcoin</span>
-                                </div>
-                            </li>
-                            <li class="logoloop__item flex items-center justify-center shrink-0">
-                                <div class="flex flex-col items-center gap-3 w-28">
-                                    <div
-                                        class="w-20 h-20 rounded-2xl bg-[#13131a] border border-[#2a2a35] flex items-center justify-center p-4">
-                                        <img loading="lazy"
-                                            src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/eth.svg"
-                                            alt="ETH" class="w-full h-full object-contain">
-                                    </div>
-                                    <span
-                                        class="font-mono text-[10px] tracking-widest text-[#C8C8D8] uppercase">Ethereum</span>
-                                </div>
-                            </li>
-                            <li class="logoloop__item flex items-center justify-center shrink-0">
-                                <div class="flex flex-col items-center gap-3 w-28">
-                                    <div
-                                        class="w-20 h-20 rounded-2xl bg-[#13131a] border border-[#2a2a35] flex items-center justify-center p-4">
-                                        <img loading="lazy"
-                                            src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/usdt.svg"
-                                            alt="USDT" class="w-full h-full object-contain">
-                                    </div>
-                                    <span
-                                        class="font-mono text-[10px] tracking-widest text-[#C8C8D8] uppercase">Tether</span>
-                                </div>
-                            </li>
-                            <li class="logoloop__item flex items-center justify-center shrink-0">
-                                <div class="flex flex-col items-center gap-3 w-28">
-                                    <div
-                                        class="w-20 h-20 rounded-2xl bg-[#13131a] border border-[#2a2a35] flex items-center justify-center p-4">
-                                        <img loading="lazy"
-                                            src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/usdc.svg"
-                                            alt="USDC" class="w-full h-full object-contain">
-                                    </div>
-                                    <span
-                                        class="font-mono text-[10px] tracking-widest text-[#C8C8D8] uppercase">USDC</span>
-                                </div>
-                            </li>
-                            <li class="logoloop__item flex items-center justify-center shrink-0">
-                                <div class="flex flex-col items-center gap-3 w-28">
-                                    <div
-                                        class="w-20 h-20 rounded-2xl bg-[#13131a] border border-[#2a2a35] flex items-center justify-center p-4">
-                                        <img loading="lazy"
-                                            src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/sol.svg"
-                                            alt="SOL" class="w-full h-full object-contain">
-                                    </div>
-                                    <span
-                                        class="font-mono text-[10px] tracking-widest text-[#C8C8D8] uppercase">Solana</span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
-                <!-- Loop 2: Right -->
-                <div class="logoloop logoloop--horizontal logoloop--fade w-full relative overflow-hidden"
-                    id="loop-right"
-                    style="mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent); -webkit-mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);">
-                    <div class="logoloop__track flex flex-row w-max will-change-transform">
-                        <ul class="logoloop__list flex flex-row list-none m-0 p-0 pr-14 items-center">
-                            <li class="logoloop__item flex items-center justify-center shrink-0">
-                                <div class="flex flex-col items-center gap-3 w-28">
-                                    <div
-                                        class="w-20 h-20 rounded-2xl bg-[#13131a] border border-[rgba(255,255,255,0.06)] flex items-center justify-center p-4">
-                                        <img loading="lazy"
-                                            src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/bnb.svg"
-                                            alt="BNB" class="w-full h-full object-contain">
-                                    </div>
-                                    <span
-                                        class="font-mono text-[10px] tracking-widest text-[#C8C8D8] uppercase">BNB</span>
-                                </div>
-                            </li>
-                            <li class="logoloop__item flex items-center justify-center shrink-0">
-                                <div class="flex flex-col items-center gap-3 w-28">
-                                    <div
-                                        class="w-20 h-20 rounded-2xl bg-[#13131a] border border-[rgba(255,255,255,0.06)] flex items-center justify-center p-4">
-                                        <img loading="lazy"
-                                            src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/matic.svg"
-                                            alt="MATIC" class="w-full h-full object-contain">
-                                    </div>
-                                    <span
-                                        class="font-mono text-[10px] tracking-widest text-[#C8C8D8] uppercase">Polygon</span>
-                                </div>
-                            </li>
-                            <li class="logoloop__item flex items-center justify-center shrink-0">
-                                <div class="flex flex-col items-center gap-3 w-28">
-                                    <div
-                                        class="w-20 h-20 rounded-2xl bg-[#13131a] border border-[rgba(255,255,255,0.06)] flex items-center justify-center p-4">
-                                        <img loading="lazy"
-                                            src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/trx.svg"
-                                            alt="TRX" class="w-full h-full object-contain">
-                                    </div>
-                                    <span
-                                        class="font-mono text-[10px] tracking-widest text-[#C8C8D8] uppercase">Tron</span>
-                                </div>
-                            </li>
-                            <li class="logoloop__item flex items-center justify-center shrink-0">
-                                <div class="flex flex-col items-center gap-3 w-28">
-                                    <div
-                                        class="w-20 h-20 rounded-2xl bg-[#13131a] border border-[rgba(255,255,255,0.06)] flex items-center justify-center p-4">
-                                        <img loading="lazy"
-                                            src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/avax.svg"
-                                            alt="AVAX" class="w-full h-full object-contain">
-                                    </div>
-                                    <span
-                                        class="font-mono text-[10px] tracking-widest text-[#C8C8D8] uppercase">Avalanche</span>
-                                </div>
-                            </li>
-                            <li class="logoloop__item flex items-center justify-center shrink-0">
-                                <div class="flex flex-col items-center gap-3 w-28">
-                                    <div
-                                        class="w-20 h-20 rounded-2xl bg-[#13131a] border border-[rgba(255,255,255,0.06)] flex items-center justify-center p-4">
-                                        <img loading="lazy" src="/assets/icons/arb.svg" alt="ARB"
-                                            class="w-full h-full object-contain">
-                                    </div>
-                                    <span
-                                        class="font-mono text-[10px] tracking-widest text-[#C8C8D8] uppercase">Arbitrum</span>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Testimonials Section -->
-        <section class="w-full py-32 bg-black border-t border-[rgba(255,255,255,0.04)] relative">
-            <div class="max-w-screen-2xl mx-auto px-6 md:px-12 mb-16 text-center flex flex-col items-center">
-                <div
-                    class="inline-flex items-center gap-2 border border-[#3b82f6]/20 bg-[#3b82f6]/5 px-4 py-[6px] rounded-full mb-6 relative">
-                    <div class="w-1.5 h-1.5 rounded-full bg-[#3b82f6] animate-pulse"></div>
-                    <span
-                        class="font-mono text-[9px] font-bold uppercase tracking-[0.25em] text-[#3b82f6]">TESTIMONIALS</span>
-                </div>
-                <h2 class="text-4xl md:text-5xl font-headline font-semibold text-white tracking-tight">What Clients Are
-                    Saying</h2>
-            </div>
-
-            <style>
-                @keyframes scrollLoop {
-                    0% {
-                        transform: translateX(0);
-                    }
-
-                    100% {
-                        transform: translateX(calc(-1 * (400px * 4 + 24px * 4)));
-                    }
-                }
-
-                @media (max-width: 768px) {
-                    @keyframes scrollLoop {
-                        0% {
-                            transform: translateX(0);
-                        }
-
-                        100% {
-                            transform: translateX(calc(-1 * (320px * 4 + 24px * 4)));
-                        }
-                    }
-                }
-
-                .animate-infinite-scroll {
-                    display: flex;
-                    width: max-content;
-                    animation: scrollLoop 40s linear infinite;
-                }
-
-                .animate-infinite-scroll:hover {
-                    animation-play-state: paused;
-                }
-            </style>
-
-            <!-- Horizontal Marquee Container -->
-            <div class="relative w-full overflow-hidden bento-section">
-                <!-- Left/Right Edge Fades -->
-                <div
-                    class="absolute inset-y-0 left-0 w-8 md:w-32 bg-gradient-to-r from-black to-transparent z-10 pointer-events-none">
-                </div>
-                <div
-                    class="absolute inset-y-0 right-0 w-8 md:w-32 bg-gradient-to-l from-black to-transparent z-10 pointer-events-none">
-                </div>
-
-                <div class="animate-infinite-scroll gap-6 px-6">
-                    <!-- Setup 5 Unique Cards, then Duplicate for Seamless Scroll -->
-                    <!-- Card 1 -->
-                    <div
-                        class="w-[320px] md:w-[400px] bg-[#0e0e12] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 md:p-8 flex flex-col gap-6 shadow-2xl hover:border-[rgba(255,255,255,0.15)] transition-colors duration-400">
-                        <div class="flex justify-between items-start">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-[#2a2a35] flex items-center justify-center font-mono text-sm tracking-widest text-white border border-white/10 shadow-inner">
-                                    C
-                                </div>
-                                <div class="flex flex-col">
-                                    <span
-                                        class="font-headline font-semibold tracking-wide text-white text-[15px]">CryptoDaily</span>
-                                    <span class="font-body text-[#C8C8D8] opacity-50 text-[11px]">Media Outlet</span>
-                                </div>
-                            </div>
-                            <div class="flex gap-1 text-[#FFD700]">
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                            </div>
-                        </div>
-                        <p class="font-body text-[#C8C8D8] opacity-70 text-[13px] leading-relaxed">"Best decentralized
-                            transaction off-ramp in the game. Fast, reliable, and entirely discreet."</p>
-                    </div>
-
-                    <!-- Card 2 -->
-                    <div
-                        class="w-[320px] md:w-[400px] bg-[#0e0e12] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 md:p-8 flex flex-col gap-6 shadow-2xl hover:border-[rgba(255,255,255,0.15)] transition-colors duration-400">
-                        <div class="flex justify-between items-start">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-[#2a2a35] flex items-center justify-center font-mono text-sm tracking-widest text-[#C8C8D8] border border-white/10">
-                                    M
-                                </div>
-                                <div class="flex flex-col">
-                                    <span
-                                        class="font-headline font-semibold tracking-wide text-white text-[15px]">Marcus
-                                        L.</span>
-                                    <span class="font-body text-[#C8C8D8] opacity-50 text-[11px]">Brand Manager</span>
-                                </div>
-                            </div>
-                            <div class="flex gap-1 text-[#FFD700]">
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                            </div>
-                        </div>
-                        <p class="font-body text-[#C8C8D8] opacity-70 text-[13px] leading-relaxed">"We recovered a
-                            high-value wallet amount we've been trying to withdraw for years. Set a new standard. Worth
-                            every penny."</p>
-                    </div>
-
-                    <!-- Card 3 -->
-                    <div
-                        class="w-[320px] md:w-[400px] bg-[#0e0e12] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 md:p-8 flex flex-col gap-6 shadow-2xl hover:border-[rgba(255,255,255,0.15)] transition-colors duration-400">
-                        <div class="flex justify-between items-start">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-[#2a2a35] flex items-center justify-center font-mono text-sm tracking-widest text-white border border-white/10">
-                                    S
-                                </div>
-                                <div class="flex flex-col">
-                                    <span class="font-headline font-semibold tracking-wide text-white text-[15px]">Sarah
-                                        Jenkins</span>
-                                    <span class="font-body text-[#C8C8D8] opacity-50 text-[11px]">@sarah_creates</span>
-                                </div>
-                            </div>
-                            <div class="flex gap-1 text-[#FFD700]">
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star_half</span>
-                            </div>
-                        </div>
-                        <p class="font-body text-[#C8C8D8] opacity-70 text-[13px] leading-relaxed">"I thought my
-                            stablecoins were stuck forever on an obsolete chain. The routing bridge got it out in 15
-                            minutes. Unreal service."</p>
-                    </div>
-
-                    <!-- Card 4 -->
-                    <div
-                        class="w-[320px] md:w-[400px] bg-[#0e0e12] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 md:p-8 flex flex-col gap-6 shadow-2xl hover:border-[rgba(255,255,255,0.15)] transition-colors duration-400">
-                        <div class="flex justify-between items-start">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-[#2a2a35] flex items-center justify-center font-mono text-sm tracking-widest text-[#C8C8D8] border border-white/10">
-                                    T
-                                </div>
-                                <div class="flex flex-col">
-                                    <span
-                                        class="font-headline font-semibold tracking-wide text-white text-[15px]">TechStart
-                                        Inc.</span>
-                                    <span class="font-body text-[#C8C8D8] opacity-50 text-[11px]">Enterprise
-                                        Client</span>
-                                </div>
-                            </div>
-                            <div class="flex gap-1 text-[#FFD700]">
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                            </div>
-                        </div>
-                        <p class="font-body text-[#C8C8D8] opacity-70 text-[13px] leading-relaxed">"Secured bulk
-                            liquidation clearance for our entire executive fund. The off-ramp process was seamless and
-                            completely professional."</p>
-                    </div>
-
-                    <!-- Duplicates for scrolling illusion -->
-                    <div
-                        class="w-[320px] md:w-[400px] bg-[#0e0e12] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 md:p-8 flex flex-col gap-6 shadow-2xl">
-                        <div class="flex justify-between items-start">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-[#2a2a35] flex items-center justify-center font-mono text-sm tracking-widest text-white border border-white/10">
-                                    C
-                                </div>
-                                <div class="flex flex-col">
-                                    <span
-                                        class="font-headline font-semibold tracking-wide text-white text-[15px]">CryptoDaily</span>
-                                    <span class="font-body text-[#C8C8D8] opacity-50 text-[11px]">Media Outlet</span>
-                                </div>
-                            </div>
-                            <div class="flex gap-1 text-[#FFD700]">
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                            </div>
-                        </div>
-                        <p class="font-body text-[#C8C8D8] opacity-70 text-[13px] leading-relaxed">"Best decentralized
-                            transaction off-ramp in the game. Fast, reliable, and entirely discreet."</p>
-                    </div>
-
-                    <div
-                        class="w-[320px] md:w-[400px] bg-[#0e0e12] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 md:p-8 flex flex-col gap-6 shadow-2xl">
-                        <div class="flex justify-between items-start">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-[#2a2a35] flex items-center justify-center font-mono text-sm tracking-widest text-[#C8C8D8] border border-white/10">
-                                    M
-                                </div>
-                                <div class="flex flex-col">
-                                    <span
-                                        class="font-headline font-semibold tracking-wide text-white text-[15px]">Marcus
-                                        L.</span>
-                                    <span class="font-body text-[#C8C8D8] opacity-50 text-[11px]">Brand Manager</span>
-                                </div>
-                            </div>
-                            <div class="flex gap-1 text-[#FFD700]">
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                            </div>
-                        </div>
-                        <p class="font-body text-[#C8C8D8] opacity-70 text-[13px] leading-relaxed">"We recovered a
-                            high-value wallet amount we've been trying to withdraw for years. Set a new standard. Worth
-                            every penny."</p>
-                    </div>
-
-                    <!-- Duplicating Card 3 inside loop -->
-                    <div
-                        class="w-[320px] md:w-[400px] bg-[#0e0e12] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 md:p-8 flex flex-col gap-6 shadow-2xl hover:border-[rgba(255,255,255,0.15)] transition-colors duration-400">
-                        <div class="flex justify-between items-start">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-[#2a2a35] flex items-center justify-center font-mono text-sm tracking-widest text-white border border-white/10">
-                                    S
-                                </div>
-                                <div class="flex flex-col">
-                                    <span class="font-headline font-semibold tracking-wide text-white text-[15px]">Sarah
-                                        Jenkins</span>
-                                    <span class="font-body text-[#C8C8D8] opacity-50 text-[11px]">@sarah_creates</span>
-                                </div>
-                            </div>
-                            <div class="flex gap-1 text-[#FFD700]">
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star_half</span>
-                            </div>
-                        </div>
-                        <p class="font-body text-[#C8C8D8] opacity-70 text-[13px] leading-relaxed">"I thought my
-                            stablecoins were stuck forever on an obsolete chain. The routing bridge got it out in 15
-                            minutes. Unreal service."</p>
-                    </div>
-
-                    <!-- Duplicating Card 4 inside loop -->
-                    <div
-                        class="w-[320px] md:w-[400px] bg-[#0e0e12] border border-[rgba(255,255,255,0.06)] rounded-2xl p-6 md:p-8 flex flex-col gap-6 shadow-2xl hover:border-[rgba(255,255,255,0.15)] transition-colors duration-400">
-                        <div class="flex justify-between items-start">
-                            <div class="flex items-center gap-4">
-                                <div
-                                    class="w-10 h-10 rounded-full bg-[#2a2a35] flex items-center justify-center font-mono text-sm tracking-widest text-[#C8C8D8] border border-white/10">
-                                    T
-                                </div>
-                                <div class="flex flex-col">
-                                    <span
-                                        class="font-headline font-semibold tracking-wide text-white text-[15px]">TechStart
-                                        Inc.</span>
-                                    <span class="font-body text-[#C8C8D8] opacity-50 text-[11px]">Enterprise
-                                        Client</span>
-                                </div>
-                            </div>
-                            <div class="flex gap-1 text-[#FFD700]">
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                                <span class="material-symbols-outlined text-[14px]">star</span>
-                            </div>
-                        </div>
-                        <p class="font-body text-[#C8C8D8] opacity-70 text-[13px] leading-relaxed">"Secured bulk
-                            liquidation clearance for our entire executive fund. The off-ramp process was seamless and
-                            completely professional."</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Final CTA Section -->
-        <section class="max-w-screen-2xl mx-auto md:w-full px-6 md:px-12 pb-32">
-            <div
-                class="bg-[#0e0e12] border border-[rgba(255,255,255,0.06)] rounded-[32px] md:rounded-[40px] py-32 px-12 flex flex-col items-center text-center gap-10 relative overflow-hidden">
-                <!-- Floating Crypto Backgrounds -->
-                <div class="absolute inset-0 pointer-events-none z-0">
-                    <img loading="lazy"
-                        src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/btc.svg"
-                        alt="BTC"
-                        class="absolute top-[15%] left-[10%] w-16 h-16 opacity-30 blur-[2px] -rotate-12 animate-[pulse_4s_in-out_infinite]" />
-                    <img loading="lazy"
-                        src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/eth.svg"
-                        alt="ETH" class="absolute top-[30%] left-[25%] w-24 h-24 opacity-10 blur-[5px] rotate-45" />
-                    <img loading="lazy"
-                        src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/usdt.svg"
-                        alt="USDT"
-                        class="absolute bottom-[20%] left-[15%] w-20 h-20 opacity-40 blur-[1px] rotate-[-20deg]" />
-                    <img loading="lazy"
-                        src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/sol.svg"
-                        alt="SOL"
-                        class="absolute top-[20%] right-[15%] w-20 h-20 opacity-30 blur-[2px] rotate-12 animate-[pulse_5s_in-out_infinite]" />
-                    <img loading="lazy"
-                        src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/matic.svg"
-                        alt="MATIC"
-                        class="absolute bottom-[25%] right-[25%] w-28 h-28 opacity-10 blur-[6px] rotate-[-45deg]" />
-                    <img loading="lazy"
-                        src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/bnb.svg"
-                        alt="BNB" class="absolute bottom-[15%] right-[10%] w-16 h-16 opacity-40 blur-[1px] rotate-45" />
-                    <img loading="lazy"
-                        src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/trx.svg"
-                        alt="TRX" class="absolute top-[40%] -left-16 w-48 h-48 opacity-[0.05] blur-[8px] -rotate-12" />
-                    <img loading="lazy"
-                        src="https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/avax.svg"
-                        alt="AVAX"
-                        class="absolute top-[40%] -right-16 w-48 h-48 opacity-[0.05] blur-[8px] rotate-180" />
-                </div>
-
-                <h2 class="text-5xl md:text-6xl font-headline text-white tracking-tight z-10">Ready to convert?</h2>
-                <p class="text-[#C8C8D8] opacity-50 max-w-md font-body z-10">Experience the gold standard in
-                    crypto-to-fiat settlements with sub-15 minute latency.</p>
-                <a href="signin.html"
-                    class="bg-white text-black px-12 py-4 rounded-full text-sm font-bold uppercase tracking-[0.15em] hover:bg-[#e0e0e0] transition-all duration-400 active:scale-[0.98] font-body z-10 shadow-[0_0_40px_rgba(255,255,255,0.2)]">
-                    GET STARTED
-                </a>
-            </div>
-        </section>
-    </main>
-
-    <!-- Additional styles for asset pills injected here to avoid editing styles.css again immediately -->
-    <style>
-        .asset-pill {
-            display: inline-block;
-            border-radius: 9999px;
-            background: #13131a;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 6px 16px;
-            font-family: 'DM Mono', monospace;
-            font-size: 11px;
-            color: #C8C8D8;
-            transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BITVORA | Crypto to INR</title>
+<script src="https://cdn.tailwindcss.com?plugins=container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            background-color: #000000;
+            color: #E5E5E5;
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
         }
-
-        .asset-pill:hover {
-            border-color: rgba(255, 255, 255, 0.3);
-            color: #ffffff;
+        .font-headline { font-family: 'Space Grotesk', sans-serif; }
+        .metallic-gradient {
+            background: linear-gradient(135deg, #E5E5E5 0%, #6E6E6E 50%, #2A2A2A 100%);
+            border: none;
         }
+        .brushed-surface {
+            background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0) 100%);
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
     </style>
-    <script src="/assets/js/animations.js"></script>
-    <script src="/assets/js/platform.js"></script>
-    <script src="/assets/js/metallic-paint.js"></script>
-    <script type="module" src="/assets/js/soft-aurora.js"></script>
-    <script>
-        (async () => {
-            // Recent Payouts Marquee
-            try {
-                const res = await fetch(`${BITVORA_CONFIG.API_BASE_URL}/assets/recent-payouts`);
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.payouts && data.payouts.length > 0) {
-                        const marquee = document.getElementById('recent-payouts-marquee');
-                        marquee.innerHTML = '';
-                        const items = [...data.payouts, ...data.payouts];
-                        items.forEach(p => {
-                            const ago = Math.floor((Date.now() - new Date(p.payout_sent_at)) / 60000);
-                            const agoStr = ago <= 0 ? 'JUST NOW' : `${ago} MINS AGO`;
-                            const span = document.createElement('span');
-                            span.className = "font-mono text-[9px] uppercase tracking-[0.2em] text-[#C8C8D8] opacity-60 flex items-center gap-2 shrink-0";
-                            span.innerHTML = `${p.asset.toUpperCase()} <span class="material-symbols-outlined text-[8px] opacity-30">arrow_forward</span> ₹${p.amount_inr.toLocaleString('en-IN')} (${agoStr}) <span class="material-symbols-outlined text-[10px] text-[#22c55e]">check_circle</span>`;
-                            marquee.appendChild(span);
-                        });
-                    }
-                }
-            } catch (e) { }
-
-            // Live P2P Rate Banner + Hero rate display
-            try {
-                const res = await fetch(`${BITVORA_CONFIG.API_BASE_URL}/assets/rates`);
-                if (res.ok) {
-                    const data = await res.json();
-                    const usdtRate = data.rates && data.rates.USDT;
-                    const displayRate = usdtRate
-                        ? `1 USDT ≈ ₹${usdtRate.rate_inr.toFixed(2)}`
-                        : (data.rates && data.rates.USD ? `1 USD ≈ ₹${data.rates.USD.rate_inr.toFixed(2)}` : null);
-                    if (displayRate) {
-                        const heroRate = document.getElementById('hero-rate-display');
-                        if (heroRate) heroRate.innerHTML += ` <span class="mx-2 opacity-30 text-white font-light">|</span> <span class="text-white opacity-100 font-bold bg-[#13131a] px-3 py-1 rounded-full border border-[rgba(255,255,255,0.08)]">${displayRate}</span>`;
-                        const topV = document.getElementById('top-rate-value');
-                        if (topV) topV.innerText = displayRate;
-                    }
-                }
-            } catch (e) { }
-
-            // Stats bar (from backend settings table)
-            try {
-                const res = await fetch(`${BITVORA_CONFIG.API_BASE_URL}/assets/settings`);
-                if (res.ok) {
-                    const data = await res.json();
-                    const s = data.settings || {};
-                    if (s.stat_volume && document.getElementById('stat-volume-front')) document.getElementById('stat-volume-front').innerText = s.stat_volume;
-                    if (s.stat_time && document.getElementById('stat-time-front')) document.getElementById('stat-time-front').innerText = s.stat_time;
-                    if (s.stat_assets && document.getElementById('stat-assets-front')) document.getElementById('stat-assets-front').innerText = s.stat_assets;
-                }
-            } catch (e) { }
-
-            // Live Network Volume Counter
-            try {
-                const res = await fetch(`${BITVORA_CONFIG.API_BASE_URL}/assets/live-counter`);
-                if (res.ok) {
-                    const data = await res.json();
-                    const container = document.getElementById('live-transaction-counter');
-                    if (container && data.count) {
-                        const formatted = data.count.toLocaleString('en-IN');
-                        container.innerHTML = `<div class="flex flex-col items-center gap-3"><span class="text-[60px] md:text-[90px] font-headline text-white tracking-tight leading-none tabular-nums">${formatted}</span><span class="font-mono text-[10px] uppercase tracking-[0.2em] text-white/40">Total Transactions Settled</span></div>`;
-                    }
-                }
-            } catch (e) { }
-        })();
-
-        // Initialize LogoLoops
-        document.addEventListener("DOMContentLoaded", () => {
-            if (window.LogoLoop) {
-                const loopLeft = document.getElementById('loop-left');
-                const loopRight = document.getElementById('loop-right');
-                if (loopLeft) new LogoLoop(loopLeft, { speed: 80, direction: 'left', gap: 60, pauseOnHover: true });
-                if (loopRight) new LogoLoop(loopRight, { speed: 80, direction: 'right', gap: 60, pauseOnHover: true });
-            }
-        });
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary-fixed-dim": "#454747",
+              "tertiary": "#e4e2e1",
+              "surface-container": "#1f1f1f",
+              "secondary-fixed": "#c7c6c6",
+              "on-primary-container": "#000000",
+              "surface-container-low": "#1b1b1b",
+              "surface-bright": "#393939",
+              "primary-container": "#d4d4d4",
+              "on-primary-fixed-variant": "#e2e2e2",
+              "on-primary": "#1a1c1c",
+              "background": "#000000",
+              "secondary-container": "#464747",
+              "on-secondary-container": "#e3e2e2",
+              "on-error-container": "#ffdad6",
+              "surface-tint": "#c6c6c6",
+              "surface-container-high": "#2a2a2a",
+              "outline-variant": "#474747",
+              "inverse-on-surface": "#303030",
+              "on-tertiary-container": "#000000",
+              "surface-container-highest": "#353535",
+              "on-secondary": "#1a1c1c",
+              "on-tertiary-fixed": "#ffffff",
+              "secondary-fixed-dim": "#ababab",
+              "on-tertiary": "#1b1c1c",
+              "surface-variant": "#353535",
+              "surface": "#000000",
+              "primary-fixed": "#5d5f5f",
+              "outline": "#3A3A3A",
+              "inverse-primary": "#5d5f5f",
+              "on-surface": "#e2e2e2",
+              "inverse-surface": "#e2e2e2",
+              "on-secondary-fixed-variant": "#3a3c3c",
+              "error-container": "#93000a",
+              "tertiary-fixed": "#5f5e5e",
+              "surface-dim": "#131313",
+              "on-tertiary-fixed-variant": "#e4e2e1",
+              "on-error": "#690005",
+              "on-background": "#e2e2e2",
+              "on-secondary-fixed": "#1a1c1c",
+              "tertiary-fixed-dim": "#474747",
+              "error": "#ffb4ab",
+              "on-surface-variant": "#c6c6c6",
+              "surface-container-lowest": "#0e0e0e",
+              "secondary": "#c7c6c6",
+              "tertiary-container": "#919090",
+              "primary": "#ffffff",
+              "on-primary-fixed": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Space Grotesk"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
     </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+      overflow-x: hidden;
+    }
+    .darkveil-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .darkveil-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    
+    /* Scroll Velocity Base Styles */
+    .parallax {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .scroller {
+      display: flex;
+      white-space: nowrap;
+      text-align: center;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 3rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.1));
+      color: #3A3A3A;
+    }
+    .scroller.reverse {
+      color: #5d5f5f;
+    }
+    .scroller span {
+      flex-shrink: 0;
+      display: inline-block;
+      padding-right: 2rem;
+    }
+    @media (min-width: 768px) {
+      .scroller {
+        font-size: 5rem;
+        line-height: 5rem;
+      }
+    }
 
-
-</body>
-
-</html>
+    /* Scroll animations */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
+  </head>
+<body class="bg-black text-on-surface selection:bg-primary selection:text-black">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full border-b border-zinc-800/50 bg-black z-50 flex justify-between items-center px-6 py-4">
+    <a href="index.html" class="flex items-center gap-2">
+        <span class="material-symbols-outlined text-zinc-100" style="font-variation-settings: 'FILL' 1;">toll</span>
+        <span class="text-xl font-headline font-bold tracking-tighter text-zinc-100">KINETIC</span>
+    </a>
+    <nav class="hidden md:flex gap-4 items-center">
+        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-100 opacity-100" href="index.html">Home</a>
+        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="exchange.html">Exchange</a>
+        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="dashboard.html">Dashboard</a>
+        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="profile.html">Profile</a>
+        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="support.html">Support</a>
+    </nav>
+    <a href="profile.html" class="px-5 py-1.5 bg-zinc-900 border border-zinc-800 text-zinc-100 text-[10px] font-bold tracking-widest uppercase">
+        Profile
+    </a>
+</header>
+<main class="pt-24 pb-32">
+<!-- Hero Section -->
+<section class="px-6 md:px-24 pt-20 md:pt-40 flex flex-col items-start max-w-7xl mx-auto">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-surface-container-high rounded-full mb-8">
+<span class="w-2 h-2 rounded-full bg-white"></span>
+<span class="text-[10px] font-bold tracking-widest uppercase text-zinc-400">Network Status: Operational</span>
+</div>
+<h1 class="text-6xl md:text-9xl font-headline font-bold text-primary leading-[0.9] tracking-tighter mb-8">
+                Turn Crypto <br/> Into Rupees
+            </h1>
+<p class="text-lg md:text-2xl font-body text-outline max-w-2xl mb-12">
+                Verified on-chain. Paid to your UPI. Experience the ultimate exit ramp for the digital age.
+            </p>
+<button class="metallic-gradient text-black px-12 py-5 rounded-full font-headline font-bold text-xl tracking-tight flex items-center gap-4 hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_40px_rgba(255,255,255,0.1)]">
+                Start
+                <span class="material-symbols-outlined">north_east</span>
+</button>
+</section>
+<!-- Feature Bento Grid -->
+<section class="px-6 md:px-24 mt-40 max-w-7xl mx-auto">
+<div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+<!-- Large Terminal Module -->
+<div class="md:col-span-8 bg-surface-container-low rounded-lg p-10 border border-outline/10 flex flex-col justify-between min-h-[500px] relative overflow-hidden group">
+<div class="relative z-10">
+<span class="text-[10px] font-bold tracking-[0.2em] text-outline uppercase mb-4 block">Transaction Engine</span>
+<h3 class="text-4xl font-headline font-bold text-primary mb-6">Real-time settlement <br/>infrastructure.</h3>
+</div>
+<div class="bg-black/40 backdrop-blur-xl border border-white/5 rounded-md p-6 font-mono text-xs text-zinc-500 relative z-10">
+<div class="flex justify-between mb-4">
+<span class="text-zinc-100">TX_ID: 0x82...a921</span>
+<span class="text-white">STATUS: SUCCESS</span>
+</div>
+<div class="space-y-1">
+<p>&gt; Initiating liquidation protocol...</p>
+<p>&gt; Oracle verification confirmed (99.9%)</p>
+<p>&gt; Executing INR transfer via UPI gateway...</p>
+<p class="text-zinc-100">&gt; Settlement complete. 120,000.00 INR dispatched.</p>
+</div>
+</div>
+<div class="absolute top-0 right-0 w-full h-full opacity-10 pointer-events-none">
+<img class="w-full h-full object-cover" data-alt="Abstract futuristic digital grid lines on a deep black background representing high speed data transfer and technology" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD5Fst0bmNZZohHxilH1GwsuM8Ru264Fd_qhMY8qgUeUEGikYvfs1xqxEuVw_mSA2vzQ-T4RwwTao3iQUy_jXWBWBXXHWWMozuVIs_wwlicoJEeskAIT7yp9DkQsJWo9IB1p_7bnfBFysme0-XURHbaKItoHPXr2uGmpr206VeuZx5VVfRgv4vd1bRoyQrtyKIJ64AKlc_D5wUPrlj13PDQSIBf64WX3--KgXL-Rzlgoscw8fXKGtYI0r0xv-Qlqc1IaVw7GRiN8JqT"/>
+</div>
+</div>
+<!-- Secondary Metric Module -->
+<div class="md:col-span-4 bg-surface-container-high rounded-lg p-8 border border-outline/10 flex flex-col justify-center items-center text-center">
+<span class="material-symbols-outlined text-5xl mb-6 text-zinc-100" style="font-variation-settings: 'FILL' 1;">speed</span>
+<h4 class="text-5xl font-headline font-bold text-primary mb-2">~45s</h4>
+<p class="text-sm font-body text-outline uppercase tracking-widest">Average payout time</p>
+</div>
+<!-- Third Row Module -->
+<div class="md:col-span-4 bg-surface-container-high rounded-lg p-8 border border-outline/10">
+<span class="material-symbols-outlined text-3xl mb-4 text-zinc-100">verified_user</span>
+<h4 class="text-xl font-headline font-bold text-primary mb-2">Bank-Grade Security</h4>
+<p class="text-sm font-body text-outline">Multi-signature cold storage and institutional custody for every byte of data.</p>
+</div>
+<div class="md:col-span-8 bg-[#0A0A0A] rounded-lg p-8 border border-outline/10 flex flex-col md:flex-row items-center gap-8 overflow-hidden">
+<div class="flex-1">
+<h4 class="text-2xl font-headline font-bold text-primary mb-2">Universal UPI Support</h4>
+<p class="text-sm font-body text-outline">Seamlessly deposit funds to GPay, PhonePe, or any BHIM-enabled bank account instantly.</p>
+</div>
+<div class="flex gap-4 opacity-50">
+<span class="material-symbols-outlined text-4xl">payments</span>
+<span class="material-symbols-outlined text-4xl">account_balance</span>
+<span class="material-symbols-outlined text-4xl">qr_code_2</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Dynamic Data Section -->
+<section class="px-6 md:px-24 mt-40 max-w-7xl mx-auto">
+<div class="flex flex-col md:flex-row justify-between items-end gap-12 mb-20">
+<div class="max-w-xl">
+<h2 class="text-5xl md:text-7xl font-headline font-bold text-primary tracking-tighter mb-6">Market Precision</h2>
+<p class="text-lg text-outline">We pull direct liquidity from the world's deepest order books to ensure you get the sharpest rate in the market.</p>
+</div>
+<div class="text-right">
+<span class="text-[10px] font-bold tracking-[0.3em] uppercase text-outline">LIVE_TICKER</span>
+<div class="text-4xl font-headline font-bold text-primary">â‚¹7,82,142.00</div>
+<div class="text-sm text-zinc-500 font-mono">BTC / INR (+1.2%)</div>
+</div>
+</div>
+<div class="border border-outline/10 rounded-lg overflow-hidden bg-surface-container-lowest">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-outline/10">
+<tr>
+<th class="px-8 py-5 text-[10px] font-bold tracking-widest text-outline uppercase">Asset</th>
+<th class="px-8 py-5 text-[10px] font-bold tracking-widest text-outline uppercase">Exchange Rate</th>
+<th class="px-8 py-5 text-[10px] font-bold tracking-widest text-outline uppercase">Liquidity</th>
+<th class="px-8 py-5 text-[10px] font-bold tracking-widest text-outline uppercase text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline/5 font-body">
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-8 py-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-zinc-100">currency_bitcoin</span>
+<span class="font-bold text-primary">Bitcoin</span>
+</div>
+</td>
+<td class="px-8 py-6 text-zinc-300">â‚¹7,82,142.00</td>
+<td class="px-8 py-6 text-zinc-500">Tier 1 â€¢ Deep</td>
+<td class="px-8 py-6 text-right">
+<button class="text-xs font-bold tracking-widest text-white border-b border-white hover:opacity-70 transition-opacity">CONVERT</button>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-8 py-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-zinc-100">currency_bitcoin</span>
+<span class="font-bold text-primary">Ethereum</span>
+</div>
+</td>
+<td class="px-8 py-6 text-zinc-300">â‚¹2,45,102.50</td>
+<td class="px-8 py-6 text-zinc-500">Tier 1 â€¢ High</td>
+<td class="px-8 py-6 text-right">
+<button class="text-xs font-bold tracking-widest text-white border-b border-white hover:opacity-70 transition-opacity">CONVERT</button>
+</td>
+</tr>
+<tr class="hover:bg-white/5 transition-colors">
+<td class="px-8 py-6">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-zinc-100">stabilization</span>
+<span class="font-bold text-primary">USDT (Polygon)</span>
+</div>
+</td>
+<td class="px-8 py-6 text-zinc-300">â‚¹91.45</td>
+<td class="px-8 py-6 text-zinc-500">Tier 1 â€¢ Instant</td>
+<td class="px-8 py-6 text-right">
+<button class="text-xs font-bold tracking-widest text-white border-b border-white hover:opacity-70 transition-opacity">CONVERT</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- CTA Section -->
+<section class="px-6 md:px-24 mt-60 text-center max-w-4xl mx-auto">
+<h2 class="text-5xl md:text-8xl font-headline font-bold text-primary tracking-tighter mb-10">Scale your wealth.</h2>
+<p class="text-xl text-outline mb-12">The bridge between digital assets and local spending power is now open. Join the elite network.</p>
+<div class="flex flex-col md:flex-row gap-4 justify-center">
+<button class="metallic-gradient text-black px-12 py-5 rounded-full font-headline font-bold text-lg hover:scale-105 active:scale-95 transition-all">Start On-boarding</button>
+<button class="bg-black border border-outline text-primary px-12 py-5 rounded-full font-headline font-bold text-lg hover:bg-white hover:text-black transition-all">Documentation</button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="border-t border-zinc-900 bg-black pt-20 pb-40 px-6 md:px-24">
+<div class="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-12 mb-20">
+<div class="col-span-2">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-zinc-100" style="font-variation-settings: 'FILL' 1;">toll</span>
+<span class="text-xl font-headline font-bold tracking-tighter text-zinc-100">KINETIC</span>
+</div>
+<p class="text-zinc-500 max-w-xs text-sm">Advanced liquidation infrastructure for the modern on-chain economy. Built for speed, security, and global scale.</p>
+</div>
+<div>
+<h5 class="text-zinc-100 font-bold mb-6 text-xs tracking-widest uppercase">Protocol</h5>
+<ul class="space-y-4 text-sm text-zinc-500">
+<li><a class="hover:text-white transition-colors" href="index.html">Liquidity Pools</a></li>
+<li><a class="hover:text-white transition-colors" href="dashboard.html">Oracle Specs</a></li>
+<li><a class="hover:text-white transition-colors" href="tracker.html">UPI Gateway</a></li>
+<li><a class="hover:text-white transition-colors" href="profile.html">API Keys</a></li>
+</ul>
+</div>
+<div>
+<h5 class="text-zinc-100 font-bold mb-6 text-xs tracking-widest uppercase">Connect</h5>
+<ul class="space-y-4 text-sm text-zinc-500">
+<li><a class="hover:text-white transition-colors" href="#">X / Twitter</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Discord</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Telegram</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Github</a></li>
+</ul>
+</div>
+</div>
+<div class="max-w-7xl mx-auto flex flex-col md:row justify-between pt-10 border-t border-zinc-900 gap-6">
+<p class="text-[10px] text-zinc-600 font-mono tracking-widest uppercase">Â© 2024 Kinetic Monolith Systems. ALL RIGHTS RESERVED.</p>
+<div class="flex gap-8">
+<a class="text-[10px] text-zinc-600 hover:text-white uppercase tracking-widest" href="#">Privacy</a>
+<a class="text-[10px] text-zinc-600 hover:text-white uppercase tracking-widest" href="#">Terms</a>
+<a class="text-[10px] text-zinc-600 hover:text-white uppercase tracking-widest" href="#">Status</a>
+</div>
+</div>
+</footer>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center py-3 bg-black/90 backdrop-blur-md border-t border-zinc-800 pb-safe">
+<a class="flex flex-col items-center justify-center text-zinc-100 opacity-100 active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">home_app_logo</span>
+<span class="font-label text-[10px] font-medium uppercase tracking-widest mt-1">Home</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 hover:text-zinc-300 active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="font-label text-[10px] font-medium uppercase tracking-widest mt-1">Dashboard</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 hover:text-zinc-300 active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined">monitoring</span>
+<span class="font-label text-[10px] font-medium uppercase tracking-widest mt-1">Tracker</span>
+</a>
+<a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 hover:text-zinc-300 active:scale-90 transition-all" href="#">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label text-[10px] font-medium uppercase tracking-widest mt-1">Profile</span>
+</a>
+</nav>
+</body></html>

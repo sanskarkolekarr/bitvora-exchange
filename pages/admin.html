@@ -313,7 +313,6 @@
                                 <option value="bsc">BNB Smart Chain (BEP20)</option>
                                 <option value="tron">TRON (TRC20)</option>
                                 <option value="solana">Solana</option>
-                                <option value="ton">TON</option>
                                 <option value="bitcoin">Bitcoin</option>
                                 <option value="litecoin">Litecoin</option>
                             </select>
@@ -429,8 +428,12 @@ async function adminLogin() {
             sessionStorage.setItem('bv_admin', key);
             document.getElementById('admin-gate').style.display = 'none';
             document.getElementById('admin-app').style.display = 'block';
-            loadDashboard();
             loadPlatformConfig();
+            const p = window.location.pathname;
+            if (p.includes('admin-payouts')) showPage('transactions');
+            else if (p.includes('admin-users')) showPage('users');
+            else if (p.includes('admin-settings')) showPage('rates');
+            else { loadDashboard(); showPage('dashboard'); }
         } else {
             document.getElementById('gate-error').textContent = 'Invalid admin key.';
             document.getElementById('gate-error').style.display = 'block';
@@ -450,7 +453,13 @@ if (saved) {
     ADMIN_KEY = saved;
     document.getElementById('admin-gate').style.display = 'none';
     document.getElementById('admin-app').style.display = 'block';
-    loadDashboard(); loadPlatformConfig();
+    loadPlatformConfig();
+    
+    const p = window.location.pathname;
+    if (p.includes('admin-payouts')) showPage('transactions');
+    else if (p.includes('admin-users')) showPage('users');
+    else if (p.includes('admin-settings')) showPage('rates');
+    else { loadDashboard(); showPage('dashboard'); }
 }
 
 // ── Navigation ─────────────────────────────────────────────────────

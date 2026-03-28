@@ -5,10 +5,10 @@
  */
 
 const BITVORA_CONFIG = {
-    // LOCAL DEV:  "http://localhost:8000"
-    // PRODUCTION: "https://api.bitvora.in"   ← swap to this when you go live
-    API_BASE_URL: "http://localhost:8000",
+    // Auto-detect: localhost → local API, bitvora.in → production API
+    API_BASE_URL: (location.hostname === 'localhost' || location.hostname === '127.0.0.1')
+        ? 'http://localhost:8000'
+        : 'https://api.bitvora.in',
 
     SUPPORT_EMAIL: 'support@bitvora.in',
 };
-

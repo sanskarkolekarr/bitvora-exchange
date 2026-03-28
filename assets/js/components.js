@@ -1,152 +1,139 @@
 /**
- * BITVORA EXCHANGE — Shared Components
- * Injects Navbar, Footer, Cursor, and overlays to eliminate HTML duplication.
+ * KINETIC MONOLITH — Shared Components
+ * Injects Navbar, Footer, and overlays for landing/marketing pages.
+ * Functional pages (exchange, dashboard, tracker, profile) have their own built-in nav.
  */
 
-const NOISE_CURSOR_HTML = `
-    <div class="noise-overlay"></div>
-`;
-
 const NAVBAR_HTML = `
-    <!-- Floating Pill Navbar -->
-    <nav id="navbar" class="navbar-pill z-[110]">
-        <!-- Left Zone: Wordmark -->
-        <a href="index.html" class="flex items-center gap-2 group whitespace-nowrap">
-            <span class="font-headline font-semibold text-[11px] md:text-[12px] tracking-[0.04em] text-white/90 group-hover:text-white transition-colors">BITVORA_EXCHANGE</span>
-            <span class="hidden md:inline-flex h-[10px] w-[1px] bg-white/10"></span>
-            <span class="hidden md:inline font-mono text-[9px] text-[#22c55e] animate-pulse">LIVE</span>
+    <!-- Kinetic Topbar (Marketing Pages) -->
+    <nav id="navbar" class="navbar-pill z-[110]" style="
+        position:fixed; top:0; width:100%;
+        border-bottom:1px solid rgba(255,255,255,0.06);
+        background:rgba(0,0,0,0.95);
+        backdrop-filter:blur(12px);
+        z-index:110;
+        display:flex; justify-content:space-between; align-items:center;
+        padding:16px 24px;
+    ">
+        <a href="index.html" class="flex items-center gap-2 group whitespace-nowrap" style="text-decoration:none;">
+            <span class="material-symbols-outlined text-zinc-100" style="font-variation-settings:'FILL' 1;">toll</span>
+            <span class="text-xl font-headline font-bold tracking-tighter text-zinc-100" style="font-family:'Space Grotesk',sans-serif;">KINETIC</span>
         </a>
         
-        <!-- Center Zone: Nav Links (Desktop) -->
-        <div class="hidden lg:flex items-center gap-[18px]">
-            <a href="how-it-works.html" class="font-mono text-[9px] font-normal tracking-[0.1em] text-[rgba(255,255,255,0.3)] hover:text-white transition-colors uppercase">HOW IT WORKS</a>
-            <a href="assets.html" class="font-mono text-[9px] font-normal tracking-[0.1em] text-[rgba(255,255,255,0.3)] hover:text-white transition-colors uppercase">ASSETS</a>
-            <a href="why-us.html" class="font-mono text-[9px] font-normal tracking-[0.1em] text-[rgba(255,255,255,0.3)] hover:text-white transition-colors uppercase">WHY US</a>
-            <a href="support.html" class="font-mono text-[9px] font-normal tracking-[0.1em] text-[rgba(255,255,255,0.3)] hover:text-white transition-colors uppercase">SUPPORT</a>
+        <!-- Center Nav (Desktop) -->
+        <div class="hidden lg:flex items-center gap-4">
+            <a href="index.html" style="font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;color:rgba(255,255,255,0.3);transition:color 0.1s;">Home</a>
+            <a href="exchange.html" style="font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;color:rgba(255,255,255,0.3);transition:color 0.1s;">Exchange</a>
+            <a href="dashboard.html" style="font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;color:rgba(255,255,255,0.3);transition:color 0.1s;">Dashboard</a>
+            <a href="profile.html" style="font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;color:rgba(255,255,255,0.3);transition:color 0.1s;">Profile</a>
+            <a href="support.html" style="font-family:'Inter',sans-serif;font-size:11px;font-weight:500;letter-spacing:0.08em;text-transform:uppercase;text-decoration:none;color:rgba(255,255,255,0.3);transition:color 0.1s;">Support</a>
         </div>
         
-        <!-- Right Zone (Desktop & Mobile Actions) -->
-        <div class="flex items-center gap-[12px]">
+        <!-- Right Zone -->
+        <div class="flex items-center gap-3">
             <!-- Guest State -->
-            <a id="nav-launch" href="signin.html" class="bg-white text-black rounded-full px-4 py-[6px] font-headline font-bold text-[10px] tracking-[0.05em] uppercase hover:bg-gray-200 transition-all">LAUNCH</a>
+            <a id="nav-launch" href="signin.html" style="
+                background:linear-gradient(135deg, #E5E5E5 0%, #6E6E6E 50%, #2A2A2A 100%);
+                color:#000; padding:6px 20px; border-radius:2px;
+                font-family:'Space Grotesk',sans-serif; font-weight:700;
+                font-size:10px; letter-spacing:0.12em; text-transform:uppercase;
+                text-decoration:none; transition:all 0.1s;
+            ">LAUNCH</a>
             
             <!-- Logged-in State -->
-            <div id="nav-user-zone" class="hidden items-center gap-[12px]">
-                <a href="submit.html" class="hidden md:inline-block font-mono text-[9px] text-white/40 hover:text-white transition-colors">SUBMIT</a>
-                <a id="nav-dash-v2" href="dashboard.html" class="bg-white text-black px-4 py-[6px] rounded-full font-headline font-bold text-[10px] tracking-[0.05em] uppercase">DASHBOARD</a>
+            <div id="nav-user-zone" class="hidden items-center gap-3">
+                <a href="exchange.html" class="hidden md:inline-block" style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.3);text-decoration:none;letter-spacing:0.1em;">EXCHANGE</a>
+                <a id="nav-dash-v2" href="dashboard.html" style="
+                    background:linear-gradient(135deg, #E5E5E5 0%, #6E6E6E 50%, #2A2A2A 100%);
+                    color:#000; padding:6px 20px; border-radius:2px;
+                    font-family:'Space Grotesk',sans-serif; font-weight:700;
+                    font-size:10px; letter-spacing:0.12em; text-transform:uppercase;
+                    text-decoration:none;
+                ">DASHBOARD</a>
                 
-                <button onclick="(typeof signOut === 'function' ? signOut() : (localStorage.removeItem('bitvora_session'), window.location.href='signin.html'))" class="hidden md:flex w-[26px] h-[26px] rounded-full bg-white/[0.04] border border-white/[0.08] items-center justify-center opacity-40 hover:opacity-100 transition-all">
-                    <span class="material-symbols-outlined text-[12px]">logout</span>
+                <button onclick="(typeof signOut === 'function' ? signOut() : (localStorage.removeItem('bitvora_session'), window.location.href='signin.html'))" class="hidden md:flex" style="
+                    width:28px;height:28px;border-radius:2px;
+                    background:rgba(255,255,255,0.04);
+                    border:1px solid rgba(255,255,255,0.06);
+                    display:flex;align-items:center;justify-content:center;
+                    opacity:0.4;cursor:pointer;transition:opacity 0.1s;
+                ">
+                    <span class="material-symbols-outlined" style="font-size:13px;color:#E5E5E5;">logout</span>
                 </button>
             </div>
 
-            <div class="lg:hidden h-[18px] w-[1px] bg-white/10 mx-1"></div>
+            <div class="lg:hidden" style="height:18px;width:1px;background:rgba(255,255,255,0.06);margin:0 4px;"></div>
             
-            <button id="mobile-menu-btn" class="lg:hidden w-[32px] h-[32px] flex items-center justify-center rounded-full bg-white/[0.05] border border-white/[0.08]">
-                <span class="material-symbols-outlined text-[18px] text-white/60">menu</span>
+            <button id="mobile-menu-btn" class="lg:hidden" style="
+                width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+                border-radius:2px;background:rgba(255,255,255,0.04);
+                border:1px solid rgba(255,255,255,0.06);cursor:pointer;
+            ">
+                <span class="material-symbols-outlined" style="font-size:18px;color:rgba(255,255,255,0.5);">menu</span>
             </button>
         </div>
     </nav>
-
 `;
 
 const MOBILE_OVERLAY_HTML = `
-<div id="mobile-overlay" class="fixed inset-0 bg-[rgba(6,6,8,0.97)] backdrop-blur-[24px] z-[200] opacity-0 pointer-events-none transition-all duration-350" style="transition-timing-function: cubic-bezier(0.16,1,0.3,1);">
-    <button id="mobile-close" class="absolute top-[32px] right-[32px] text-white flex items-center justify-center" style="min-width: 44px; min-height: 44px;">
-        <span class="material-symbols-outlined text-[24px]">close</span>
+<div id="mobile-overlay" style="
+    position:fixed;inset:0;background:rgba(0,0,0,0.97);backdrop-filter:blur(8px);
+    z-index:200;opacity:0;pointer-events:none;transition:opacity 0.2s ease;
+">
+    <button id="mobile-close" style="position:absolute;top:32px;right:32px;color:#E5E5E5;background:none;border:none;cursor:pointer;min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;">
+        <span class="material-symbols-outlined" style="font-size:24px;">close</span>
     </button>
-    <div class="flex flex-col items-center justify-center h-full gap-[40px]">
-        <a href="how-it-works.html" class="mobile-nav-link font-headline text-[32px] font-medium text-white opacity-0 translate-y-[16px] transition-all duration-300">HOW IT WORKS</a>
-        <a href="assets.html" class="mobile-nav-link font-headline text-[32px] font-medium text-white opacity-0 translate-y-[16px] transition-all duration-300" style="transition-delay: 0.1s">ASSETS</a>
-        <a href="why-us.html" class="mobile-nav-link font-headline text-[32px] font-medium text-white opacity-0 translate-y-[16px] transition-all duration-300" style="transition-delay: 0.2s">WHY US</a>
-        <a href="support.html" class="mobile-nav-link font-headline text-[32px] font-medium text-white opacity-0 translate-y-[16px] transition-all duration-300" style="transition-delay: 0.3s">SUPPORT</a>
-        <div class="w-[80vw] max-w-[280px] h-[1px] bg-[rgba(255,255,255,0.08)]"></div>
-        <a href="signin.html" class="bg-white text-black px-12 py-4 rounded-full font-headline font-bold uppercase tracking-widest text-center w-full max-w-[280px]">LAUNCH APP</a>
+    <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:36px;">
+        <a href="index.html" class="mobile-nav-link" style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#E5E5E5;text-decoration:none;letter-spacing:-0.02em;text-transform:uppercase;opacity:0;transform:translateY(8px);transition:all 0.2s;">HOME</a>
+        <a href="exchange.html" class="mobile-nav-link" style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#E5E5E5;text-decoration:none;letter-spacing:-0.02em;text-transform:uppercase;opacity:0;transform:translateY(8px);transition:all 0.2s;transition-delay:0.05s;">EXCHANGE</a>
+        <a href="dashboard.html" class="mobile-nav-link" style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#E5E5E5;text-decoration:none;letter-spacing:-0.02em;text-transform:uppercase;opacity:0;transform:translateY(8px);transition:all 0.2s;transition-delay:0.1s;">DASHBOARD</a>
+        <a href="profile.html" class="mobile-nav-link" style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#E5E5E5;text-decoration:none;letter-spacing:-0.02em;text-transform:uppercase;opacity:0;transform:translateY(8px);transition:all 0.2s;transition-delay:0.15s;">PROFILE</a>
+        <a href="support.html" class="mobile-nav-link" style="font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;color:#E5E5E5;text-decoration:none;letter-spacing:-0.02em;text-transform:uppercase;opacity:0;transform:translateY(8px);transition:all 0.2s;transition-delay:0.2s;">SUPPORT</a>
+        <div style="width:80vw;max-width:280px;height:1px;background:rgba(255,255,255,0.06);"></div>
+        <a href="signin.html" style="
+            background:linear-gradient(135deg, #E5E5E5 0%, #6E6E6E 50%, #2A2A2A 100%);
+            color:#000;padding:16px 48px;border-radius:2px;
+            font-family:'Space Grotesk',sans-serif;font-weight:700;
+            font-size:11px;letter-spacing:0.15em;text-transform:uppercase;
+            text-decoration:none;text-align:center;width:100%;max-width:280px;
+        ">LAUNCH APP</a>
     </div>
 </div>
 `;
 
 const FOOTER_HTML = `
-    <!-- Premium Footer Section -->
-    <footer class="w-full bg-black pt-20 pb-12 px-6 md:px-12 border-t border-white/5" style="padding-bottom: env(safe-area-inset-bottom);">
-        <div class="max-w-7xl mx-auto flex flex-col lg:flex-row gap-8">
-            <!-- Footer Card 1: Branding & Socials -->
-            <div class="flex-1 bg-[#080808] border border-white/5 rounded-[40px] p-10 md:p-14 relative overflow-hidden group min-h-[400px]">
-                <div class="absolute -right-10 top-1/2 -translate-y-1/2 w-64 h-64 opacity-60 pointer-events-none animate-[float_6s_ease-in-out_infinite]">
-                    <canvas class="metallic-logo w-full h-full" width="200" height="200"></canvas>
-                </div>
-                <div class="relative z-10 h-full flex flex-col">
-                    <div class="flex items-center gap-3 mb-8">
-                        <canvas class="metallic-logo w-8 h-8 rounded-full" width="100" height="100"></canvas>
-                        <span class="text-xl font-bold tracking-tight text-white font-headline">BITVORA_EXCHANGE</span>
+    <footer style="width:100%;background:#000;padding:60px 24px 40px;border-top:1px solid rgba(255,255,255,0.04);">
+        <div style="max-width:1200px;margin:0 auto;">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:40px;margin-bottom:40px;">
+                <!-- Brand -->
+                <div>
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+                        <span class="material-symbols-outlined" style="font-size:20px;color:#E5E5E5;font-variation-settings:'FILL' 1;">toll</span>
+                        <span style="font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#E5E5E5;letter-spacing:-0.02em;">KINETIC</span>
                     </div>
-                    <h3 class="text-3xl md:text-4xl font-headline text-white leading-tight mb-auto max-w-xs">
-                        Turn Crypto Into Rupees, <span class="text-white/40">powered by speed.</span>
-                    </h3>
-                    <div class="mt-12">
-                        <p class="font-mono text-[10px] uppercase tracking-[0.3em] text-white/40 mb-6 font-bold">STAY CONNECTED</p>
-                        <div class="flex gap-4">
-                            <a href="#" class="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-400">
-                                <span class="material-symbols-outlined text-[20px]">send</span>
-                            </a>
-                            <a href="#" class="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-400">
-                                <span class="material-symbols-outlined text-[20px]">camera</span>
-                            </a>
-                            <a href="#" class="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-white hover:text-black transition-all duration-400">
-                                <span class="material-symbols-outlined text-[20px]">contact_support</span>
-                            </a>
-                        </div>
+                    <p style="font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,0.2);line-height:1.6;max-width:250px;">Turn crypto into rupees. Instant settlement, institutional liquidity.</p>
+                </div>
+                <!-- Platform -->
+                <div>
+                    <span style="font-family:'DM Mono',monospace;font-size:9px;letter-spacing:0.2em;text-transform:uppercase;color:rgba(255,255,255,0.15);font-weight:700;">Platform</span>
+                    <div style="display:flex;flex-direction:column;gap:10px;margin-top:16px;">
+                        <a href="exchange.html" style="font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,0.3);text-decoration:none;">Exchange</a>
+                        <a href="dashboard.html" style="font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,0.3);text-decoration:none;">Dashboard</a>
+                        <a href="tracker.html" style="font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,0.3);text-decoration:none;">Tracker</a>
+                        <a href="profile.html" style="font-family:'Inter',sans-serif;font-size:13px;color:rgba(255,255,255,0.3);text-decoration:none;">Profile</a>
                     </div>
                 </div>
             </div>
-
-            <!-- Footer Card 2: Navigation -->
-            <div class="lg:w-[60%] bg-[#080808] border border-white/5 rounded-[40px] p-10 md:p-14 flex flex-col">
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-12 mb-auto">
-                    <!-- Navigation Column -->
-                    <div class="flex flex-col gap-6">
-                        <span class="font-mono text-[10px] uppercase tracking-[0.3em] text-[#3b82f6] font-bold">NAVIGATION</span>
-                        <div class="flex flex-col gap-4">
-                            <a href="how-it-works.html" class="text-white/60 hover:text-white transition-colors font-body text-sm">How It Works</a>
-                            <a href="assets.html" class="text-white/60 hover:text-white transition-colors font-body text-sm">Assets</a>
-                            <a href="why-us.html" class="text-white/60 hover:text-white transition-colors font-body text-sm">Why Us</a>
-                            <a href="support.html" class="text-white/60 hover:text-white transition-colors font-body text-sm">Support</a>
-                        </div>
-                    </div>
-                    <!-- Resources Column -->
-                    <div class="flex flex-col gap-6">
-                        <span class="font-mono text-[10px] uppercase tracking-[0.3em] text-[#3b82f6] font-bold">BITVORA_EXCHANGE</span>
-                        <div class="flex flex-col gap-4">
-                            <a href="#" class="text-white/60 hover:text-white transition-colors font-body text-sm">About Us</a>
-                            <a href="#" class="text-white/60 hover:text-white transition-colors font-body text-sm">Official Telegram</a>
-                            <a href="#" class="text-white/60 hover:text-white transition-colors font-body text-sm">Legal & Privacy</a>
-                            <a href="#" class="text-white/60 hover:text-white transition-colors font-body text-sm">Status Page</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-20 pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-end gap-10">
-                    <div class="flex flex-col gap-2">
-                        <span class="text-white/20 font-mono text-[11px] tracking-widest">© 2026 BITVORA_EXCHANGE.</span>
-                        <span class="text-white/10 font-mono text-[9px] tracking-[0.2em] uppercase">Built for the decentralized era.</span>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-white/40 font-body text-sm italic mb-2">Crypto moves fast.</p>
-                        <p class="text-white font-headline text-lg tracking-tight">Stay ahead with BITVORA.</p>
-                    </div>
-                </div>
+            <div style="border-top:1px solid rgba(255,255,255,0.04);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;">
+                <span style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,0.1);letter-spacing:0.15em;">© 2026 BITVORA_EXCHANGE</span>
+                <span style="font-family:'DM Mono',monospace;font-size:9px;color:rgba(255,255,255,0.08);letter-spacing:0.2em;text-transform:uppercase;">Built for the decentralized era.</span>
             </div>
         </div>
     </footer>
 `;
 
 function injectComponents() {
-    // 1. Inject Noise & Cursor
-    if (!document.querySelector('.noise-overlay')) {
-        document.body.insertAdjacentHTML('afterbegin', NOISE_CURSOR_HTML);
-    }
-
-    // 2. Inject Navbar & Mobile Overlay if not present and not disabled by a meta tag or class
+    // Inject Navbar if not disabled
     const noNav = document.body.classList.contains('no-navbar');
     if (!noNav && !document.getElementById('navbar')) {
         document.body.insertAdjacentHTML('afterbegin', NAVBAR_HTML);
@@ -154,65 +141,39 @@ function injectComponents() {
         _initNavbarLogic();
     }
 
-    // 3. Inject Footer if not present and not disabled
+    // Inject Footer if not disabled
     const noFooter = document.body.classList.contains('no-footer');
     if (!noFooter && !document.querySelector('footer')) {
         document.body.insertAdjacentHTML('beforeend', FOOTER_HTML);
-        // Dispatch event for metallic logo to draw
-        window.dispatchEvent(new Event('componentsLoaded'));
     }
 }
 
 function _initNavbarLogic() {
-    const navbar = document.getElementById('navbar');
-    
-    // Initial Drop-in Entrance
-    setTimeout(() => {
-        if(navbar) navbar.classList.add('loaded');
-    }, 300);
-
-    // Scrolling Glass transition
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 80) {
-            navbar?.classList.add('scrolled');
-        } else {
-            navbar?.classList.remove('scrolled');
-        }
-    });
-
     // Mobile Menu Logic
-    const triggers = document.querySelectorAll(".mobile-menu-trigger, #mobile-menu-btn");
     const overlay = document.getElementById("mobile-overlay");
     const closeBtn = document.getElementById("mobile-close");
     const links = document.querySelectorAll(".mobile-nav-link");
-    
+    const menuBtn = document.getElementById("mobile-menu-btn");
+
     const openMenu = () => {
         if(!overlay) return;
         overlay.style.opacity = '1';
         overlay.style.pointerEvents = 'all';
-        links.forEach(l => {
-            l.style.opacity = '1';
-            l.style.transform = 'translateY(0)';
-        });
+        links.forEach(l => { l.style.opacity = '1'; l.style.transform = 'translateY(0)'; });
     };
     const closeMenu = () => {
         if(!overlay) return;
         overlay.style.opacity = '0';
         overlay.style.pointerEvents = 'none';
-        links.forEach(l => {
-            l.style.opacity = '0';
-            l.style.transform = 'translateY(16px)';
-        });
+        links.forEach(l => { l.style.opacity = '0'; l.style.transform = 'translateY(8px)'; });
     };
-    
-    triggers.forEach(t => t.addEventListener("click", openMenu));
+
+    if(menuBtn) menuBtn.addEventListener("click", openMenu);
     if(closeBtn) closeBtn.addEventListener("click", closeMenu);
     links.forEach(l => l.addEventListener("click", closeMenu));
-    if(overlay) overlay.addEventListener("click", (e) => {
-        if(e.target === overlay) closeMenu();
-    });
+    if(overlay) overlay.addEventListener("click", (e) => { if(e.target === overlay) closeMenu(); });
 
-    // Auth-aware logic — reads from localStorage directly, no api.js dependency
+    // Auth-aware logic
     function _getNavUser() {
         try {
             const token = localStorage.getItem('bitvora_session');
@@ -237,23 +198,15 @@ function _initNavbarLogic() {
 
         if (user) {
             if (launchBtn) launchBtn.style.display = 'none';
-            if (userZone) { 
-                userZone.classList.remove('hidden'); 
-                userZone.classList.add('flex');
-                // Ensure the dashboard button is also visible and links correctly
-                const dashBtn = document.getElementById('nav-dash-v2');
-                if (dashBtn) dashBtn.style.display = 'inline-block';
+            if (userZone) {
+                userZone.classList.remove('hidden');
+                userZone.style.display = 'flex';
             }
-            const usernameEl = document.getElementById('nav-username-home');
-            if (usernameEl) usernameEl.innerText = `@${user.username || user.email || 'user'}`;
             const heroCta = document.getElementById('hero-cta');
-            if (heroCta) { 
-                heroCta.href = 'submit.html'; 
-                heroCta.innerText = 'GO TO DASHBOARD'; 
-            }
+            if (heroCta) { heroCta.href = 'dashboard.html'; heroCta.innerText = 'GO TO DASHBOARD'; }
         } else {
             if (launchBtn) launchBtn.style.display = 'inline-block';
-            if (userZone) { userZone.classList.add('hidden'); userZone.classList.remove('flex'); }
+            if (userZone) { userZone.classList.add('hidden'); userZone.style.display = ''; }
         }
     }
 
