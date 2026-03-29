@@ -405,7 +405,7 @@
       </nav>
       <a
         href="profile.html"
-        class="px-5 py-1.5 bg-zinc-900 border border-zinc-800 text-zinc-100 text-[10px] font-bold tracking-widest uppercase"
+        class="hidden md:block px-5 py-1.5 bg-zinc-900 border border-zinc-800 text-zinc-100 text-[10px] font-bold tracking-widest uppercase"
       >
         Profile
       </a>
@@ -543,12 +543,6 @@
             <div id="quote-content" class="hidden flex-col gap-1">
               <div class="quote-row">
                 <span>Amount (Crypto)</span><span id="q-amount">—</span>
-              </div>
-              <div class="quote-row">
-                <span>Gross INR</span><span id="q-gross">—</span>
-              </div>
-              <div class="quote-row">
-                <span>Platform Fee</span><span id="q-fee">—</span>
               </div>
               <div class="quote-row total">
                 <span>You Receive</span><span id="q-inr">₹0</span>
@@ -982,11 +976,6 @@
           const d = res.data;
           document.getElementById("q-amount").textContent =
             `${d.amount_crypto} ${d.asset}`;
-          document.getElementById("q-gross").textContent =
-            `₹${(d.gross_inr || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
-          let feePct = d.fee_percentage ? ` (${d.fee_percentage}%)` : "";
-          document.getElementById("q-fee").textContent =
-            `₹${(d.platform_fee_inr || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}${feePct}`;
           document.getElementById("q-inr").textContent =
             `₹${(d.net_inr || d.amount_inr || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
           document.getElementById("quote-loading").classList.add("hidden");
@@ -996,14 +985,9 @@
           const rate = cachedRates[selectedToken.symbol]?.rate_inr;
           if (rate) {
             const gross = amount * rate;
-            const fee = gross * 0.015;
-            const net = gross - fee;
+            const net = gross;
             document.getElementById("q-amount").textContent =
               `${amount} ${selectedToken.symbol}`;
-            document.getElementById("q-gross").textContent =
-              `₹${gross.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
-            document.getElementById("q-fee").textContent =
-              `₹${fee.toLocaleString("en-IN", { maximumFractionDigits: 2 })} (1.5%)`;
             document.getElementById("q-inr").textContent =
               `₹${net.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
             document.getElementById("quote-loading").classList.add("hidden");
@@ -1092,12 +1076,21 @@
           `${selectedToken.symbol} (${selectedToken.network})`;
         document.getElementById("suc-amount").textContent =
           `${amount} ${selectedToken.symbol}`;
+        let usdtRate = cachedRates["USDT"]?.rate_inr;
         document.getElementById("suc-rate").textContent = data.exchange_rate
           ? `₹${Number(data.exchange_rate).toLocaleString("en-IN")}`
-          : "—";
-        document.getElementById("suc-inr").textContent = data.amount_inr
-          ? `₹${Number(data.amount_inr).toLocaleString("en-IN")}`
-          : "Being Calculated...";
+          : (usdtRate ? `₹${Number(usdtRate).toLocaleString("en-IN")}` : "—");
+          
+        let estInrStr = "Being Calculated...";
+        if (data.amount_inr) {
+          estInrStr = `₹${Number(data.amount_inr).toLocaleString("en-IN")}`;
+        } else {
+          const qInr = document.getElementById("q-inr").textContent;
+          if (qInr && qInr.startsWith("₹") && qInr !== "₹0") {
+            estInrStr = qInr;
+          }
+        }
+        document.getElementById("suc-inr").textContent = estInrStr;
         document.getElementById("suc-upi").textContent = upi;
       }
 

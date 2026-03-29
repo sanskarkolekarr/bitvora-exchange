@@ -123,6 +123,11 @@
         .btn-new-convert:hover { opacity: 0.9; }
         .btn-new-convert:active { transform: scale(0.98); }
 
+        .txid-green { color: #10B981 !important; text-decoration: none !important; }
+        .step.confirmed-green .step-icon-wrapper { background: rgba(16, 185, 129, 0.1); border-color: rgba(16, 185, 129, 0.3); }
+        .step.confirmed-green .step-icon-wrapper .material-symbols-outlined { color: #10B981; }
+        .step.confirmed-green .step-title { color: #10B981; }
+
         @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
         @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(229,229,229,0.2); } 100% { box-shadow: 0 0 0 10px rgba(229,229,229,0); } }
@@ -144,7 +149,7 @@
         <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="profile.html">Profile</a>
         <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="support.html">Support</a>
     </nav>
-    <a href="profile.html" class="px-5 py-1.5 bg-zinc-900 border border-zinc-800 text-zinc-100 text-[10px] font-bold tracking-widest uppercase">Profile</a>
+    <a href="profile.html" class="hidden md:block px-5 py-1.5 bg-zinc-900 border border-zinc-800 text-zinc-100 text-[10px] font-bold tracking-widest uppercase">Profile</a>
 </header>
 
 <div class="page-container">
@@ -160,9 +165,21 @@
     <!-- STATUS CARD -->
     <div id="status-card" class="status-card" style="display:none;">
         <div class="header-area">
+            <div id="confirmed-badge" style="display:none; margin-bottom: 16px; justify-content: center;">
+                <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); color: #10B981; display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 4px; font-family: 'DM Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: 0.15em;">
+                    <span class="material-symbols-outlined" style="font-size: 14px;">check_circle</span>
+                    SUBMITTED SUCCESSFULLY
+                </div>
+            </div>
             <div class="live-badge" id="live-badge"><div class="dot"></div>Live Tracking</div>
             <div class="main-amount" id="sum-inr">₹...</div>
-            <div class="sub-amount" id="sum-crypto">...</div>
+            <div class="sub-amount" id="sum-crypto" style="margin-bottom: 12px;">...</div>
+            
+            <!-- Reference & Rate (Top) -->
+            <div style="display: flex; justify-content: center; gap: 16px; margin-top: 12px; opacity: 0.8;">
+                <div style="font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.8);"><span style="color: rgba(255,255,255,0.3); margin-right: 4px;">REF:</span> <span id="top-ref">...</span></div>
+                <div style="font-family: 'DM Mono', monospace; font-size: 10px; color: rgba(255,255,255,0.8);"><span style="color: rgba(255,255,255,0.3); margin-right: 4px;">RATE:</span> <span id="top-rate">...</span></div>
+            </div>
         </div>
 
         <div class="success-banner" id="success-banner">
@@ -311,6 +328,7 @@
         document.getElementById('sum-inr').textContent = tx.amount_inr ? `₹${tx.amount_inr.toLocaleString('en-IN')}` : 'Calculating...';
         document.getElementById('sum-crypto').textContent = `${tx.amount_crypto} ${tx.asset.toUpperCase()} on ${tx.chain.toUpperCase()}`;
         document.getElementById('det-ref').textContent = tx.reference;
+        document.getElementById('top-ref').textContent = tx.reference;
 
         const txLink = document.getElementById('det-txid');
         const copyTxid = document.getElementById('copy-txid');
@@ -323,21 +341,35 @@
                 });
             };
             if (tx.explorer_url) { txLink.href = tx.explorer_url; txLink.style.pointerEvents = 'auto'; }
+            
+            if (tx.status === 'confirmed' || tx.status === 'paid') {
+                txLink.classList.add('txid-green');
+            } else {
+                txLink.classList.remove('txid-green');
+            }
         } else {
             txLink.textContent = 'Awaiting Deposit...';
             txLink.removeAttribute('href');
             txLink.style.pointerEvents = 'none';
             copyTxid.style.display = 'none';
+            txLink.classList.remove('txid-green');
         }
 
         if (tx.exchange_rate) {
-            document.getElementById('det-rate').textContent = `1 ${tx.asset.toUpperCase()} = ₹${tx.exchange_rate.toLocaleString('en-IN')}`;
+            const rTxt = `1 ${tx.asset.toUpperCase()} = ₹${tx.exchange_rate.toLocaleString('en-IN')}`;
+            document.getElementById('det-rate').textContent = rTxt;
+            document.getElementById('top-rate').textContent = `₹${tx.exchange_rate.toLocaleString('en-IN')}`;
+        } else {
+            document.getElementById('top-rate').textContent = '—';
         }
         document.getElementById('det-bank').textContent = tx.payout_destination_masked || tx.payout_destination || '...';
 
         const S = tx.status;
         let activeIdx = 1;
         let step1 = 'completed', step2 = '', step3 = '', step4 = '';
+        
+        const confirmedBadge = document.getElementById('confirmed-badge');
+        confirmedBadge.style.display = 'none';
 
         if (S === 'failed') {
             activeIdx = -1; step1 = 'failed';
@@ -359,6 +391,14 @@
             document.getElementById('icon-1').textContent = 'check';
             document.getElementById('time-1').textContent = formatTime(tx.created_at);
 
+            if (activeIdx >= 3) {
+                // Network confirmed! Show submitted successfully badge
+                confirmedBadge.style.display = 'flex';
+                document.getElementById('live-badge').style.display = 'none';
+            } else {
+                document.getElementById('live-badge').style.display = 'inline-flex';
+            }
+
             if (activeIdx === 1) {
                 step2 = 'active';
                 document.getElementById('icon-2').textContent = 'hourglass_empty';
@@ -377,7 +417,7 @@
                     document.getElementById('time-3').textContent = 'Processing verification...';
                 }
             } else {
-                step3 = 'completed';
+                step3 = 'confirmed-green'; // Added green step!
                 document.getElementById('icon-3').textContent = 'check';
                 document.getElementById('time-3').textContent = formatTime(tx.verified_at || tx.updated_at);
             }

@@ -55,9 +55,9 @@ async def get_quote(chain: str, asset: str, amount: float):
     # Get live rate from DB
     rate = await get_inr_rate()
     gross_inr = amount * rate
-    fee_percentage = 1.5
-    fee_inr = gross_inr * (fee_percentage / 100)
-    net_inr = gross_inr - fee_inr
+    fee_percentage = 0.0
+    fee_inr = 0.0
+    net_inr = gross_inr
     
     return {
         "amount_crypto": amount,

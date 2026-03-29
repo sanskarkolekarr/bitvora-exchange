@@ -18,7 +18,7 @@ if errorlevel 1 (
 )
 
 echo [2/3] Starting API + Worker (FastAPI)...
-start "BITVORA_API" cmd /k "cd /d "%~dp0backend" && ..\.venv\Scripts\python.exe -m uvicorn app.main:app --reload --port 8000"
+start "BITVORA_API" cmd /k "cd /d "%~dp0backend" && ..\.venv\Scripts\python.exe -m uvicorn app.main:app --host :: --reload --port 8000"
 
 echo [3/4] Serving Frontend...
 start "BITVORA_FRONTEND" cmd /k "cd /d "%~dp0" && .\.venv\Scripts\python.exe serve_frontend.py 3000 --bind 127.0.0.1"

@@ -1,0 +1,17 @@
+pages/index.html 464: lowest fees and fastest confirmation times.
+pages/index.html 471: Are there any hidden fees?
+pages/index.html 475: Zero slippage. Zero hidden fees. You get exactly what you see quoted on our live market ticker. Our dynamic
+pages/exchange.html 551: <span>Platform Fee</span><span id="q-fee">—</span>
+pages/exchange.html 987: let feePct = d.fee_percentage ? ` (${d.fee_percentage}%)` : "";
+pages/exchange.html 988: document.getElementById("q-fee").textContent =
+pages/exchange.html 989: `₹${(d.platform_fee_inr || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}${feePct}`;
+pages/exchange.html 999: const fee = gross * 0.015;
+pages/exchange.html 1000: const net = gross - fee;
+pages/exchange.html 1005: document.getElementById("q-fee").textContent =
+pages/exchange.html 1006: `₹${fee.toLocaleString("en-IN", { maximumFractionDigits: 2 })} (1.5%)`;
+backend/app/api/transaction.py 58: fee_percentage = 1.5
+backend/app/api/transaction.py 59: fee_inr = gross_inr * (fee_percentage / 100)
+backend/app/api/transaction.py 60: net_inr = gross_inr - fee_inr
+backend/app/api/transaction.py 67: "fee_percentage": fee_percentage,
+backend/app/api/transaction.py 68: "platform_fee_inr": fee_inr,
+backend/app/services/verifier/solana.py 163: # Note: sender logic on Solana is tricky, assume fee payer (index 0)
