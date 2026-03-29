@@ -5,7 +5,7 @@
  */
 
 const BITVORA_CONFIG = {
-    // Force production API for local testing since backend is on the VPS
-    API_BASE_URL: 'https://api.bitvora.in',
+    // Force production API using Nginx proxy to bypass Cloudflare Tunnel 502 issue
+    API_BASE_URL: 'https://bitvora.in/api',
     SUPPORT_EMAIL: 'support@bitvora.in',
 };
