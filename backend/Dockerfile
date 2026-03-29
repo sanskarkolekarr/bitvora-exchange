@@ -12,9 +12,9 @@ COPY . .
 # Expose internal port (never directly to public)
 EXPOSE 8000
 
-# Health check
+# Health check using native python urllib instead of httpx
 HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
-    CMD python -c "import httpx; httpx.get('http://localhost:8000/health').raise_for_status()"
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"
 
 # Run with uvicorn — production-tuned settings
 # --workers 4: matches 4 vCPU, true parallelism
