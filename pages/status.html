@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BITVORA | System Status</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="/assets/css/styles.css">
+    <script src="https://cdn.tailwindcss.com?plugins=container-queries"></script>
+    <script src="/assets/js/tailwind-config.js"></script>
+
+    <style>
+        body { background-color: #000000; color: #E5E5E5; font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-black text-on-surface">
+
+<header class="fixed top-0 w-full border-b border-zinc-800/50 bg-black z-50 flex justify-between items-center px-6 py-4">
+    <a href="index.html" class="flex items-center gap-2">
+        <img src="/Logo/Bitvora.jpg" alt="Bitvora Logo" class="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover">
+        <span class="text-xl font-headline font-bold tracking-tighter text-zinc-100">BITVORA</span>
+    </a>
+    <nav class="hidden md:flex gap-4 items-center">
+        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-100 opacity-100" href="index.html">Home</a>
+        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="exchange.html">Exchange</a>
+    </nav>
+</header>
+
+<main class="pt-32 pb-32 px-6 md:px-24 max-w-4xl mx-auto min-h-screen">
+    <h1 class="text-4xl md:text-6xl font-headline font-bold text-primary mb-2 tracking-tighter">System Status</h1>
+    <p class="text-zinc-500 mb-12">Checking uptime and connectivity across core Bitvora infrastructure.</p>
+
+    <div class="space-y-4">
+        <!-- API CORE -->
+        <div class="bg-zinc-900 border border-white/5 rounded-2xl p-6 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <span class="material-symbols-outlined text-zinc-400">dns</span>
+                <div>
+                    <h3 class="font-bold text-zinc-100">Core API & Routing</h3>
+                    <p class="text-xs text-zinc-500">FastAPI backend and database connections.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-[pulse_2s_ease-in-out_infinite]"></span>
+                <span class="text-xs font-bold text-green-500 tracking-widest uppercase">Operational</span>
+            </div>
+        </div>
+
+        <!-- BLOCKCHAIN SCANNER -->
+        <div class="bg-zinc-900 border border-white/5 rounded-2xl p-6 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <span class="material-symbols-outlined text-zinc-400">lan</span>
+                <div>
+                    <h3 class="font-bold text-zinc-100">Ledger Verification Nodes</h3>
+                    <p class="text-xs text-zinc-500">Tron, Ethereum, Solana, and BSC web3 listeners.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-[pulse_2s_ease-in-out_infinite]"></span>
+                <span class="text-xs font-bold text-green-500 tracking-widest uppercase">Operational</span>
+            </div>
+        </div>
+
+        <!-- UPI GATEWAY -->
+        <div class="bg-zinc-900 border border-white/5 rounded-2xl p-6 flex justify-between items-center">
+            <div class="flex items-center gap-4">
+                <span class="material-symbols-outlined text-zinc-400">account_balance</span>
+                <div>
+                    <h3 class="font-bold text-zinc-100">IMPS / UPI Payout Gateway</h3>
+                    <p class="text-xs text-zinc-500">Liquidation APIs with partnered Indian banks.</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-green-500 animate-[pulse_2s_ease-in-out_infinite]"></span>
+                <span class="text-xs font-bold text-green-500 tracking-widest uppercase">Operational</span>
+            </div>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

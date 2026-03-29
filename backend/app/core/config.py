@@ -74,6 +74,7 @@ class Settings(BaseSettings):
     # ── Telegram ─────────────────────────────────────────────────
     TELEGRAM_BOT_TOKEN: str = ""
     TELEGRAM_GROUP_ID: str = ""
+    TELEGRAM_REPORT_GROUP_ID: str = ""
     TELEGRAM_ADMIN_IDS: str = ""  # comma-separated Telegram user IDs
     ADMIN_SECRET_KEY: str = "fallback-secret-key-123456789"
 

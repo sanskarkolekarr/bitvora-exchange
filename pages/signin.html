@@ -3,12 +3,14 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KINETIC | Sign In</title>
+    <title>BITVORA | Sign In</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+
     <script src="https://cdn.tailwindcss.com?plugins=container-queries"></script>
     <script src="/assets/js/tailwind-config.js"></script>
+
     <link rel="stylesheet" href="/assets/css/styles.css">
     <script src="config.js"></script>
     <script src="/assets/js/api.js"></script>
@@ -140,6 +142,7 @@
         .form-area { transition: opacity 0.15s ease; }
         .form-area.fading { opacity: 0; }
     </style>
+    <link rel="icon" type="image/jpeg" href="/Logo/Bitvora.jpg">
 </head>
 <body class="no-navbar no-footer">
 
@@ -150,8 +153,8 @@
 <!-- Logo -->
 <div class="relative z-10 mb-8 flex flex-col items-center">
     <a href="index.html" class="flex items-center gap-2 mb-6">
-        <span class="material-symbols-outlined text-zinc-100 text-3xl" style="font-variation-settings:'FILL' 1;">toll</span>
-        <span class="text-2xl font-headline font-bold tracking-tighter text-zinc-100">KINETIC</span>
+        <img src="/Logo/Bitvora.jpg" alt="Bitvora Logo" class="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover">
+        <span class="text-2xl font-headline font-bold tracking-tighter text-zinc-100">BITVORA</span>
     </a>
     <p class="font-mono text-[9px] tracking-[0.3em] text-zinc-700 uppercase">Bitvora Exchange Terminal</p>
 </div>
@@ -320,5 +323,51 @@ async function handleRegister() {
 
 renderForm();
 </script>
+<!-- Bottom Mobile Nav -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center py-3 bg-black/92 backdrop-blur-md border-t border-zinc-800/50 pb-safe">
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 hover:text-zinc-300 transition-all" id="nav-mob-home" href="/pages/index.html">
+        <span class="material-symbols-outlined">home_app_logo</span>
+        <span class="font-label text-[10px] font-medium uppercase tracking-widest mt-1">Home</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 hover:text-zinc-300 transition-all" id="nav-mob-exchange" href="/pages/exchange.html">
+        <span class="material-symbols-outlined">swap_horiz</span>
+        <span class="font-label text-[10px] font-medium uppercase tracking-widest mt-1">Exchange</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 hover:text-zinc-300 transition-all" id="nav-mob-dashboard" href="/pages/dashboard.html">
+        <span class="material-symbols-outlined">grid_view</span>
+        <span class="font-label text-[10px] font-medium uppercase tracking-widest mt-1">Dashboard</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 hover:text-zinc-300 transition-all" id="nav-mob-profile" href="/pages/profile.html">
+        <span class="material-symbols-outlined">person</span>
+        <span class="font-label text-[10px] font-medium uppercase tracking-widest mt-1">Profile</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 hover:text-zinc-300 transition-all" id="nav-mob-support" href="/pages/support.html">
+        <span class="material-symbols-outlined">help</span>
+        <span class="font-label text-[10px] font-medium uppercase tracking-widest mt-1">Support</span>
+    </a>
+</nav>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const path = window.location.pathname.toLowerCase();
+        let activeId = null;
+        if (path.includes("index.html") || path === "/" || path.endsWith("/")) activeId = "nav-mob-home";
+        else if (path.includes("exchange.html")) activeId = "nav-mob-exchange";
+        else if (path.includes("dashboard.html")) activeId = "nav-mob-dashboard";
+        else if (path.includes("profile.html")) activeId = "nav-mob-profile";
+        else if (path.includes("support.html")) activeId = "nav-mob-support";
+    
+        if (activeId) {
+            const el = document.getElementById(activeId);
+            if (el) {
+                el.classList.remove("text-zinc-500", "opacity-40", "hover:text-zinc-300");
+                el.classList.add("text-zinc-100", "opacity-100");
+                const icon = el.querySelector(".material-symbols-outlined");
+                if (icon) icon.style.fontVariationSettings = "'FILL' 1";
+            }
+        }
+    });
+</script>
+
 </body>
 </html>

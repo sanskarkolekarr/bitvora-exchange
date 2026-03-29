@@ -4,16 +4,22 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KINETIC | Support</title>
+    <title>BITVORA | Support</title>
 
     <link
         href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
         rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         rel="stylesheet" />
+
     <script src="https://cdn.tailwindcss.com?plugins=container-queries"></script>
     <script src="/assets/js/tailwind-config.js"></script>
+
     <link rel="stylesheet" href="/assets/css/styles.css">
+
+    <!-- Config & API -->
+    <script src="config.js"></script>
+    <script src="/assets/js/api.js"></script>
 
     <meta name="theme-color" content="#000000">
     <style>
@@ -84,65 +90,67 @@
             margin: 0 auto;
         }
 
-        .contact-methods {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
+        .input-group {
+            margin-bottom: 20px;
         }
 
-        .method-card {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            background: #121212;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 4px;
-            padding: 24px;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-
-        .method-card:hover {
-            border-color: rgba(255, 255, 255, 0.2);
-            background: #1A1A1A;
-            transform: translateY(-2px);
-        }
-
-        .method-icon-wrapper {
-            width: 48px;
-            height: 48px;
-            border-radius: 4px;
-            background: rgba(255, 255, 255, 0.04);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-
-        .method-icon-wrapper .material-symbols-outlined {
-            font-size: 24px !important;
-            color: #E5E5E5;
-        }
-
-        .method-text {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .method-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 16px;
-            font-weight: 700;
-            color: #E5E5E5;
-        }
-
-        .method-desc {
-            font-family: 'Inter', sans-serif;
-            font-size: 12px;
+        .input-label {
+            display: block;
+            font-family: 'DM Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
             color: rgba(255, 255, 255, 0.4);
-            line-height: 1.4;
+            margin-bottom: 8px;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .input-field {
+            width: 100%;
+            background: #121212;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            color: #E5E5E5;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: rgba(255, 255, 255, 0.25);
+            background: #1A1A1A;
+        }
+
+        .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: #E5E5E5;
+            color: #0A0A0A;
+            border-radius: 8px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+            border: none;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            background: #FFFFFF;
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
         }
 
         @keyframes fadeUp {
@@ -157,6 +165,7 @@
             }
         }
     </style>
+    <link rel="icon" type="image/jpeg" href="/Logo/Bitvora.jpg">
 </head>
 
 <body class="bg-black text-on-surface" style="-webkit-tap-highlight-color:transparent;">
@@ -165,8 +174,8 @@
     <header
         class="fixed top-0 w-full border-b border-zinc-800/50 bg-black z-50 flex justify-between items-center px-6 py-4">
         <a href="index.html" class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-zinc-100" style="font-variation-settings:'FILL' 1;">toll</span>
-            <span class="text-xl font-headline font-bold tracking-tighter text-zinc-100">KINETIC</span>
+            <img src="/Logo/Bitvora.jpg" alt="Bitvora Logo" class="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover">
+        <span class="text-xl font-headline font-bold tracking-tighter text-zinc-100">BITVORA</span>
         </a>
         <nav class="hidden md:flex gap-4 items-center">
         <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="index.html">Home</a>
@@ -189,65 +198,124 @@
                     our team.</p>
             </div>
 
-            <div class="contact-methods">
-                <a href="https://t.me/swade" target="_blank" class="method-card">
-                    <div class="method-icon-wrapper">
-                        <span class="material-symbols-outlined">send</span>
-                    </div>
-                    <div class="method-text">
-                        <span class="method-title">Telegram Support</span>
-                        <span class="method-desc">Get instant answers via our official support channel. Available
-                            24/7.</span>
-                    </div>
-                </a>
+            <form id="support-form" class="mt-4">
+                <div class="input-group">
+                    <label class="input-label">Subject</label>
+                    <input type="text" id="subject" class="input-field" placeholder="E.g., Missing Deposit, Account Issue" required>
+                </div>
+            
+                <div class="input-group">
+                    <label class="input-label">Reference ID (Optional)</label>
+                    <input type="text" id="reference" class="input-field" placeholder="Enter Transaction ID if applicable">
+                </div>
+            
+                <div class="input-group">
+                    <label class="input-label">Contact (Email or Telegram)</label>
+                    <input type="text" id="contact" class="input-field" placeholder="How can we reach you?">
+                </div>
+            
+                <div class="input-group">
+                    <label class="input-label">Message</label>
+                    <textarea id="message" class="input-field" rows="4" placeholder="Describe your issue in detail..." required></textarea>
+                </div>
 
-                <a href="mailto:support@bitvora.exchange" class="method-card">
-                    <div class="method-icon-wrapper">
-                        <span class="material-symbols-outlined">mail</span>
-                    </div>
-                    <div class="method-text">
-                        <span class="method-title">Email Us</span>
-                        <span class="method-desc">For detailed inquiries, transaction issues, or account
-                            management.</span>
-                    </div>
-                </a>
+                <div id="submit-status" class="hidden mb-4 p-3 rounded text-sm text-center" style="font-family: 'Inter', sans-serif;"></div>
 
-                <a href="exchange.html" class="method-card">
-                    <div class="method-icon-wrapper">
-                        <span class="material-symbols-outlined">receipt_long</span>
-                    </div>
-                    <div class="method-text">
-                        <span class="method-title">Transaction Issues?</span>
-                        <span class="method-desc">If your amount hasn't arrived, go to the dashboard and retrieve your
-                            transaction ID before contacting us.</span>
-                    </div>
-                </a>
-            </div>
+                <button type="submit" id="submit-btn" class="submit-btn">
+                    Submit Report
+                </button>
+            </form>
         </div>
     </div>
 
     <!-- Bottom Mobile Nav -->
-    <nav
-        class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center py-3 bg-black/92 backdrop-blur-md border-t border-zinc-800/50 pb-safe">
-        <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40" href="index.html">
-            <span class="material-symbols-outlined">home_app_logo</span>
-            <span class="font-label text-[9px] font-medium uppercase tracking-widest mt-1">Home</span>
-        </a>
-        <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40" href="dashboard.html">
-            <span class="material-symbols-outlined">grid_view</span>
-            <span class="font-label text-[9px] font-medium uppercase tracking-widest mt-1">Dashboard</span>
-        </a>
-        <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40" href="profile.html">
-            <span class="material-symbols-outlined">person</span>
-            <span class="font-label text-[9px] font-medium uppercase tracking-widest mt-1">Profile</span>
-        </a>
-        <a class="flex flex-col items-center justify-center text-zinc-100 opacity-100" href="support.html">
-            <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">help</span>
-            <span class="font-label text-[9px] font-medium uppercase tracking-widest mt-1">Support</span>
-        </a>
-    </nav>
+<nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center py-3 bg-black/92 backdrop-blur-md border-t border-zinc-800/50 pb-safe">
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 hover:text-zinc-300 transition-all" id="nav-mob-home" href="/pages/index.html">
+        <span class="material-symbols-outlined">home_app_logo</span>
+        <span class="font-label text-[10px] font-medium uppercase tracking-widest mt-1">Home</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 hover:text-zinc-300 transition-all" id="nav-mob-exchange" href="/pages/exchange.html">
+        <span class="material-symbols-outlined">swap_horiz</span>
+        <span class="font-label text-[10px] font-medium uppercase tracking-widest mt-1">Exchange</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 hover:text-zinc-300 transition-all" id="nav-mob-dashboard" href="/pages/dashboard.html">
+        <span class="material-symbols-outlined">grid_view</span>
+        <span class="font-label text-[10px] font-medium uppercase tracking-widest mt-1">Dashboard</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 hover:text-zinc-300 transition-all" id="nav-mob-profile" href="/pages/profile.html">
+        <span class="material-symbols-outlined">person</span>
+        <span class="font-label text-[10px] font-medium uppercase tracking-widest mt-1">Profile</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 hover:text-zinc-300 transition-all" id="nav-mob-support" href="/pages/support.html">
+        <span class="material-symbols-outlined">help</span>
+        <span class="font-label text-[10px] font-medium uppercase tracking-widest mt-1">Support</span>
+    </a>
+</nav>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const path = window.location.pathname.toLowerCase();
+        let activeId = null;
+        if (path.includes("index.html") || path === "/" || path.endsWith("/")) activeId = "nav-mob-home";
+        else if (path.includes("exchange.html")) activeId = "nav-mob-exchange";
+        else if (path.includes("dashboard.html")) activeId = "nav-mob-dashboard";
+        else if (path.includes("profile.html")) activeId = "nav-mob-profile";
+        else if (path.includes("support.html")) activeId = "nav-mob-support";
+    
+        if (activeId) {
+            const el = document.getElementById(activeId);
+            if (el) {
+                el.classList.remove("text-zinc-500", "opacity-40", "hover:text-zinc-300");
+                el.classList.add("text-zinc-100", "opacity-100");
+                const icon = el.querySelector(".material-symbols-outlined");
+                if (icon) icon.style.fontVariationSettings = "'FILL' 1";
+            }
+        }
+    });
+</script>
+
 
     <script>
+        document.getElementById('support-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn');
+            const status = document.getElementById('submit-status');
+        
+            // reset status
+            status.className = "hidden mb-4 p-3 rounded text-sm text-center";
+        
+            const subject = document.getElementById('subject').value.trim();
+            const reference = document.getElementById('reference').value.trim();
+            const contact = document.getElementById('contact').value.trim();
+            const message = document.getElementById('message').value.trim();
+        
+            btn.disabled = true;
+            btn.textContent = "Submitting...";
+        
+            try {
+                const res = await apiFetch('/support/create', {
+                    method: 'POST',
+                    body: JSON.stringify({ subject, reference, contact, message })
+                });
+            
+                status.classList.remove('hidden');
+                if (res.ok) {
+                    status.classList.add('bg-green-500/10', 'text-green-500', 'border', 'border-green-500/20');
+                    status.textContent = "✅ Support ticket sent! We'll look into it.";
+                    document.getElementById('support-form').reset();
+                } else {
+                    status.classList.add('bg-red-500/10', 'text-red-500', 'border', 'border-red-500/20');
+                    status.textContent = res.data?.detail || "Failed to submit ticket. Please try again later.";
+                }
+            } catch (err) {
+                status.classList.remove('hidden');
+                status.classList.add('bg-red-500/10', 'text-red-500', 'border', 'border-red-500/20');
+                status.textContent = "Network error. Please try again later.";
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "Submit Report";
+            }
+        });
     </script>
 </body>
 

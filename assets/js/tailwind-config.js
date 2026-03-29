@@ -43,7 +43,7 @@ tailwind.config = {
                 "headline": ["Space Grotesk", "sans-serif"],
                 "body": ["Inter", "sans-serif"],
                 "label": ["Inter", "sans-serif"],
-                "mono": ["'DM Mono'", "monospace"],
+                "mono": ["DM Mono", "monospace"],
             },
             borderRadius: {
                 "DEFAULT": "2px",

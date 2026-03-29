@@ -50,17 +50,17 @@ _scheduler_task: Optional[asyncio.Task] = None
 # ── Fetch chain from DB ──────────────────────────────────────
 
 
-async def _get_tx_info(txid: str) -> tuple[Optional[str], Optional[str]]:
-    """Fetch the chain and user_id for a TXID from the database."""
+async def _get_tx_info(txid: str) -> tuple[Optional[str], Optional[str], bool]:
+    """Fetch the chain, user_id, and telegram_sent for a TXID from the database."""
     from app.models.transaction import Transaction
 
     async with get_session() as session:
-        stmt = select(Transaction.chain, Transaction.user_id).where(Transaction.txid == txid).limit(1)
+        stmt = select(Transaction.chain, Transaction.user_id, Transaction.telegram_sent).where(Transaction.txid == txid).limit(1)
         result = await session.execute(stmt)
         row = result.one_or_none()
         if row:
-            return row[0], row[1]
-        return None, None
+            return row[0], row[1], row[2]
+        return None, None, False
 
 
 # ── Verifier bridge ───────────────────────────────────────────
@@ -141,12 +141,16 @@ async def _update_tx_confirmed(txid: str, data: dict) -> None:
         tx.receiver_address = data.get("receiver")
         tx.verified_at = datetime.now(timezone.utc)
 
+        await session.commit()
+        await session.refresh(tx)
+
     logger.info(
-        "TX %s CONFIRMED — amount=%.8f usd=%.2f inr=%.2f",
+        "TX %s CONFIRMED — amount=%.8f usd=%.2f inr=%.2f, DB update success, status changed to %s",
         txid[:16],
         data.get("amount", 0),
         data.get("usd_value", 0),
         data.get("inr_value", 0),
+        tx.status.value
     )
 
 
@@ -166,6 +170,21 @@ async def _mark_tx_invalid(txid: str) -> None:
         await session.execute(stmt)
 
     logger.warning("TX %s marked INVALID/FAILED in DB", txid[:16])
+
+
+async def _set_telegram_sent(txid: str) -> None:
+    """Mark a transaction as having sent its Telegram notification."""
+    from app.models.transaction import Transaction
+
+    async with get_session() as session:
+        stmt = (
+            update(Transaction)
+            .where(Transaction.txid == txid)
+            .values(telegram_sent=True)
+        )
+        await session.execute(stmt)
+
+    logger.debug("TX %s marked telegram_sent=True in DB", txid[:16])
 
 
 # ── Telegram notification ────────────────────────────────────
@@ -232,7 +251,7 @@ async def _process_single_tx(txid: str) -> None:
         await update_tx_status_processing(txid)
 
         # ── 3. Get chain + user_id from DB ──────────────────────
-        chain, user_id = await _get_tx_info(txid)
+        chain, user_id, telegram_sent = await _get_tx_info(txid)
         if not chain:
             logger.error("TX %s has no chain in DB — marking failed", txid[:16])
             await _mark_tx_invalid(txid)
@@ -261,8 +280,15 @@ async def _process_single_tx(txid: str) -> None:
 
             await _update_tx_confirmed(txid, data)
             await mark_completed(txid)
-            await _notify_telegram(txid, chain, data, user_id=user_id)
-            logger.info("TX %s ✓ verification complete", txid[:16])
+            
+            if not telegram_sent:
+                await _notify_telegram(txid, chain, data, user_id=user_id)
+                await _set_telegram_sent(txid)
+            else:
+                logger.info("TX %s telegram already sent — skipping", txid[:16])
+
+            logger.info("TX %s ✓ verification complete, job removed from Redis", txid[:16])
+            return
 
         elif error in ("tx_not_found", "tx_pending", "rpc_failure"):
             # 🔁 RETRYABLE — schedule retry

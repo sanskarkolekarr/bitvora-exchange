@@ -10,14 +10,14 @@ Security:
 import re
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, update, desc
+from sqlalchemy import select, update, desc, func
 from pydantic import BaseModel, field_validator
 
 from app.core.database import get_db
 from app.core.logger import get_logger
 from app.models.user import User
 from app.models.user_payment import UserPayment
-from app.models.transaction import Transaction
+from app.models.transaction import Transaction, TransactionStatus
 from app.utils.security import get_current_user
 
 logger = get_logger("api.user")
@@ -187,11 +187,32 @@ async def get_profile(user: User = Depends(get_current_user)):
 
 
 @router.get("/stats")
-async def get_user_stats(user: User = Depends(get_current_user)):
-    """Return dashboard stats for the authenticated user."""
+async def get_user_stats(
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user),
+):
+    """Return dashboard stats for the authenticated user based on real-time transaction statuses."""
+    
+    # Calculate Paid INR (crypto received AND payout sent)
+    stmt_paid = select(func.coalesce(func.sum(Transaction.inr_value), 0)).where(
+        Transaction.user_id == user.id,
+        Transaction.status == TransactionStatus.PAID
+    )
+    res_paid = await db.execute(stmt_paid)
+    total_paid = float(res_paid.scalar())
+
+    # Calculate Pending INR (crypto received BUT payout not sent)
+    stmt_pending = select(func.coalesce(func.sum(Transaction.inr_value), 0)).where(
+        Transaction.user_id == user.id,
+        Transaction.status == TransactionStatus.CONFIRMED
+    )
+    res_pending = await db.execute(stmt_pending)
+    total_pending = float(res_pending.scalar())
+
     return {
         "total_transactions": int(user.total_transactions),
-        "total_inr_received": float(user.total_inr_received),
+        "total_inr_received": total_paid,
+        "pending_inr": total_pending,
         "default_upi": user.default_upi,
     }
 

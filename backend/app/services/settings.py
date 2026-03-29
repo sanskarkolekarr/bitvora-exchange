@@ -61,14 +61,19 @@ async def _write_setting_to_db(key: str, value: str) -> bool:
             )
             existing = result.scalar_one_or_none()
 
+            try:
+                v_float = float(value)
+            except ValueError:
+                v_float = 0.0
+
             if existing:
                 existing.value_str = value
-                existing.value_float = float(value)
+                existing.value_float = v_float
             else:
                 new_setting = Setting(
                     key=key,
                     value_str=value,
-                    value_float=float(value),
+                    value_float=v_float,
                 )
                 session.add(new_setting)
 
@@ -164,6 +169,49 @@ def invalidate_inr_cache() -> None:
     logger.debug("INR rate cache invalidated")
 
 
+# ── Maintenance Mode API ────────────────────────────────────────
+
+_maintenance_cache: Optional[bool] = None
+_maintenance_timestamp: float = 0.0
+
+async def get_maintenance_mode() -> bool:
+    """Check if the exchange is in maintenance mode."""
+    global _maintenance_cache, _maintenance_timestamp
+
+    now = time.monotonic()
+    if _maintenance_cache is not None and (now - _maintenance_timestamp) < _CACHE_TTL:
+        return _maintenance_cache
+
+    async with _cache_lock:
+        now = time.monotonic()
+        if _maintenance_cache is not None and (now - _maintenance_timestamp) < _CACHE_TTL:
+            return _maintenance_cache
+
+        db_value = await _read_setting_from_db("MAINTENANCE_MODE")
+        if db_value is not None:
+            _maintenance_cache = (db_value.lower() == "true")
+        else:
+            _maintenance_cache = False
+            
+        _maintenance_timestamp = time.monotonic()
+        return _maintenance_cache
+
+async def set_maintenance_mode(active: bool) -> bool:
+    """Enable or disable maintenance mode."""
+    global _maintenance_cache, _maintenance_timestamp
+
+    success = await _write_setting_to_db("MAINTENANCE_MODE", str(active).lower())
+    if not success:
+        raise RuntimeError("Failed to set maintenance mode")
+
+    async with _cache_lock:
+        _maintenance_cache = active
+        _maintenance_timestamp = time.monotonic()
+
+    logger.info("Maintenance mode set to %s", active)
+    return active
+
+
 # ── Startup seeding ─────────────────────────────────────────────
 
 async def seed_defaults() -> None:
@@ -183,3 +231,9 @@ async def seed_defaults() -> None:
             logger.warning("Could not seed INR_RATE into settings table")
     else:
         logger.info("INR_RATE already exists in DB: %s", db_value)
+
+    # Seed maintenance mode
+    maint_val = await _read_setting_from_db("MAINTENANCE_MODE")
+    if maint_val is None:
+        await _write_setting_to_db("MAINTENANCE_MODE", "false")
+        logger.info("Seeded MAINTENANCE_MODE=false")

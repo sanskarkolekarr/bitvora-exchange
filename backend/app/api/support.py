@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, BackgroundTasks
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, desc
@@ -10,6 +10,7 @@ from app.core.database import get_db
 from app.models.ticket import SupportTicket
 from app.models.user import User
 from app.utils.security import get_current_user
+from app.services.telegram import notifier
 
 router = APIRouter(prefix="/support", tags=["support"], dependencies=[Depends(get_current_user)])
 
@@ -20,7 +21,12 @@ class CreateTicketRequest(BaseModel):
     reference: Optional[str] = None
 
 @router.post("/create")
-async def create_ticket(req: CreateTicketRequest, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
+async def create_ticket(
+    req: CreateTicketRequest, 
+    bg_tasks: BackgroundTasks,
+    db: AsyncSession = Depends(get_db), 
+    user: User = Depends(get_current_user)
+):
     ticket = SupportTicket(
         id=str(uuid.uuid4()),
         user_id=user.id,
@@ -28,12 +34,22 @@ async def create_ticket(req: CreateTicketRequest, db: AsyncSession = Depends(get
         message=req.message,
         contact=req.contact,
         reference=req.reference,
-        status="open",
-        created_at=datetime.now(timezone.utc),
-        updated_at=datetime.now(timezone.utc)
+        status="open"
     )
     db.add(ticket)
     await db.commit()
+
+    # Trigger Telegram Alert
+    ticket_data = {
+        "id": ticket.id,
+        "subject": ticket.subject,
+        "message": ticket.message,
+        "contact": ticket.contact,
+        "reference": ticket.reference,
+        "user_id": user.id,
+    }
+    bg_tasks.add_task(notifier.send_support_ticket, ticket_data)
+
     return {"success": True, "ticket_id": ticket.id}
 
 @router.get("/my-tickets")

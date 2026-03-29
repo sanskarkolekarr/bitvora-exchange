@@ -22,7 +22,8 @@ from sqlalchemy import (
     Integer,
     String,
     func,
-    ForeignKey, # Added ForeignKey
+    ForeignKey,
+    Boolean,
 )
 from sqlalchemy.orm import Mapped, mapped_column, relationship # Added relationship
 
@@ -36,6 +37,7 @@ class TransactionStatus(str, enum.Enum):
     CONFIRMED = "confirmed"
     PAID = "paid"
     FAILED = "failed"
+    REFUNDED = "refunded"
 
 
 class Transaction(Base):
@@ -98,6 +100,9 @@ class Transaction(Base):
     )
     retry_count: Mapped[int] = mapped_column(
         Integer, nullable=False, default=0, server_default="0"
+    )
+    telegram_sent: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False, server_default="false"
     )
 
     # ── Timestamps ───────────────────────────────────────────────

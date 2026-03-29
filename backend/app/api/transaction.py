@@ -28,7 +28,7 @@ from app.models.transaction import Transaction, TransactionStatus
 from app.models.user import User
 from app.schemas.transaction import VerifyRequest, VerifyResponse
 from app.utils.security import get_current_user
-from app.services.settings import get_inr_rate
+from app.services.settings import get_inr_rate, get_maintenance_mode
 
 logger = get_logger("api.transaction")
 router = APIRouter(prefix="/transaction", tags=["transaction"])
@@ -82,6 +82,12 @@ async def submit_transaction(
     db: AsyncSession = Depends(get_db),
     user: User = Depends(get_current_user)
 ):
+    if await get_maintenance_mode():
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Exchange is currently paused for maintenance."
+        )
+        
     ip = _client_ip(request)
     if rate_limiter.is_rate_limited(ip):
         raise HTTPException(status_code=429, detail="rate limit exceeded")

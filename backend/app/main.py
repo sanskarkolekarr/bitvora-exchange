@@ -25,7 +25,6 @@ from app.api import (
     status_router,
     auth_router,
     user_router,
-    admin_router,
     assets_router,
     support_router
 )
@@ -99,7 +98,6 @@ app.include_router(auth_router)
 app.include_router(user_router)
 app.include_router(transaction_router)
 app.include_router(status_router)
-app.include_router(admin_router)
 app.include_router(assets_router)
 app.include_router(support_router)
 

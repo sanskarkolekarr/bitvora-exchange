@@ -7,8 +7,51 @@
     <script>
         window.location.href = "/pages/index.html";
     </script>
+    <link rel="icon" type="image/jpeg" href="/Logo/Bitvora.jpg">
+    <script src="https://cdn.tailwindcss.com?plugins=container-queries"></script>
 </head>
 <body>
     If you are not redirected, <a href="/pages/index.html">click here</a>.
+<!-- Bottom Mobile Nav -->
+<nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center py-3 bg-black/92 backdrop-blur-md border-t border-zinc-800/50 pb-safe">
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 hover:text-zinc-300 transition-all" id="nav-mob-home" href="/pages/index.html">
+        <span class="material-symbols-outlined">home_app_logo</span>
+        <span class="font-label text-[10px] font-medium uppercase tracking-widest mt-1">Home</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 hover:text-zinc-300 transition-all" id="nav-mob-exchange" href="/pages/exchange.html">
+        <span class="material-symbols-outlined">swap_horiz</span>
+        <span class="font-label text-[10px] font-medium uppercase tracking-widest mt-1">Exchange</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 hover:text-zinc-300 transition-all" id="nav-mob-dashboard" href="/pages/dashboard.html">
+        <span class="material-symbols-outlined">grid_view</span>
+        <span class="font-label text-[10px] font-medium uppercase tracking-widest mt-1">Dashboard</span>
+    </a>
+    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 hover:text-zinc-300 transition-all" id="nav-mob-profile" href="/pages/profile.html">
+        <span class="material-symbols-outlined">person</span>
+        <span class="font-label text-[10px] font-medium uppercase tracking-widest mt-1">Profile</span>
+    </a>
+</nav>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const path = window.location.pathname.toLowerCase();
+        let activeId = null;
+        if (path.includes("index.html") || path === "/" || path.endsWith("/")) activeId = "nav-mob-home";
+        else if (path.includes("exchange.html")) activeId = "nav-mob-exchange";
+        else if (path.includes("dashboard.html")) activeId = "nav-mob-dashboard";
+        else if (path.includes("profile.html")) activeId = "nav-mob-profile";
+    
+        if (activeId) {
+            const el = document.getElementById(activeId);
+            if (el) {
+                el.classList.remove("text-zinc-500", "opacity-40", "hover:text-zinc-300");
+                el.classList.add("text-zinc-100", "opacity-100");
+                const icon = el.querySelector(".material-symbols-outlined");
+                if (icon) icon.style.fontVariationSettings = "'FILL' 1";
+            }
+        }
+    });
+</script>
+
 </body>
 </html>

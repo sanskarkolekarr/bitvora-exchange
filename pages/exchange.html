@@ -1,564 +1,1174 @@
-<!DOCTYPE html>
+<!doctype html>
 <html class="dark" lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KINETIC | Exchange Terminal</title>
-    <meta name="description" content="Submit your crypto transaction and receive instant INR settlement.">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>BITVORA | Exchange Terminal</title>
+    <meta
+      name="description"
+      content="Submit your crypto transaction and receive instant INR settlement."
+    />
 
     <script src="config.js"></script>
     <script src="/assets/js/api.js"></script>
-    <script>requireAuth();</script>
+    <script>
+      requireAuth();
+    </script>
 
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/assets/css/styles.css" />
     <script src="https://cdn.tailwindcss.com?plugins=container-queries"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
-    <link rel="stylesheet" href="/assets/css/styles.css">
-    <script src="/assets/js/tailwind-config.js"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            animation: {
+              blob: "blob 10s infinite alternate",
+            },
+            keyframes: {
+              blob: {
+                "0%": {
+                  transform: "translate(0px, 0px) scale(1)",
+                  filter: "blur(100px)",
+                },
+                "33%": {
+                  transform: "translate(50px, -50px) scale(1.1)",
+                  filter: "blur(120px)",
+                },
+                "66%": {
+                  transform: "translate(-20px, 30px) scale(0.9)",
+                  filter: "blur(90px)",
+                },
+                "100%": {
+                  transform: "translate(0px, 0px) scale(1)",
+                  filter: "blur(100px)",
+                },
+              },
+            },
+            colors: {
+              // ... existing colors preserved ...
+              "primary-fixed-dim": "#454747",
+              tertiary: "#e4e2e1",
+              "surface-container": "#1f1f1f",
+              "secondary-fixed": "#c7c6c6",
+              "on-primary-container": "#000000",
+              "surface-container-low": "#1b1b1b",
+              "surface-bright": "#393939",
+              "primary-container": "#d4d4d4",
+              "on-primary-fixed-variant": "#e2e2e2",
+              "on-primary": "#1a1c1c",
+              background: "#000000",
+              "secondary-container": "#464747",
+              "on-secondary-container": "#e3e2e2",
+              "on-error-container": "#ffdad6",
+              "surface-tint": "#c6c6c6",
+              "surface-container-high": "#2a2a2a",
+              "outline-variant": "#474747",
+              "inverse-on-surface": "#303030",
+              "on-tertiary-container": "#000000",
+              "surface-container-highest": "#353535",
+              "on-secondary": "#1a1c1c",
+              "on-tertiary-fixed": "#ffffff",
+              "secondary-fixed-dim": "#ababab",
+              "on-tertiary": "#1b1c1c",
+              "surface-variant": "#353535",
+              surface: "#000000",
+              "primary-fixed": "#5d5f5f",
+              outline: "#3A3A3A",
+              "inverse-primary": "#5d5f5f",
+              "on-surface": "#e2e2e2",
+              "inverse-surface": "#e2e2e2",
+              "on-secondary-fixed-variant": "#3a3c3c",
+              "error-container": "#93000a",
+              "tertiary-fixed": "#5f5e5e",
+              "surface-dim": "#131313",
+              "on-tertiary-fixed-variant": "#e4e2e1",
+              "on-error": "#690005",
+              "on-background": "#e2e2e2",
+              "on-secondary-fixed": "#1a1c1c",
+              "tertiary-fixed-dim": "#474747",
+              error: "#ffb4ab",
+              "on-surface-variant": "#c6c6c6",
+              "surface-container-lowest": "#0e0e0e",
+              secondary: "#c7c6c6",
+              "tertiary-container": "#919090",
+              primary: "#ffffff",
+              "on-primary-fixed": "#ffffff",
+            },
+            fontFamily: {
+              headline: ["Space Grotesk", "sans-serif"],
+              body: ["Inter", "sans-serif"],
+              label: ["Inter", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              "2xl": "1rem",
+              "3xl": "1.5rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
 
-    <meta name="theme-color" content="#000000">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#000000" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
 
     <style>
-        .token-card {
-            cursor: pointer;
-            background: #050505;
-            border: 1px solid rgba(255,255,255,0.04);
-            border-radius: 2px;
-            padding: 14px 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.1s ease-in;
-            position: relative;
-            overflow: hidden;
-        }
-        .token-card:hover {
-            border-color: rgba(255,255,255,0.15);
-            background: #0A0A0A;
-        }
-        .token-card.selected {
-            border-color: rgba(255,255,255,0.6);
-            background: #1A1A1A;
-            box-shadow: 8px 8px 0px rgba(0,0,0,1);
-        }
-        .token-card.selected::after {
-            content: '✓';
-            position: absolute;
-            top: 4px;
-            right: 6px;
-            font-size: 10px;
-            color: #E5E5E5;
-            font-weight: 800;
-        }
+      .token-card {
+        cursor: pointer;
+        background: #050505;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        border-radius: 4px;
+        padding: 14px 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        transition: all 0.1s ease-in;
+        position: relative;
+        overflow: hidden;
+      }
+      .token-card:hover {
+        border-color: rgba(255, 255, 255, 0.15);
+        background: #0a0a0a;
+      }
+      .token-card.selected {
+        border-color: rgba(255, 255, 255, 0.6);
+        background: #1a1a1a;
+        box-shadow: 8px 8px 0px rgba(0, 0, 0, 1);
+      }
+      .token-card.selected::after {
+        content: "✓";
+        position: absolute;
+        top: 4px;
+        right: 6px;
+        font-size: 10px;
+        color: #e5e5e5;
+        font-weight: 800;
+      }
 
-        .token-icon { width: 28px; height: 28px; object-fit: contain; }
-        .token-name { font-size: 10px; font-family: 'DM Mono', monospace; color: #E5E5E5; letter-spacing: 0.08em; text-align: center; }
-        .token-network { font-size: 8px; font-family: 'DM Mono', monospace; color: rgba(255,255,255,0.2); letter-spacing: 0.12em; text-align: center; text-transform: uppercase; }
+      .token-icon {
+        width: 28px;
+        height: 28px;
+        object-fit: contain;
+      }
+      .token-name {
+        font-size: 11px;
+        font-family: "DM Mono", monospace;
+        color: #e5e5e5;
+        font-weight: 500;
+        letter-spacing: 0.05em;
+        text-align: center;
+      }
+      .token-network {
+        font-size: 8px;
+        font-family: "DM Mono", monospace;
+        color: rgba(255, 255, 255, 0.7);
+        letter-spacing: 0.05em;
+        text-align: center;
+        text-transform: uppercase;
+        background: rgba(255, 255, 255, 0.1);
+        padding: 3px 6px;
+        border-radius: 4px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        white-space: nowrap;
+      }
 
-        .step-label {
-            font-size: 9px;
-            letter-spacing: 0.2em;
-            font-weight: 700;
-            color: rgba(161,161,161,0.6);
-            text-transform: uppercase;
-            font-family: 'DM Mono', monospace;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .step-label span {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 18px;
-            height: 18px;
-            border-radius: 2px;
-            background: rgba(255,255,255,0.05);
-            font-size: 9px;
-            color: #E5E5E5;
-        }
+      .step-label {
+        font-size: 9px;
+        letter-spacing: 0.2em;
+        font-weight: 700;
+        color: rgba(161, 161, 161, 0.6);
+        text-transform: uppercase;
+        font-family: "DM Mono", monospace;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .step-label span:first-child {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 18px;
+        height: 18px;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.05);
+        font-size: 9px;
+        color: #e5e5e5;
+      }
 
-        .input-field {
-            width: 100%;
-            background: #1A1A1A;
-            border: none;
-            border-bottom: 2px solid #3A3A3A;
-            padding: 16px 20px;
-            font-family: 'DM Mono', monospace;
-            color: #E5E5E5;
-            font-size: 16px;
-            outline: none;
-            transition: border-color 0.1s ease-in;
-            border-radius: 0;
-        }
-        .input-field:focus { border-image: linear-gradient(135deg, #E5E5E5 0%, #6E6E6E 50%, #2A2A2A 100%) 1; }
-        .input-field::placeholder { color: rgba(255,255,255,0.12); }
+      .input-field {
+        width: 100%;
+        background: #1a1a1a;
+        border: none;
+        border-bottom: 2px solid #3a3a3a;
+        padding: 16px 20px;
+        font-family: "DM Mono", monospace;
+        color: #e5e5e5;
+        font-size: 16px;
+        outline: none;
+        transition: border-color 0.1s ease-in;
+        border-radius: 0;
+      }
+      .input-field:focus {
+        border-image: linear-gradient(
+            135deg,
+            #e5e5e5 0%,
+            #6e6e6e 50%,
+            #2a2a2a 100%
+          )
+          1;
+      }
+      .input-field::placeholder {
+        color: rgba(255, 255, 255, 0.12);
+      }
 
-        .address-box {
-            background: #050505;
-            border: 1px solid rgba(255,255,255,0.06);
-            border-radius: 2px;
-            padding: 16px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-        }
-        .address-text {
-            font-family: 'DM Mono', monospace;
-            font-size: 11px;
-            color: #E5E5E5;
-            word-break: break-all;
-            opacity: 0.8;
-        }
-        .copy-btn {
-            flex-shrink: 0;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid #3A3A3A;
-            border-radius: 2px;
-            padding: 8px 14px;
-            color: #E5E5E5;
-            font-size: 9px;
-            font-family: 'DM Mono', monospace;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            transition: all 0.1s ease-in;
-            white-space: nowrap;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
-        .copy-btn:hover { background: rgba(255,255,255,0.08); }
+      .address-box {
+        background: #050505;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 2px;
+        padding: 16px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+      .address-text {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: #e5e5e5;
+        word-break: break-all;
+        opacity: 0.8;
+      }
+      .copy-btn {
+        flex-shrink: 0;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid #3a3a3a;
+        border-radius: 2px;
+        padding: 8px 14px;
+        color: #e5e5e5;
+        font-size: 9px;
+        font-family: "DM Mono", monospace;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        transition: all 0.1s ease-in;
+        white-space: nowrap;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .copy-btn:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
 
-        .quote-row { display: flex; justify-content: space-between; font-family: 'DM Mono', monospace; font-size: 11px; padding: 8px 0; color: rgba(255,255,255,0.4); }
-        .quote-row.total { border-top: 1px solid rgba(255,255,255,0.06); margin-top: 8px; padding-top: 14px; color: #E5E5E5; font-size: 15px; font-weight: 600; }
-        .quote-row.total span:last-child { color: #E5E5E5; }
+      .quote-row {
+        display: flex;
+        justify-content: space-between;
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        padding: 8px 0;
+        color: rgba(255, 255, 255, 0.4);
+      }
+      .quote-row.total {
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
+        margin-top: 8px;
+        padding-top: 14px;
+        color: #e5e5e5;
+        font-size: 15px;
+        font-weight: 600;
+      }
+      .quote-row.total span:last-child {
+        color: #e5e5e5;
+      }
 
-        .submit-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #E5E5E5 0%, #6E6E6E 50%, #2A2A2A 100%);
-            color: #000000;
-            border: none;
-            border-radius: 2px;
-            padding: 20px;
-            font-size: 11px;
-            font-weight: 800;
-            letter-spacing: 0.2em;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.1s ease-in;
-            font-family: 'Space Grotesk', sans-serif;
-            min-height: 56px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-        }
-        .submit-btn:hover:not(:disabled) { opacity: 0.9; }
-        .submit-btn:active:not(:disabled) { transform: scale(0.98); }
-        .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+      .submit-btn {
+        width: 100%;
+        background: linear-gradient(
+          135deg,
+          #e5e5e5 0%,
+          #6e6e6e 50%,
+          #2a2a2a 100%
+        );
+        color: #000000;
+        border: none;
+        border-radius: 2px;
+        padding: 20px;
+        font-size: 11px;
+        font-weight: 800;
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.1s ease-in;
+        font-family: "Space Grotesk", sans-serif;
+        min-height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+      }
+      .submit-btn:hover:not(:disabled) {
+        opacity: 0.9;
+      }
+      .submit-btn:active:not(:disabled) {
+        transform: scale(0.98);
+      }
+      .submit-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
 
-        .error-msg { font-family: 'DM Mono', monospace; font-size: 11px; color: #f87171; margin-top: 6px; padding-left: 4px; }
-        .success-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 2px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); color: #E5E5E5; font-family: 'DM Mono', monospace; font-size: 10px; letter-spacing: 0.15em; }
+      .error-msg {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: #f87171;
+        margin-top: 6px;
+        padding-left: 4px;
+      }
+      .success-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 14px;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #e5e5e5;
+        font-family: "DM Mono", monospace;
+        font-size: 10px;
+        letter-spacing: 0.15em;
+      }
     </style>
-</head>
-<body class="bg-black text-on-surface" style="-webkit-tap-highlight-color: transparent;">
-
-<!-- TopAppBar -->
-<header class="fixed top-0 w-full border-b border-zinc-800/50 bg-black z-50 flex justify-between items-center px-6 py-4">
-    <a href="index.html" class="flex items-center gap-2">
-        <span class="material-symbols-outlined text-zinc-100" style="font-variation-settings: 'FILL' 1;">toll</span>
-        <span class="text-xl font-headline font-bold tracking-tighter text-zinc-100">KINETIC</span>
-    </a>
-    <nav class="hidden md:flex gap-4 items-center">
-        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="index.html">Home</a>
-        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-100 opacity-100" href="exchange.html">Exchange</a>
-        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="dashboard.html">Dashboard</a>
-        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="profile.html">Profile</a>
-        <a class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors" href="support.html">Support</a>
-    </nav>
-    <a href="profile.html" class="px-5 py-1.5 bg-zinc-900 border border-zinc-800 text-zinc-100 text-[10px] font-bold tracking-widest uppercase">
+    <link rel="icon" type="image/jpeg" href="/Logo/Bitvora.jpg" />
+  </head>
+  <body
+    class="bg-black text-on-surface"
+    style="-webkit-tap-highlight-color: transparent"
+  >
+    <!-- TopAppBar -->
+    <header
+      class="fixed top-0 w-full border-b border-zinc-800/50 bg-black z-50 flex justify-between items-center px-6 py-4"
+    >
+      <a href="index.html" class="flex items-center gap-2">
+        <img
+          src="/Logo/Bitvora.jpg"
+          alt="Bitvora Logo"
+          class="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover"
+        />
+        <span
+          class="text-xl font-headline font-bold tracking-tighter text-zinc-100"
+          >BITVORA</span
+        >
+      </a>
+      <nav class="hidden md:flex gap-4 items-center">
+        <a
+          class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors"
+          href="index.html"
+          >Home</a
+        >
+        <a
+          class="font-label text-[10px] uppercase tracking-widest text-zinc-100 opacity-100"
+          href="exchange.html"
+          >Exchange</a
+        >
+        <a
+          class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors"
+          href="dashboard.html"
+          >Dashboard</a
+        >
+        <a
+          class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors"
+          href="profile.html"
+          >Profile</a
+        >
+        <a
+          class="font-label text-[10px] uppercase tracking-widest text-zinc-500 hover:text-zinc-100 transition-colors"
+          href="support.html"
+          >Support</a
+        >
+      </nav>
+      <a
+        href="profile.html"
+        class="px-5 py-1.5 bg-zinc-900 border border-zinc-800 text-zinc-100 text-[10px] font-bold tracking-widest uppercase"
+      >
         Profile
-    </a>
-</header>
+      </a>
+    </header>
 
-<main class="min-h-screen pt-28 pb-32 px-6">
-<div class="max-w-[640px] mx-auto">
+    <main class="min-h-screen pt-28 pb-32 px-6">
+      <div class="max-w-[640px] mx-auto">
+        <!-- Header -->
+        <div class="mb-12">
+          <div
+            class="font-mono text-[9px] tracking-[0.3em] text-zinc-600 uppercase mb-3"
+          >
+            BITVORA CORE / EXCHANGE TERMINAL
+          </div>
+          <h1
+            class="text-5xl md:text-7xl font-headline font-bold tracking-tighter text-on-surface mb-3"
+          >
+            New Exchange
+          </h1>
+          <p
+            class="text-sm text-zinc-600 font-mono tracking-wider"
+            id="rate-ticker"
+          >
+            Loading rates...
+          </p>
+        </div>
 
-    <!-- Header -->
-    <div class="mb-12">
-        <div class="font-mono text-[9px] tracking-[0.3em] text-zinc-600 uppercase mb-3">BITVORA CORE / EXCHANGE TERMINAL</div>
-        <h1 class="text-5xl md:text-7xl font-headline font-bold tracking-tighter text-on-surface mb-3">New Exchange</h1>
-        <p class="text-sm text-zinc-600 font-mono tracking-wider" id="rate-ticker">Loading rates...</p>
-    </div>
-
-    <!-- ── SUBMIT FORM ── -->
-    <div id="submit-form" class="bg-component-surface border border-outline/10 p-8 md:p-10 flex flex-col gap-10" style="border-radius:4px;">
-
-        <!-- STEP 1: Token -->
-        <div>
+        <!-- ── SUBMIT FORM ── -->
+        <div
+          id="submit-form"
+          class="bg-component-surface border border-outline/10 p-8 md:p-10 flex flex-col gap-10"
+          style="border-radius: 4px"
+        >
+          <!-- STEP 1: Token -->
+          <div>
             <div class="step-label"><span>1</span> Select Token</div>
-            <div id="token-grid" class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-2"></div>
-        </div>
+            <div
+              id="token-grid"
+              class="grid grid-cols-4 sm:grid-cols-5 md:grid-cols-7 gap-2"
+            ></div>
+          </div>
 
-        <!-- STEP 2: Send to Address -->
-        <div>
-            <div class="step-label"><span>2</span> Send To This Address</div>
-            <div class="address-box">
-                <code id="deposit-address" class="address-text">Select a token above</code>
-                <button class="copy-btn" id="copy-addr-btn" onclick="copyAddress()" title="Copy address">
-                    <span class="material-symbols-outlined text-[13px]">content_copy</span> COPY
-                </button>
+          <!-- STEP 2: Send to Address -->
+          <div>
+            <div class="step-label">
+              <span>2</span>
+              <span id="deposit-label-text">Send To This Address</span>
             </div>
-            <p class="text-[9px] font-mono text-zinc-700 mt-3 tracking-wider uppercase">⚠ Send ONLY the selected token to this address or funds will be lost.</p>
-        </div>
+            <div class="address-box">
+              <code id="deposit-address" class="address-text"
+                >Select a token above</code
+              >
+              <button
+                class="copy-btn"
+                id="copy-addr-btn"
+                onclick="copyAddress()"
+                title="Copy address"
+              >
+                <span class="material-symbols-outlined text-[13px]"
+                  >content_copy</span
+                >
+                COPY
+              </button>
+            </div>
+            <p
+              class="text-[9px] font-mono text-zinc-700 mt-3 tracking-wider uppercase"
+            >
+              ⚠ Send ONLY the selected token to this address or funds will be
+              lost.
+            </p>
+          </div>
 
-        <!-- STEP 3: Transaction Details -->
-        <div class="flex flex-col gap-5">
+          <!-- STEP 3: Transaction Details -->
+          <div class="flex flex-col gap-5">
             <div class="step-label"><span>3</span> Transaction Details</div>
             <div>
-                <label class="text-[9px] font-mono tracking-[0.15em] text-zinc-600 uppercase block mb-3">Transaction Hash (TXID)</label>
-                <input id="txid-input" class="input-field" type="text" placeholder="Paste your transaction hash..." autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" />
-                <div id="txid-error" class="error-msg hidden"></div>
+              <label
+                class="text-[9px] font-mono tracking-[0.15em] text-zinc-600 uppercase block mb-3"
+                >Transaction Hash (TXID)</label
+              >
+              <input
+                id="txid-input"
+                class="input-field"
+                type="text"
+                placeholder="Paste your transaction hash..."
+                autocomplete="off"
+                autocorrect="off"
+                autocapitalize="none"
+                spellcheck="false"
+              />
+              <div id="txid-error" class="error-msg hidden"></div>
             </div>
             <div>
-                <label class="text-[9px] font-mono tracking-[0.15em] text-zinc-600 uppercase block mb-3">Amount Sent</label>
-                <div class="flex items-center" style="background:#1A1A1A;border-bottom:2px solid #3A3A3A;">
-                    <input id="amount-input" class="flex-1 bg-transparent border-none py-4 px-5 font-mono text-on-surface text-sm text-right placeholder:text-zinc-800 focus:outline-none focus:ring-0" placeholder="0.00000000" type="number" step="any" inputmode="decimal" autocomplete="off"/>
-                    <span id="ticker-label" class="pr-5 text-[10px] font-mono font-bold text-zinc-600 tracking-widest shrink-0">---</span>
-                </div>
+              <label
+                class="text-[9px] font-mono tracking-[0.15em] text-zinc-600 uppercase block mb-3"
+                >Amount Sent</label
+              >
+              <div
+                class="flex items-center"
+                style="background: #1a1a1a; border-bottom: 2px solid #3a3a3a"
+              >
+                <input
+                  id="amount-input"
+                  class="flex-1 bg-transparent border-none py-4 px-5 font-mono text-on-surface text-sm text-right placeholder:text-zinc-800 focus:outline-none focus:ring-0"
+                  placeholder="0.00000000"
+                  type="number"
+                  step="any"
+                  inputmode="decimal"
+                  autocomplete="off"
+                />
+                <span
+                  id="ticker-label"
+                  class="pr-5 text-[10px] font-mono font-bold text-zinc-600 tracking-widest shrink-0"
+                  >---</span
+                >
+              </div>
             </div>
-        </div>
+          </div>
 
-        <!-- STEP 4: Live Quote -->
-        <div id="quote-box" class="hidden bg-secondary-base p-6 border border-outline/10" style="border-radius:2px;">
-            <div id="quote-loading" class="flex items-center gap-2 text-zinc-600 font-mono text-[11px]">
-                <span class="material-symbols-outlined text-[14px] animate-spin">progress_activity</span> Calculating...
+          <!-- STEP 4: Live Quote -->
+          <div
+            id="quote-box"
+            class="hidden bg-secondary-base p-6 border border-outline/10"
+            style="border-radius: 2px"
+          >
+            <div
+              id="quote-loading"
+              class="flex items-center gap-2 text-zinc-600 font-mono text-[11px]"
+            >
+              <span class="material-symbols-outlined text-[14px] animate-spin"
+                >progress_activity</span
+              >
+              Calculating...
             </div>
             <div id="quote-content" class="hidden flex-col gap-1">
-                <div class="quote-row"><span>Amount (Crypto)</span><span id="q-amount">—</span></div>
-                <div class="quote-row"><span>Gross INR</span><span id="q-gross">—</span></div>
-                <div class="quote-row"><span>Platform Fee</span><span id="q-fee">—</span></div>
-                <div class="quote-row total"><span>You Receive</span><span id="q-inr">₹0</span></div>
+              <div class="quote-row">
+                <span>Amount (Crypto)</span><span id="q-amount">—</span>
+              </div>
+              <div class="quote-row">
+                <span>Gross INR</span><span id="q-gross">—</span>
+              </div>
+              <div class="quote-row">
+                <span>Platform Fee</span><span id="q-fee">—</span>
+              </div>
+              <div class="quote-row total">
+                <span>You Receive</span><span id="q-inr">₹0</span>
+              </div>
             </div>
-        </div>
+          </div>
 
-        <!-- STEP 5: UPI / Bank -->
-        <div>
+          <!-- STEP 5: UPI / Bank -->
+          <div>
             <div class="step-label"><span>4</span> Payout Destination</div>
-            <label class="text-[9px] font-mono tracking-[0.15em] text-zinc-600 uppercase block mb-3">UPI ID / Bank Account</label>
-            <input id="upi-input" class="input-field" type="text" placeholder="yourname@upi  or  account@bank" autocomplete="off"/>
-            <p class="text-[9px] font-mono text-zinc-700 mt-3 tracking-wider uppercase">INR will be sent here via IMPS within 15 minutes of chain confirmation.</p>
-        </div>
+            <label
+              class="text-[9px] font-mono tracking-[0.15em] text-zinc-600 uppercase block mb-3"
+              >UPI ID / Bank Account</label
+            >
+            <input
+              id="upi-input"
+              class="input-field"
+              type="text"
+              placeholder="yourname@upi  or  account@bank"
+              autocomplete="off"
+            />
+            <p
+              class="text-[9px] font-mono text-zinc-700 mt-3 tracking-wider uppercase"
+            >
+              INR will be sent here via IMPS within 15 minutes of chain
+              confirmation.
+            </p>
+          </div>
 
-        <!-- Submit -->
-        <button id="submit-btn" class="submit-btn" onclick="handleSubmit()">
+          <!-- Submit -->
+          <button id="submit-btn" class="submit-btn" onclick="handleSubmit()">
             VERIFY & SUBMIT
-        </button>
+          </button>
 
-        <p id="submit-error" class="error-msg hidden text-center"></p>
-    </div>
-
-    <!-- ── SUCCESS STATE ── -->
-    <div id="success-state" class="hidden bg-component-surface border border-outline/10 p-8 md:p-10 flex flex-col gap-8" style="border-radius:4px;">
-        <div class="flex justify-center">
-            <div class="success-badge">
-                <span class="material-symbols-outlined text-[14px]">check_circle</span>
-                SUBMITTED SUCCESSFULLY
-            </div>
+          <p id="submit-error" class="error-msg hidden text-center"></p>
         </div>
 
-        <div class="bg-secondary-base p-6 border border-outline/10 flex flex-col gap-5" style="border-radius:2px;">
+        <!-- ── SUCCESS STATE ── -->
+        <div
+          id="success-state"
+          class="hidden bg-component-surface border border-outline/10 p-8 md:p-10 flex flex-col gap-8"
+          style="border-radius: 4px"
+        >
+          <div class="flex justify-center">
+            <div class="success-badge">
+              <span class="material-symbols-outlined text-[14px]"
+                >check_circle</span
+              >
+              SUBMITTED SUCCESSFULLY
+            </div>
+          </div>
+
+          <div
+            class="bg-secondary-base p-6 border border-outline/10 flex flex-col gap-5"
+            style="border-radius: 2px"
+          >
             <div class="flex justify-between items-center">
-                <span class="font-mono text-[9px] tracking-[0.15em] text-zinc-600 uppercase">Reference</span>
-                <span class="font-mono text-on-surface text-[11px] font-bold" id="suc-ref">—</span>
+              <span
+                class="font-mono text-[9px] tracking-[0.15em] text-zinc-600 uppercase"
+                >Reference</span
+              >
+              <span
+                class="font-mono text-on-surface text-[11px] font-bold"
+                id="suc-ref"
+                >—</span
+              >
             </div>
             <div class="flex justify-between items-center gap-4">
-                <span class="font-mono text-[9px] tracking-[0.15em] text-zinc-600 uppercase shrink-0">Transaction Hash</span>
-                <span class="font-mono text-zinc-400 text-[10px] truncate max-w-[200px]" id="suc-txid" style="word-wrap:break-word;white-space:normal;">—</span>
+              <span
+                class="font-mono text-[9px] tracking-[0.15em] text-zinc-600 uppercase shrink-0"
+                >Transaction Hash</span
+              >
+              <span
+                class="font-mono text-zinc-400 text-[10px] truncate max-w-[200px]"
+                id="suc-txid"
+                style="word-wrap: break-word; white-space: normal"
+                >—</span
+              >
             </div>
             <div class="flex justify-between items-center">
-                <span class="font-mono text-[9px] tracking-[0.15em] text-zinc-600 uppercase">Token</span>
-                <span class="font-mono text-on-surface text-[11px]" id="suc-token">—</span>
+              <span
+                class="font-mono text-[9px] tracking-[0.15em] text-zinc-600 uppercase"
+                >Token</span
+              >
+              <span class="font-mono text-on-surface text-[11px]" id="suc-token"
+                >—</span
+              >
             </div>
             <div class="flex justify-between items-center">
-                <span class="font-mono text-[9px] tracking-[0.15em] text-zinc-600 uppercase">Amount</span>
-                <span class="font-mono text-on-surface text-[11px]" id="suc-amount">—</span>
+              <span
+                class="font-mono text-[9px] tracking-[0.15em] text-zinc-600 uppercase"
+                >Amount</span
+              >
+              <span
+                class="font-mono text-on-surface text-[11px]"
+                id="suc-amount"
+                >—</span
+              >
             </div>
             <div class="flex justify-between items-center">
-                <span class="font-mono text-[9px] tracking-[0.15em] text-zinc-600 uppercase">Exchange Rate</span>
-                <span class="font-mono text-on-surface text-[11px]" id="suc-rate">—</span>
+              <span
+                class="font-mono text-[9px] tracking-[0.15em] text-zinc-600 uppercase"
+                >Exchange Rate</span
+              >
+              <span class="font-mono text-on-surface text-[11px]" id="suc-rate"
+                >—</span
+              >
             </div>
-            <div class="flex justify-between items-center pt-4 border-t border-outline/10">
-                <span class="font-mono text-[12px] text-on-surface font-bold uppercase">Estimated INR</span>
-                <span class="font-mono text-on-surface text-2xl font-medium" id="suc-inr">₹0</span>
+            <div
+              class="flex justify-between items-center pt-4 border-t border-outline/10"
+            >
+              <span
+                class="font-mono text-[12px] text-on-surface font-bold uppercase"
+                >Estimated INR</span
+              >
+              <span
+                class="font-mono text-on-surface text-2xl font-medium"
+                id="suc-inr"
+                >₹0</span
+              >
             </div>
+          </div>
+
+          <div>
+            <label
+              class="text-[9px] font-mono tracking-[0.15em] text-zinc-600 uppercase block mb-2"
+              >Sending To</label
+            >
+            <div
+              class="input-field"
+              style="padding: 14px 20px; opacity: 0.6"
+              id="suc-upi"
+            >
+              —
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-3">
+            <button onclick="goToStatus()" class="submit-btn">
+              VIEW LIVE STATUS
+            </button>
+            <button
+              onclick="resetForm()"
+              class="btn-secondary w-full py-4 text-center"
+            >
+              SUBMIT ANOTHER
+            </button>
+          </div>
         </div>
+      </div>
+    </main>
 
-        <div>
-            <label class="text-[9px] font-mono tracking-[0.15em] text-zinc-600 uppercase block mb-2">Sending To</label>
-            <div class="input-field" style="padding:14px 20px;opacity:0.6;" id="suc-upi">—</div>
-        </div>
-
-        <div class="flex flex-col gap-3">
-            <button onclick="goToStatus()" class="submit-btn">VIEW LIVE STATUS</button>
-            <button onclick="resetForm()" class="btn-secondary w-full py-4 text-center">SUBMIT ANOTHER</button>
-        </div>
-    </div>
-
-</div>
-</main>
-
-<!-- Bottom Mobile Nav -->
-<nav class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center py-3 bg-black/92 backdrop-blur-md border-t border-zinc-800/50 pb-safe">
-    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 transition-all" href="index.html">
+    <!-- Bottom Mobile Nav -->
+    <nav
+      class="md:hidden fixed bottom-0 w-full z-50 flex justify-around items-center py-3 bg-black/92 backdrop-blur-md border-t border-zinc-800/50 pb-safe"
+    >
+      <a
+        class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 hover:text-zinc-300 transition-all"
+        id="nav-mob-home"
+        href="/pages/index.html"
+      >
         <span class="material-symbols-outlined">home_app_logo</span>
-        <span class="font-label text-[9px] font-medium uppercase tracking-widest mt-1">Home</span>
-    </a>
-    <a class="flex flex-col items-center justify-center text-zinc-100 opacity-100" href="exchange.html">
-        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">swap_horiz</span>
-        <span class="font-label text-[9px] font-medium uppercase tracking-widest mt-1">Exchange</span>
-    </a>
-    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 transition-all" href="dashboard.html">
+        <span
+          class="font-label text-[10px] font-medium uppercase tracking-widest mt-1"
+          >Home</span
+        >
+      </a>
+      <a
+        class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 hover:text-zinc-300 transition-all"
+        id="nav-mob-exchange"
+        href="/pages/exchange.html"
+      >
+        <span class="material-symbols-outlined">swap_horiz</span>
+        <span
+          class="font-label text-[10px] font-medium uppercase tracking-widest mt-1"
+          >Exchange</span
+        >
+      </a>
+      <a
+        class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 hover:text-zinc-300 transition-all"
+        id="nav-mob-dashboard"
+        href="/pages/dashboard.html"
+      >
         <span class="material-symbols-outlined">grid_view</span>
-        <span class="font-label text-[9px] font-medium uppercase tracking-widest mt-1">Dashboard</span>
-    </a>
-    <a class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 transition-all" href="tracker.html">
-        <span class="material-symbols-outlined">monitoring</span>
-        <span class="font-label text-[9px] font-medium uppercase tracking-widest mt-1">Tracker</span>
-    </a>
-</nav>
+        <span
+          class="font-label text-[10px] font-medium uppercase tracking-widest mt-1"
+          >Dashboard</span
+        >
+      </a>
+      <a
+        class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 hover:text-zinc-300 transition-all"
+        id="nav-mob-profile"
+        href="/pages/profile.html"
+      >
+        <span class="material-symbols-outlined">person</span>
+        <span
+          class="font-label text-[10px] font-medium uppercase tracking-widest mt-1"
+          >Profile</span
+        >
+      </a>
+      <a
+        class="flex flex-col items-center justify-center text-zinc-500 opacity-40 active:scale-90 hover:text-zinc-300 transition-all"
+        id="nav-mob-support"
+        href="/pages/support.html"
+      >
+        <span class="material-symbols-outlined">help</span>
+        <span
+          class="font-label text-[10px] font-medium uppercase tracking-widest mt-1"
+          >Support</span
+        >
+      </a>
+    </nav>
 
-<!-- ═══════════════════════════════════════════════════ -->
-<!-- ALL BACKEND LOGIC PRESERVED FROM ORIGINAL -->
-<!-- ═══════════════════════════════════════════════════ -->
-<script>
-const TOKENS = [
-    { symbol: 'ETH',  label: 'Ethereum',  network: 'ERC20',    chain: 'ethereum',  icon: 'eth'  },
-    { symbol: 'USDT', label: 'Tether',    network: 'ERC20',    chain: 'ethereum',  icon: 'usdt' },
-    { symbol: 'USDC', label: 'USD Coin',  network: 'ERC20',    chain: 'ethereum',  icon: 'usdc' },
-    { symbol: 'BNB',  label: 'BNB',       network: 'BEP20',    chain: 'bsc',       icon: 'bnb'  },
-    { symbol: 'USDT', label: 'Tether',    network: 'BEP20',    chain: 'bsc',       icon: 'usdt' },
-    { symbol: 'TRX',  label: 'TRON',      network: 'TRC20',    chain: 'tron',      icon: 'trx'  },
-    { symbol: 'USDT', label: 'Tether',    network: 'TRC20',    chain: 'tron',      icon: 'usdt' },
-    { symbol: 'SOL',  label: 'Solana',    network: 'Solana',   chain: 'solana',    icon: 'sol'  },
-    { symbol: 'USDC', label: 'USD Coin',  network: 'Solana',   chain: 'solana',    icon: 'usdc' },
-    { symbol: 'BTC',  label: 'Bitcoin',   network: 'Bitcoin',  chain: 'bitcoin',   icon: 'btc'  },
-    { symbol: 'LTC',  label: 'Litecoin',  network: 'Litecoin', chain: 'litecoin',  icon: 'ltc'  },
-];
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const path = window.location.pathname.toLowerCase();
+        let activeId = null;
+        if (path.includes("index.html") || path === "/" || path.endsWith("/"))
+          activeId = "nav-mob-home";
+        else if (path.includes("exchange.html")) activeId = "nav-mob-exchange";
+        else if (path.includes("dashboard.html"))
+          activeId = "nav-mob-dashboard";
+        else if (path.includes("profile.html")) activeId = "nav-mob-profile";
+        else if (path.includes("support.html")) activeId = "nav-mob-support";
 
-let depositAddresses = {};
-let cachedRates = {};
-let selectedToken = null;
-let selectedRef = null;
-let quoteTimer = null;
+        if (activeId) {
+          const el = document.getElementById(activeId);
+          if (el) {
+            el.classList.remove(
+              "text-zinc-500",
+              "opacity-40",
+              "hover:text-zinc-300",
+            );
+            el.classList.add("text-zinc-100", "opacity-100");
+            const icon = el.querySelector(".material-symbols-outlined");
+            if (icon) icon.style.fontVariationSettings = "'FILL' 1";
+          }
+        }
+      });
+    </script>
 
-function renderTokenGrid() {
-    const grid = document.getElementById('token-grid');
-    grid.innerHTML = '';
-    TOKENS.forEach((tok, idx) => {
-        const card = document.createElement('div');
-        card.className = 'token-card';
-        card.id = `tok-${idx}`;
-        card.onclick = () => selectToken(idx);
-        const iconUrl = `https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/${tok.icon}.svg`;
-        card.innerHTML = `
+    <!-- ═══════════════════════════════════════════════════ -->
+    <!-- ALL BACKEND LOGIC PRESERVED FROM ORIGINAL -->
+    <!-- ═══════════════════════════════════════════════════ -->
+    <script>
+      const TOKENS = [
+        {
+          symbol: "ETH",
+          label: "Ethereum",
+          network: "ERC20",
+          chain: "ethereum",
+          icon: "eth",
+        },
+        {
+          symbol: "USDT",
+          label: "Tether",
+          network: "ERC20",
+          chain: "ethereum",
+          icon: "usdt",
+        },
+        {
+          symbol: "USDC",
+          label: "USD Coin",
+          network: "ERC20",
+          chain: "ethereum",
+          icon: "usdc",
+        },
+        {
+          symbol: "BNB",
+          label: "BNB",
+          network: "BEP20",
+          chain: "bsc",
+          icon: "bnb",
+        },
+        {
+          symbol: "USDT",
+          label: "Tether",
+          network: "BEP20",
+          chain: "bsc",
+          icon: "usdt",
+        },
+        {
+          symbol: "TRX",
+          label: "TRON",
+          network: "TRC20",
+          chain: "tron",
+          icon: "trx",
+        },
+        {
+          symbol: "USDT",
+          label: "Tether",
+          network: "TRC20",
+          chain: "tron",
+          icon: "usdt",
+        },
+        {
+          symbol: "SOL",
+          label: "Solana",
+          network: "Solana",
+          chain: "solana",
+          icon: "sol",
+        },
+        {
+          symbol: "USDC",
+          label: "USD Coin",
+          network: "Solana",
+          chain: "solana",
+          icon: "usdc",
+        },
+        {
+          symbol: "BTC",
+          label: "Bitcoin",
+          network: "Bitcoin",
+          chain: "bitcoin",
+          icon: "btc",
+        },
+        {
+          symbol: "LTC",
+          label: "Litecoin",
+          network: "Litecoin",
+          chain: "litecoin",
+          icon: "ltc",
+        },
+      ];
+
+      let depositAddresses = {};
+      let cachedRates = {};
+      let selectedToken = null;
+      let selectedRef = null;
+      let quoteTimer = null;
+
+      function renderTokenGrid() {
+        const grid = document.getElementById("token-grid");
+        grid.innerHTML = "";
+        TOKENS.forEach((tok, idx) => {
+          const card = document.createElement("div");
+          card.className = "token-card";
+          card.id = `tok-${idx}`;
+          card.onclick = () => selectToken(idx);
+          const iconUrl = `https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/${tok.icon}.svg`;
+          card.innerHTML = `
             <img src="${iconUrl}" onerror="this.src='https://raw.githubusercontent.com/spothq/cryptocurrency-icons/master/svg/color/generic.svg'" class="token-icon" alt="${tok.symbol}"/>
             <div class="token-name">${tok.symbol}</div>
             <div class="token-network">${tok.network}</div>
         `;
-        grid.appendChild(card);
-    });
-}
+          grid.appendChild(card);
+        });
+      }
 
-function selectToken(idx) {
-    document.querySelectorAll('.token-card').forEach(c => c.classList.remove('selected'));
-    const card = document.getElementById(`tok-${idx}`);
-    card.classList.add('selected');
-    selectedToken = TOKENS[idx];
-    document.getElementById('ticker-label').textContent = selectedToken.symbol;
-    loadDepositAddress(selectedToken.chain);
-    const amt = parseFloat(document.getElementById('amount-input').value);
-    if (amt > 0) scheduleQuote();
-}
+      function selectToken(idx) {
+        document
+          .querySelectorAll(".token-card")
+          .forEach((c) => c.classList.remove("selected"));
+        const card = document.getElementById(`tok-${idx}`);
+        card.classList.add("selected");
+        selectedToken = TOKENS[idx];
+        document.getElementById("ticker-label").textContent =
+          selectedToken.symbol;
+        document.getElementById("deposit-label-text").textContent =
+          `Send To This ${selectedToken.symbol} (${selectedToken.network}) Address`;
+        loadDepositAddress(selectedToken.chain);
+        const amt = parseFloat(document.getElementById("amount-input").value);
+        if (amt > 0) scheduleQuote();
+      }
 
-async function loadDepositAddress(chain) {
-    const addrEl = document.getElementById('deposit-address');
-    if (depositAddresses[chain]) { addrEl.textContent = depositAddresses[chain]; return; }
-    addrEl.textContent = 'Loading...';
-    const res = await apiFetch(`/transaction/deposit-address/${chain}`);
-    if (res.ok && res.data?.address) {
-        depositAddresses[chain] = res.data.address;
-        addrEl.textContent = res.data.address;
-    } else { addrEl.textContent = 'Address unavailable'; }
-}
+      async function loadDepositAddress(chain) {
+        const addrEl = document.getElementById("deposit-address");
+        if (depositAddresses[chain]) {
+          addrEl.textContent = depositAddresses[chain];
+          return;
+        }
+        addrEl.textContent = "Loading...";
+        const res = await apiFetch(`/transaction/deposit-address/${chain}`);
+        if (res.ok && res.data?.address) {
+          depositAddresses[chain] = res.data.address;
+          addrEl.textContent = res.data.address;
+        } else {
+          addrEl.textContent = "Address unavailable";
+        }
+      }
 
-function copyAddress() {
-    const addr = document.getElementById('deposit-address').textContent;
-    if (!addr || addr === 'Select a token above' || addr === 'Loading...') return;
-    navigator.clipboard.writeText(addr).then(() => {
-        const btn = document.getElementById('copy-addr-btn');
-        btn.innerHTML = '<span class="material-symbols-outlined text-[13px]">check</span> COPIED';
-        setTimeout(() => {
-            btn.innerHTML = '<span class="material-symbols-outlined text-[13px]">content_copy</span> COPY';
-        }, 2000);
-    });
-}
+      function copyAddress() {
+        const addr = document.getElementById("deposit-address").textContent;
+        if (!addr || addr === "Select a token above" || addr === "Loading...")
+          return;
+        navigator.clipboard.writeText(addr).then(() => {
+          const btn = document.getElementById("copy-addr-btn");
+          btn.innerHTML =
+            '<span class="material-symbols-outlined text-[13px]">check</span> COPIED';
+          setTimeout(() => {
+            btn.innerHTML =
+              '<span class="material-symbols-outlined text-[13px]">content_copy</span> COPY';
+          }, 2000);
+        });
+      }
 
-document.addEventListener('DOMContentLoaded', () => {
-    document.getElementById('amount-input').addEventListener('input', () => {
-        const val = parseFloat(document.getElementById('amount-input').value);
-        if (!val || val <= 0) { document.getElementById('quote-box').classList.add('hidden'); return; }
-        scheduleQuote();
-    });
-});
+      document.addEventListener("DOMContentLoaded", () => {
+        document
+          .getElementById("amount-input")
+          .addEventListener("input", () => {
+            const val = parseFloat(
+              document.getElementById("amount-input").value,
+            );
+            if (!val || val <= 0) {
+              document.getElementById("quote-box").classList.add("hidden");
+              return;
+            }
+            scheduleQuote();
+          });
+      });
 
-function scheduleQuote() {
-    clearTimeout(quoteTimer);
-    const qbox = document.getElementById('quote-box');
-    qbox.classList.remove('hidden');
-    document.getElementById('quote-loading').classList.remove('hidden');
-    document.getElementById('quote-content').classList.add('hidden');
-    quoteTimer = setTimeout(fetchQuote, 600);
-}
+      function scheduleQuote() {
+        clearTimeout(quoteTimer);
+        const qbox = document.getElementById("quote-box");
+        qbox.classList.remove("hidden");
+        document.getElementById("quote-loading").classList.remove("hidden");
+        document.getElementById("quote-content").classList.add("hidden");
+        quoteTimer = setTimeout(fetchQuote, 600);
+      }
 
-async function fetchQuote() {
-    if (!selectedToken) return;
-    const amount = parseFloat(document.getElementById('amount-input').value);
-    if (!amount || amount <= 0) return;
-    const res = await apiFetch(`/transaction/quote?chain=${selectedToken.chain}&asset=${selectedToken.symbol}&amount=${amount}`);
-    if (res.ok && res.data) {
-        const d = res.data;
-        document.getElementById('q-amount').textContent = `${d.amount_crypto} ${d.asset}`;
-        document.getElementById('q-gross').textContent = `₹${(d.gross_inr || 0).toLocaleString('en-IN', {maximumFractionDigits: 2})}`;
-        let feePct = d.fee_percentage ? ` (${d.fee_percentage}%)` : '';
-        document.getElementById('q-fee').textContent = `₹${(d.platform_fee_inr || 0).toLocaleString('en-IN', {maximumFractionDigits: 2})}${feePct}`;
-        document.getElementById('q-inr').textContent = `₹${(d.net_inr || d.amount_inr || 0).toLocaleString('en-IN', {maximumFractionDigits: 2})}`;
-        document.getElementById('quote-loading').classList.add('hidden');
-        document.getElementById('quote-content').classList.remove('hidden');
-        document.getElementById('quote-content').classList.add('flex');
-    } else {
-        const rate = cachedRates[selectedToken.symbol]?.rate_inr;
-        if (rate) {
+      async function fetchQuote() {
+        if (!selectedToken) return;
+        const amount = parseFloat(
+          document.getElementById("amount-input").value,
+        );
+        if (!amount || amount <= 0) return;
+        const res = await apiFetch(
+          `/transaction/quote?chain=${selectedToken.chain}&asset=${selectedToken.symbol}&amount=${amount}`,
+        );
+        if (res.ok && res.data) {
+          const d = res.data;
+          document.getElementById("q-amount").textContent =
+            `${d.amount_crypto} ${d.asset}`;
+          document.getElementById("q-gross").textContent =
+            `₹${(d.gross_inr || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
+          let feePct = d.fee_percentage ? ` (${d.fee_percentage}%)` : "";
+          document.getElementById("q-fee").textContent =
+            `₹${(d.platform_fee_inr || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}${feePct}`;
+          document.getElementById("q-inr").textContent =
+            `₹${(d.net_inr || d.amount_inr || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
+          document.getElementById("quote-loading").classList.add("hidden");
+          document.getElementById("quote-content").classList.remove("hidden");
+          document.getElementById("quote-content").classList.add("flex");
+        } else {
+          const rate = cachedRates[selectedToken.symbol]?.rate_inr;
+          if (rate) {
             const gross = amount * rate;
             const fee = gross * 0.015;
             const net = gross - fee;
-            document.getElementById('q-amount').textContent = `${amount} ${selectedToken.symbol}`;
-            document.getElementById('q-gross').textContent = `₹${gross.toLocaleString('en-IN', {maximumFractionDigits: 2})}`;
-            document.getElementById('q-fee').textContent = `₹${fee.toLocaleString('en-IN', {maximumFractionDigits: 2})} (1.5%)`;
-            document.getElementById('q-inr').textContent = `₹${net.toLocaleString('en-IN', {maximumFractionDigits: 2})}`;
-            document.getElementById('quote-loading').classList.add('hidden');
-            document.getElementById('quote-content').classList.remove('hidden');
-            document.getElementById('quote-content').classList.add('flex');
+            document.getElementById("q-amount").textContent =
+              `${amount} ${selectedToken.symbol}`;
+            document.getElementById("q-gross").textContent =
+              `₹${gross.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
+            document.getElementById("q-fee").textContent =
+              `₹${fee.toLocaleString("en-IN", { maximumFractionDigits: 2 })} (1.5%)`;
+            document.getElementById("q-inr").textContent =
+              `₹${net.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
+            document.getElementById("quote-loading").classList.add("hidden");
+            document.getElementById("quote-content").classList.remove("hidden");
+            document.getElementById("quote-content").classList.add("flex");
+          }
         }
-    }
-}
+      }
 
-async function handleSubmit() {
-    const errEl = document.getElementById('submit-error');
-    const txidEl = document.getElementById('txid-input');
-    const amtEl = document.getElementById('amount-input');
-    const upiEl = document.getElementById('upi-input');
-    const btn = document.getElementById('submit-btn');
-    errEl.classList.add('hidden');
-    document.getElementById('txid-error').classList.add('hidden');
+      async function handleSubmit() {
+        const errEl = document.getElementById("submit-error");
+        const txidEl = document.getElementById("txid-input");
+        const amtEl = document.getElementById("amount-input");
+        const upiEl = document.getElementById("upi-input");
+        const btn = document.getElementById("submit-btn");
+        errEl.classList.add("hidden");
+        document.getElementById("txid-error").classList.add("hidden");
 
-    if (!selectedToken) { showError('Please select a token first.'); return; }
-    const txid = txidEl.value.trim();
-    if (!txid) { showFieldError(document.getElementById('txid-error'), 'Transaction hash is required.'); txidEl.focus(); return; }
-    if (txid.length < 20) { showFieldError(document.getElementById('txid-error'), 'Invalid transaction hash — too short.'); return; }
-    const amount = parseFloat(amtEl.value);
-    if (!amount || amount <= 0) { showError('Enter a valid amount.'); amtEl.focus(); return; }
-    const upi = upiEl.value.trim();
-    if (!upi) { showError('Enter your UPI ID or bank account for payout.'); upiEl.focus(); return; }
+        if (!selectedToken) {
+          showError("Please select a token first.");
+          return;
+        }
+        const txid = txidEl.value.trim();
+        if (!txid) {
+          showFieldError(
+            document.getElementById("txid-error"),
+            "Transaction hash is required.",
+          );
+          txidEl.focus();
+          return;
+        }
+        if (txid.length < 20) {
+          showFieldError(
+            document.getElementById("txid-error"),
+            "Invalid transaction hash — too short.",
+          );
+          return;
+        }
+        const amount = parseFloat(amtEl.value);
+        if (!amount || amount <= 0) {
+          showError("Enter a valid amount.");
+          amtEl.focus();
+          return;
+        }
+        const upi = upiEl.value.trim();
+        if (!upi) {
+          showError("Enter your UPI ID or bank account for payout.");
+          upiEl.focus();
+          return;
+        }
 
-    btn.innerHTML = '<span class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span> PROCESSING...';
-    btn.disabled = true;
+        btn.innerHTML =
+          '<span class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span> PROCESSING...';
+        btn.disabled = true;
 
-    const res = await apiFetch('/transaction/submit', {
-        method: 'POST',
-        body: JSON.stringify({
-            chain: selectedToken.chain, asset: selectedToken.symbol,
-            txid: txid, amount: amount, payout_destination: upi,
-        })
-    });
+        const res = await apiFetch("/transaction/submit", {
+          method: "POST",
+          body: JSON.stringify({
+            chain: selectedToken.chain,
+            asset: selectedToken.symbol,
+            txid: txid,
+            amount: amount,
+            payout_destination: upi,
+          }),
+        });
 
-    if (res.ok && res.data) {
-        selectedRef = res.data.reference;
-        showSuccess(res.data, amount, upi, txid);
-    } else {
-        showError(res.error || 'Submission failed. Please try again.');
-        btn.innerHTML = 'VERIFY &amp; SUBMIT';
-        btn.disabled = false;
-    }
-}
+        if (res.ok && res.data) {
+          selectedRef = res.data.reference;
+          showSuccess(res.data, amount, upi, txid);
+        } else {
+          showError(res.error || "Submission failed. Please try again.");
+          btn.innerHTML = "VERIFY &amp; SUBMIT";
+          btn.disabled = false;
+        }
+      }
 
-function showSuccess(data, amount, upi, txid) {
-    document.getElementById('submit-form').classList.add('hidden');
-    const s = document.getElementById('success-state');
-    s.classList.remove('hidden'); s.classList.add('flex'); s.style.flexDirection = 'column';
-    document.getElementById('suc-ref').textContent = data.reference || '—';
-    document.getElementById('suc-txid').textContent = txid;
-    document.getElementById('suc-token').textContent = `${selectedToken.symbol} (${selectedToken.network})`;
-    document.getElementById('suc-amount').textContent = `${amount} ${selectedToken.symbol}`;
-    document.getElementById('suc-rate').textContent = data.exchange_rate ? `₹${Number(data.exchange_rate).toLocaleString('en-IN')}` : '—';
-    document.getElementById('suc-inr').textContent = data.amount_inr ? `₹${Number(data.amount_inr).toLocaleString('en-IN')}` : 'Being Calculated...';
-    document.getElementById('suc-upi').textContent = upi;
-}
+      function showSuccess(data, amount, upi, txid) {
+        document.getElementById("submit-form").classList.add("hidden");
+        const s = document.getElementById("success-state");
+        s.classList.remove("hidden");
+        s.classList.add("flex");
+        s.style.flexDirection = "column";
+        document.getElementById("suc-ref").textContent = data.reference || "—";
+        document.getElementById("suc-txid").textContent = txid;
+        document.getElementById("suc-token").textContent =
+          `${selectedToken.symbol} (${selectedToken.network})`;
+        document.getElementById("suc-amount").textContent =
+          `${amount} ${selectedToken.symbol}`;
+        document.getElementById("suc-rate").textContent = data.exchange_rate
+          ? `₹${Number(data.exchange_rate).toLocaleString("en-IN")}`
+          : "—";
+        document.getElementById("suc-inr").textContent = data.amount_inr
+          ? `₹${Number(data.amount_inr).toLocaleString("en-IN")}`
+          : "Being Calculated...";
+        document.getElementById("suc-upi").textContent = upi;
+      }
 
-function showError(msg) { const el = document.getElementById('submit-error'); el.textContent = '· ' + msg; el.classList.remove('hidden'); }
-function showFieldError(el, msg) { el.textContent = '· ' + msg; el.classList.remove('hidden'); }
-function goToStatus() { if (selectedRef) window.location.href = `tracker.html?ref=${selectedRef}`; }
+      function showError(msg) {
+        const el = document.getElementById("submit-error");
+        el.textContent = "· " + msg;
+        el.classList.remove("hidden");
+      }
+      function showFieldError(el, msg) {
+        el.textContent = "· " + msg;
+        el.classList.remove("hidden");
+      }
+      function goToStatus() {
+        if (selectedRef)
+          window.location.href = `tracker.html?ref=${selectedRef}`;
+      }
 
-function resetForm() {
-    document.getElementById('success-state').classList.add('hidden');
-    document.getElementById('submit-form').classList.remove('hidden');
-    document.getElementById('txid-input').value = '';
-    document.getElementById('amount-input').value = '';
-    document.getElementById('quote-box').classList.add('hidden');
-    document.getElementById('submit-btn').textContent = 'VERIFY & SUBMIT';
-    document.getElementById('submit-btn').disabled = false;
-    selectedToken = null; selectedRef = null;
-    document.querySelectorAll('.token-card').forEach(c => c.classList.remove('selected'));
-    document.getElementById('deposit-address').textContent = 'Select a token above';
-    document.getElementById('ticker-label').textContent = '---';
-}
+      function resetForm() {
+        document.getElementById("success-state").classList.add("hidden");
+        document.getElementById("submit-form").classList.remove("hidden");
+        document.getElementById("txid-input").value = "";
+        document.getElementById("amount-input").value = "";
+        document.getElementById("quote-box").classList.add("hidden");
+        document.getElementById("submit-btn").textContent = "VERIFY & SUBMIT";
+        document.getElementById("submit-btn").disabled = false;
+        selectedToken = null;
+        selectedRef = null;
+        document
+          .querySelectorAll(".token-card")
+          .forEach((c) => c.classList.remove("selected"));
+        document.getElementById("deposit-address").textContent =
+          "Select a token above";
+        document.getElementById("ticker-label").textContent = "---";
+      }
 
-async function init() {
-    renderTokenGrid();
-    const statsRes = await apiFetch('/user/stats');
-    if (statsRes.ok && statsRes.data?.default_upi) {
-        document.getElementById('upi-input').value = statsRes.data.default_upi;
-    }
-    const ratesRes = await apiFetch('/assets/rates');
-    if (ratesRes.ok && ratesRes.data?.rates) {
-        cachedRates = ratesRes.data.rates;
-        const usdt = cachedRates['USDT']?.rate_inr;
-        const btc = cachedRates['BTC']?.rate_inr;
-        if (usdt) {
-            document.getElementById('rate-ticker').textContent =
-                `1 USDT ≈ ₹${usdt.toLocaleString('en-IN')}` +
-                (btc ? `  ·  1 BTC ≈ ₹${btc.toLocaleString('en-IN')}` : '');
-        } else { document.getElementById('rate-ticker').textContent = 'Live rates loaded'; }
-    }
-    selectToken(6);
-    const params = new URLSearchParams(window.location.search);
-    const prefillTxid = params.get('txid');
-    if (prefillTxid) document.getElementById('txid-input').value = prefillTxid;
-    const prefillChain = params.get('chain');
-    if (prefillChain) {
-        const matchIdx = TOKENS.findIndex(t => t.chain === prefillChain.toLowerCase());
-        if (matchIdx !== -1) selectToken(matchIdx);
-    }
-}
+      async function init() {
+        renderTokenGrid();
+        const statsRes = await apiFetch("/user/stats");
+        if (statsRes.ok && statsRes.data?.default_upi) {
+          document.getElementById("upi-input").value =
+            statsRes.data.default_upi;
+        }
+        const ratesRes = await apiFetch("/assets/rates");
+        if (ratesRes.ok && ratesRes.data?.rates) {
+          cachedRates = ratesRes.data.rates;
+          const usdt = cachedRates["USDT"]?.rate_inr;
+          const btc = cachedRates["BTC"]?.rate_inr;
+          if (usdt) {
+            document.getElementById("rate-ticker").textContent =
+              `1 USDT ≈ ₹${usdt.toLocaleString("en-IN")}` +
+              (btc ? `  ·  1 BTC ≈ ₹${btc.toLocaleString("en-IN")}` : "");
+          } else {
+            document.getElementById("rate-ticker").textContent =
+              "Live rates loaded";
+          }
+        }
+        selectToken(6);
+        const params = new URLSearchParams(window.location.search);
+        const prefillTxid = params.get("txid");
+        if (prefillTxid)
+          document.getElementById("txid-input").value = prefillTxid;
+        const prefillChain = params.get("chain");
+        if (prefillChain) {
+          const matchIdx = TOKENS.findIndex(
+            (t) => t.chain === prefillChain.toLowerCase(),
+          );
+          if (matchIdx !== -1) selectToken(matchIdx);
+        }
+      }
 
-window.addEventListener('DOMContentLoaded', init);
-</script>
-
-</body>
+      window.addEventListener("DOMContentLoaded", init);
+    </script>
+  </body>
 </html>

@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from aiogram.exceptions import TelegramRetryAfter, TelegramAPIError
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from app.core.config import settings
 from app.core.logger import get_logger
@@ -46,6 +47,69 @@ async def send_tx_notification(data: dict[str, Any]) -> bool:
         return False
 
     message = _format_tx_message(data)
+    
+    txid = data.get("txid")
+    callback_id = txid
+    if txid:
+        try:
+            from app.core.database import get_session
+            from sqlalchemy import select
+            from app.models.transaction import Transaction
+            async with get_session() as session:
+                stmt = select(Transaction.id).where(Transaction.txid == txid).limit(1)
+                result = await session.execute(stmt)
+                fetched_id = result.scalar_one_or_none()
+                if fetched_id:
+                    callback_id = fetched_id
+        except Exception as e:
+            logger.warning("Could not fetch db_id for tx %s: %s", txid[:16], e)
+
+        # callback_data max length is 64 bytes. UUID is 36 chars.
+        markup = InlineKeyboardMarkup(inline_keyboard=[
+            [
+                InlineKeyboardButton(text="✅ Mark Paid", callback_data=f"paid:{callback_id}"),
+                InlineKeyboardButton(text="❌ Fail", callback_data=f"fail:{callback_id}")
+            ]
+        ])
+    else:
+        markup = None
+
+    return await _send_with_retry(chat_id=group_id, text=message, reply_markup=markup)
+
+
+async def send_support_ticket(data: dict[str, Any]) -> bool:
+    """
+    Send a formatted support ticket notification to the Telegram report group.
+    Falls back to TELEGRAM_GROUP_ID if TELEGRAM_REPORT_GROUP_ID is not configured.
+    """
+    group_id = settings.TELEGRAM_REPORT_GROUP_ID or settings.TELEGRAM_GROUP_ID
+    if not group_id:
+        logger.error("No TELEGRAM_REPORT_GROUP_ID configured — ticket skipped")
+        return False
+
+    ticket_id = data.get("id", "unknown")
+    subject = data.get("subject", "No Subject")
+    message_text = data.get("message", "No Message")
+    contact = data.get("contact", "Not provided")
+    reference = data.get("reference", "Not provided")
+    user_id = data.get("user_id", "Unknown")
+
+    # Format message
+    message = (
+        "🎫 <b>New Support Ticket</b>\n"
+        "\n"
+        f"<b>Subject:</b> {subject}\n"
+        f"<b>Reference:</b> <code>{reference}</code>\n"
+        f"<b>Contact:</b> {contact}\n"
+        f"<b>User ID:</b> <code>{user_id}</code>\n"
+        "\n"
+        "<b>Message:</b>\n"
+        f"{message_text}\n"
+        "\n"
+        f"<i>Ticket ID: {ticket_id}</i>\n"
+        "⚡ <b>Action Required:</b> @xchanzer"
+    )
+
     return await _send_with_retry(chat_id=group_id, text=message)
 
 
@@ -80,33 +144,34 @@ def _format_tx_message(data: dict[str, Any]) -> str:
     else:
         ts_str = "N/A"
 
-    # Build payout section if UPI is available
-    payout_section = ""
-    if upi_id:
-        payout_section = (
-            "\n"
-            "💳 <b>PAYOUT INFO</b>\n"
-            f"<b>User:</b>  {username or 'N/A'}\n"
-            f"<b>UPI:</b>  <code>{upi_id}</code>\n"
-            f"<b>Amount:</b>  ₹{inr:,.2f}\n"
-        )
+    # We no longer need a separate payout_section as per new design
 
     return (
-        "🚀 <b>New Transaction Verified</b>\n"
+        "🚀 <b>New Transaction Confirmed</b>\n"
         "\n"
-        f"<b>TXID:</b>  <code>{txid}</code>\n"
-        f"<b>Chain:</b>  {chain}\n"
-        f"<b>Token:</b>  {token}\n"
-        f"<b>Amount:</b>  {amount:,.6g}\n"
+        f"👤 <b>User:</b> {username or 'N/A'}\n"
+        f"💳 <b>UPI:</b> <code>{upi_id or 'Not Set'}</code>\n"
         "\n"
-        f"<b>USD:</b>  ${usd:,.2f}\n"
-        f"<b>INR:</b>  ₹{inr:,.2f}\n"
+        f"<b>Chain:</b> {chain}\n"
+        f"<b>Token:</b> {token}\n"
         "\n"
-        f"<b>Sender:</b>  <code>{sender_short}</code>\n"
-        f"<b>Receiver:</b>  <code>{receiver_short}</code>\n"
+        f"<b>Amount:</b> {amount:,.6g}\n"
+        f"<b>USD Value:</b> ${usd:,.2f}\n"
+        f"<b>INR Value:</b> ₹{inr:,.2f}\n"
         "\n"
-        f"<b>Time:</b>  {ts_str}"
-        f"{payout_section}"
+        "<b>TXID:</b>\n"
+        f"<code>{txid}</code>\n"
+        "\n"
+        "<b>Sender:</b>\n"
+        f"<code>{sender}</code>\n"
+        "\n"
+        "<b>Receiver:</b>\n"
+        f"<code>{receiver}</code>\n"
+        "\n"
+        "<b>Time:</b>\n"
+        f"{ts_str}\n"
+        "\n"
+        "⚡ <b>Action Required:</b> @xchanzer"
     )
 
 
@@ -123,6 +188,7 @@ async def _send_with_retry(
     chat_id: str,
     text: str,
     *,
+    reply_markup: InlineKeyboardMarkup | None = None,
     max_retries: int = MAX_RETRIES,
     base_backoff: float = BASE_BACKOFF_SECONDS,
 ) -> bool:
@@ -139,6 +205,7 @@ async def _send_with_retry(
                 chat_id=chat_id,
                 text=text,
                 disable_web_page_preview=True,
+                reply_markup=reply_markup,
             )
             logger.info(
                 "Notification delivered to %s (attempt %d)", chat_id, attempt + 1
