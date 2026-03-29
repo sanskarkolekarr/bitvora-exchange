@@ -346,13 +346,15 @@
         align-items: center;
         gap: 6px;
         padding: 6px 14px;
-        border-radius: 2px;
-        background: rgba(255, 255, 255, 0.08);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        color: #e5e5e5;
+        border: 1px solid rgba(16, 185, 129, 0.4);
+        border-radius: 4px;
+        background: rgba(16, 185, 129, 0.15);
+        color: #10B981;
         font-family: "DM Mono", monospace;
         font-size: 10px;
+        font-weight: 600;
         letter-spacing: 0.15em;
+        box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
       }
     </style>
     <link rel="icon" type="image/jpeg" href="/Logo/Bitvora.jpg" />
@@ -1076,10 +1078,10 @@
           `${selectedToken.symbol} (${selectedToken.network})`;
         document.getElementById("suc-amount").textContent =
           `${amount} ${selectedToken.symbol}`;
-        let usdtRate = cachedRates["USDT"]?.rate_inr;
+        let tokenRate = cachedRates[selectedToken.symbol]?.rate_inr;
         document.getElementById("suc-rate").textContent = data.exchange_rate
           ? `₹${Number(data.exchange_rate).toLocaleString("en-IN")}`
-          : (usdtRate ? `₹${Number(usdtRate).toLocaleString("en-IN")}` : "—");
+          : (tokenRate ? `₹${Number(tokenRate).toLocaleString("en-IN")}` : "—");
           
         let estInrStr = "Being Calculated...";
         if (data.amount_inr) {
