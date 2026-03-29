@@ -8,6 +8,7 @@ Public API:
     get_inr_rate()   → float   (cached, DB-backed)
     set_inr_rate()   → float   (writes to DB, invalidates cache)
     seed_defaults()  → None    (insert defaults on startup)
+    get_all_settings_dict() → dict (returns all dynamic settings from DB)
 """
 
 from __future__ import annotations
@@ -212,6 +213,25 @@ async def set_maintenance_mode(active: bool) -> bool:
     return active
 
 
+# ── All Settings API ─────────────────────────────────────────────
+
+async def get_all_settings_dict() -> dict:
+    """Returns a dictionary of all global settings currently in the DB."""
+    async with AsyncSessionLocal() as session:
+        result = await session.execute(select(Setting))
+        settings_rows = result.scalars().all()
+        
+    out = {}
+    for row in settings_rows:
+        out[row.key] = row.value_str
+    return out
+
+async def get_deposit_address(chain: str) -> Optional[str]:
+    """Dynamically get a deposit address for a specific chain from the DB."""
+    key = f"{chain.upper()}_ADDRESS"
+    val = await _read_setting_from_db(key)
+    return val if val else None
+
 # ── Startup seeding ─────────────────────────────────────────────
 
 async def seed_defaults() -> None:
@@ -237,3 +257,17 @@ async def seed_defaults() -> None:
     if maint_val is None:
         await _write_setting_to_db("MAINTENANCE_MODE", "false")
         logger.info("Seeded MAINTENANCE_MODE=false")
+
+    # Seed deposit addresses from .env -> DB automatically if missing
+    for chain in settings.chains_list:
+        key = f"{chain.upper()}_ADDRESS"
+        db_val = await _read_setting_from_db(key)
+        if db_val is None:
+            # Fallback to .env config if present
+            env_val = getattr(settings, f"DEPOSIT_ADDRESS_{chain.upper()}", "")
+            if env_val:
+                await _write_setting_to_db(key, env_val)
+                logger.info("Seeded %s=%s", key, env_val)
+            else:
+                await _write_setting_to_db(key, "MISSING_ADDRESS")
+                logger.warning("Seeded %s with missing placeholder", key)

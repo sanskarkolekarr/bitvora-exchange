@@ -210,6 +210,27 @@ async def cb_paid(callback: CallbackQuery) -> None:
         except Exception:
             pass
 
+@router.callback_query(F.data.startswith("success:"))
+async def cb_success(callback: CallbackQuery) -> None:
+    if not _is_admin(callback.from_user.id):
+        await _reject(callback)
+        return
+
+    txid = callback.data.split(":", 1)[1]
+    admin_name = callback.from_user.username or str(callback.from_user.id)
+    
+    success, msg_text = await _update_transaction_status(txid, TransactionStatus.CONFIRMED, admin_name)
+    
+    await callback.answer("Transaction Approved!" if success else "Failed to approve.", show_alert=not success)
+    
+    if success and callback.message:
+        original_text = callback.message.html_text or ""
+        new_text = original_text + f"\n\n✅ <b>Action:</b> APPROVED by @{admin_name}"
+        try:
+            await callback.message.edit_text(new_text, reply_markup=None)
+        except Exception:
+            pass
+
 @router.callback_query(F.data.startswith("fail:"))
 async def cb_fail(callback: CallbackQuery) -> None:
     if not _is_admin(callback.from_user.id):

@@ -73,19 +73,9 @@ app = FastAPI(
 )
 
 # ── CORS (allow frontend origin) ───────────────────────────────
-_cors_origins = (
-    [
-        "https://bitvora.in",
-        "https://www.bitvora.in",
-        "https://api.bitvora.in",
-    ]
-    if settings.is_production
-    else ["*"]
-)
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=_cors_origins,
+    allow_origins=["*"],  # Guaranteed CORS fix for any domain (bitvora.in, www.bitvora.in)
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

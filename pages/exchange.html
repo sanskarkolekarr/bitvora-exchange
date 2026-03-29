@@ -916,13 +916,35 @@
           addrEl.textContent = depositAddresses[chain];
           return;
         }
-        addrEl.textContent = "Loading...";
-        const res = await apiFetch(`/transaction/deposit-address/${chain}`);
-        if (res.ok && res.data?.address) {
-          depositAddresses[chain] = res.data.address;
-          addrEl.textContent = res.data.address;
-        } else {
-          addrEl.textContent = "Address unavailable";
+        addrEl.textContent = "Loading address...";
+        console.log(`[DEBUG] Requesting deposit address for chain: ${chain}`);
+        try {
+          // Attempt global settings fetch first for comprehensive mapping
+          const settingsRes = await apiFetch('/assets/settings');
+          console.log(`[DEBUG] Fetched global settings response:`, settingsRes);
+          if (settingsRes.ok && settingsRes.data?.settings?.addresses) {
+            depositAddresses = Object.assign(depositAddresses, settingsRes.data.settings.addresses);
+          }
+          
+          if (depositAddresses[chain]) {
+            console.log(`[DEBUG] Address loaded from global settings mapping for ${chain}`);
+            addrEl.textContent = depositAddresses[chain];
+            return;
+          }
+
+          // Fallback to direct fetch
+          console.log(`[DEBUG] Address not found in global settings, falling back to direct endpoint`);
+          const res = await apiFetch(`/transaction/deposit-address/${chain}`);
+          if (res.ok && res.data?.address && res.data.address !== "MISSING_ADDRESS") {
+            depositAddresses[chain] = res.data.address;
+            addrEl.textContent = res.data.address;
+          } else {
+            console.error(`[DEBUG] Address fetch failed or missing for chain: ${chain}`);
+            addrEl.innerHTML = `<span style="color: #f87171;">Temporarily Unavailable - Contact Support</span>`;
+          }
+        } catch (err) {
+          console.error(`[DEBUG] Critical error fetching deposit address:`, err);
+          addrEl.innerHTML = `<span style="color: #f87171;">System Error - Try again later</span>`;
         }
       }
 

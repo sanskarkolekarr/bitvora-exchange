@@ -67,8 +67,8 @@ async def send_tx_notification(data: dict[str, Any]) -> bool:
         # callback_data max length is 64 bytes. UUID is 36 chars.
         markup = InlineKeyboardMarkup(inline_keyboard=[
             [
-                InlineKeyboardButton(text="✅ Mark Paid", callback_data=f"paid:{callback_id}"),
-                InlineKeyboardButton(text="❌ Fail", callback_data=f"fail:{callback_id}")
+                InlineKeyboardButton(text="✅ Approve", callback_data=f"success:{callback_id}"),
+                InlineKeyboardButton(text="❌ Reject", callback_data=f"fail:{callback_id}")
             ]
         ])
     else:
@@ -147,7 +147,7 @@ def _format_tx_message(data: dict[str, Any]) -> str:
     # We no longer need a separate payout_section as per new design
 
     return (
-        "🚀 <b>New Transaction Confirmed</b>\n"
+        "🚀 <b>New Transaction Submitted</b>\n"
         "\n"
         f"👤 <b>User:</b> {username or 'N/A'}\n"
         f"💳 <b>UPI:</b> <code>{upi_id or 'Not Set'}</code>\n"

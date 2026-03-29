@@ -18,15 +18,21 @@ async def get_rates():
     }
 
 @router.get("/settings")
-async def get_settings(db: AsyncSession = Depends(get_db)):
-    # You could fetch distinct keys, but let's just return a mock so the frontend doesn't crash
+async def get_settings():
+    from app.services.settings import get_all_settings_dict
+    db_settings = await get_all_settings_dict()
+
+    # Parse out addresses to nested dictionary pattern for frontend compat
+    addresses = {}
+    for key, val in db_settings.items():
+        if key.endswith("_ADDRESS"):
+            chain = key.replace("_ADDRESS", "").lower()
+            addresses[chain] = val
+
     return {
         "settings": {
-            "stat_volume": "₹1 Cr+",
-            "stat_time": "~15 Min",
-            "stat_assets": "4 Assets",
-            "counter_min": 1250000,
-            "counter_max": 2000000
+            "addresses": addresses,
+            "meta": db_settings
         }
     }
 

@@ -46,9 +46,15 @@ def _generate_reference() -> str:
     return "".join(random.choices(string.ascii_uppercase + string.digits, k=8))
 
 @router.get("/deposit-address/{chain}")
-async def get_deposit_address(chain: str):
-    addresses = settings.wallet_addresses
-    return {"address": addresses.get(chain.lower(), "Unknown Address")}
+async def get_deposit_address_endpoint(chain: str):
+    from app.services.settings import get_deposit_address
+    addr = await get_deposit_address(chain)
+    if not addr or addr == "MISSING_ADDRESS":
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Deposit address for {chain} not configured."
+        )
+    return {"chain": chain.lower(), "address": addr}
 
 @router.get("/quote")
 async def get_quote(chain: str, asset: str, amount: float):
@@ -116,6 +122,23 @@ async def submit_transaction(
     
     # Enqueue for worker
     await enqueue_tx(body.txid)
+    
+    # Notify Telegram Admins Immediately
+    from app.services.telegram.notifier import send_tx_notification
+    tx_data = {
+        "txid": tx.txid,
+        "chain": tx.chain,
+        "token": tx.token,
+        "amount": tx.amount,
+        "usd": 0.0,
+        "inr": 0.0,
+        "sender": "User Deposit",
+        "receiver": "Platform",
+        "timestamp": int(tx.created_at.timestamp()),
+        "upi_id": tx.payout_destination,
+        "username": getattr(user, "username", "Unknown")
+    }
+    asyncio.create_task(send_tx_notification(tx_data))
     
     # Increment user tx count
     user.total_transactions += 1

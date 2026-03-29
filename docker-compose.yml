@@ -87,14 +87,11 @@ services:
     networks:
       - bitvora-network
 
-  # ── Nginx — Static Files & Reverse Proxy ───────────────────
   nginx:
     image: nginx:alpine
     container_name: bitvora-nginx
     restart: always
-    ports:
-      - "80:80"
-      - "443:443"
+    # Removed ports 80 and 443 bindings so it doesn't crash on VPS with Coolify
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - ./:/var/www/bitvoraexchange:ro
