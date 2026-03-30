@@ -22,11 +22,16 @@ REFRESH_TOKEN_EXPIRE_MINUTES = 60 * 24 * 30 # 30 days
 def verify_password(plain_password: str, hashed_password: str) -> bool:
     try:
         return bcrypt.checkpw(plain_password.encode('utf-8'), hashed_password.encode('utf-8'))
-    except Exception:
+    except Exception as e:
+        print(f"[SECURITY] Bcrypt parsing error: {str(e)}")
         return False
 
 def get_password_hash(password: str) -> str:
-    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    try:
+        return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    except Exception as e:
+        print(f"[SECURITY] Bcrypt hashing error: {str(e)}")
+        raise
 
 def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
     to_encode = data.copy()

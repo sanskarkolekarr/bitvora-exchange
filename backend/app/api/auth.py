@@ -49,7 +49,15 @@ async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(User).filter(User.username == safe_user))
     user = result.scalar_one_or_none()
     
-    if not user or not verify_password(req.password, user.hashed_password):
+    if not user:
+        print(f"[AUTH LOGIN] Denied: User '{safe_user}' does not exist.")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+        )
+        
+    if not verify_password(req.password, user.hashed_password):
+        print(f"[AUTH LOGIN] Denied: Invalid password provided for '{safe_user}'.")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password",
