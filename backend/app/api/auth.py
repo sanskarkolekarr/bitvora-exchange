@@ -45,7 +45,8 @@ def _validate_upi(upi: str) -> str:
 
 @router.post("/login")
 async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
-    result = await db.execute(select(User).filter(User.username == req.username))
+    safe_user = req.username.strip().lower()
+    result = await db.execute(select(User).filter(User.username == safe_user))
     user = result.scalar_one_or_none()
     
     if not user or not verify_password(req.password, user.hashed_password):
@@ -70,8 +71,10 @@ async def login(req: LoginRequest, db: AsyncSession = Depends(get_db)):
 
 @router.post("/register")
 async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db)):
+    safe_user = req.username.strip().lower()
+
     # Check if username exists
-    res = await db.execute(select(User).filter(User.username == req.username))
+    res = await db.execute(select(User).filter(User.username == safe_user))
     if res.scalar_one_or_none():
         raise HTTPException(status_code=409, detail="Username already taken")
 
@@ -86,7 +89,7 @@ async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db)):
 
     hashed = get_password_hash(req.password)
     new_user = User(
-        username=req.username,
+        username=safe_user,
         hashed_password=hashed,
         default_upi=validated_upi,
     )
