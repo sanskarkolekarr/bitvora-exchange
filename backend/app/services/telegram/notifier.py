@@ -48,27 +48,12 @@ async def send_tx_notification(data: dict[str, Any]) -> bool:
 
     message = _format_tx_message(data)
     
-    txid = data.get("txid")
-    callback_id = txid
-    if txid:
-        try:
-            from app.core.database import get_session
-            from sqlalchemy import select
-            from app.models.transaction import Transaction
-            async with get_session() as session:
-                stmt = select(Transaction.id).where(Transaction.txid == txid).limit(1)
-                result = await session.execute(stmt)
-                fetched_id = result.scalar_one_or_none()
-                if fetched_id:
-                    callback_id = fetched_id
-        except Exception as e:
-            logger.warning("Could not fetch db_id for tx %s: %s", txid[:16], e)
-
-        # callback_data max length is 64 bytes. UUID is 36 chars.
+    db_id = data.get("id")
+    if db_id:
         markup = InlineKeyboardMarkup(inline_keyboard=[
             [
-                InlineKeyboardButton(text="✅ Approve", callback_data=f"success:{callback_id}"),
-                InlineKeyboardButton(text="❌ Reject", callback_data=f"fail:{callback_id}")
+                InlineKeyboardButton(text="✅ Mark Paid", callback_data=f"paid:{db_id}"),
+                InlineKeyboardButton(text="❌ Fail", callback_data=f"fail:{db_id}")
             ]
         ])
     else:

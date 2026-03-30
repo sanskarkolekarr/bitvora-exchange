@@ -255,6 +255,11 @@ function renderForm() {
         document.getElementById('go-signin').addEventListener('click', () => switchMode('signin'));
         document.getElementById('ca-btn').addEventListener('click', handleRegister);
     }
+    document.querySelectorAll('.auth-input').forEach(input => {
+        input.addEventListener('focus', () => {
+            setTimeout(() => input.scrollIntoView({ behavior: 'smooth', block: 'center' }), 300);
+        });
+    });
 }
 
 async function handleSignIn() {
@@ -265,6 +270,8 @@ async function handleSignIn() {
     err.classList.remove('visible');
     if (!user || !pass) { err.textContent = '· Please fill in all fields.'; err.classList.add('visible'); return; }
     btn.textContent = ''; btn.classList.add('loading'); btn.disabled = true;
+    
+    console.log('[Auth] Attempting sign-in...', { username: user });
     const res = await apiFetch('/auth/login', { method: 'POST', body: JSON.stringify({ username: user, password: pass }) });
     btn.classList.remove('loading'); btn.disabled = false;
     if (res.ok) {
@@ -297,6 +304,8 @@ async function handleRegister() {
     if (pass !== confirm) { err.textContent = '· Passwords do not match.'; err.classList.add('visible'); return; }
     if (upi.length < 4 || !upi.includes('@')) { err.textContent = '· Please enter a valid UPI ID (e.g. name@upi).'; err.classList.add('visible'); return; }
     btn.textContent = ''; btn.classList.add('loading'); btn.disabled = true;
+    
+    console.log('[Auth] Attempting registration...', { username: user });
     const regRes = await apiFetch('/auth/register', { method: 'POST', body: JSON.stringify({ username: user, password: pass, default_upi: upi }) });
     if (!regRes.ok) {
         btn.classList.remove('loading'); btn.disabled = false; btn.textContent = 'Create Account';
