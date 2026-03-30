@@ -1079,8 +1079,9 @@
         });
 
         if (res.ok && res.data) {
-          selectedRef = res.data.reference;
-          showSuccess(res.data, amount, upi, txid);
+          const responseData = res.data.data || res.data;
+          selectedRef = responseData.reference;
+          showSuccess(responseData, amount, upi, txid);
         } else {
           showError(res.error || "Submission failed. Please try again.");
           btn.innerHTML = "VERIFY &amp; SUBMIT";

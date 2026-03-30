@@ -126,6 +126,7 @@ async def submit_transaction(
     # Notify Telegram Admins Immediately
     from app.services.telegram.notifier import send_tx_notification
     tx_data = {
+        "id": tx.id,
         "txid": tx.txid,
         "chain": tx.chain,
         "token": tx.token,

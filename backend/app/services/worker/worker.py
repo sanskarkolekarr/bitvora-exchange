@@ -50,17 +50,17 @@ _scheduler_task: Optional[asyncio.Task] = None
 # ── Fetch chain from DB ──────────────────────────────────────
 
 
-async def _get_tx_info(txid: str) -> tuple[Optional[str], Optional[str], bool]:
-    """Fetch the chain, user_id, and telegram_sent for a TXID from the database."""
+async def _get_tx_info(txid: str) -> tuple[Optional[str], Optional[str], bool, Optional[str]]:
+    """Fetch the chain, user_id, telegram_sent, and id for a TXID from the database."""
     from app.models.transaction import Transaction
 
     async with get_session() as session:
-        stmt = select(Transaction.chain, Transaction.user_id, Transaction.telegram_sent).where(Transaction.txid == txid).limit(1)
+        stmt = select(Transaction.chain, Transaction.user_id, Transaction.telegram_sent, Transaction.id).where(Transaction.txid == txid).limit(1)
         result = await session.execute(stmt)
         row = result.one_or_none()
         if row:
-            return row[0], row[1], row[2]
-        return None, None, False
+            return row[0], row[1], row[2], row[3]
+        return None, None, False, None
 
 
 # ── Verifier bridge ───────────────────────────────────────────
@@ -190,7 +190,7 @@ async def _set_telegram_sent(txid: str) -> None:
 # ── Telegram notification ────────────────────────────────────
 
 
-async def _notify_telegram(txid: str, chain: str, data: dict, user_id: str | None = None) -> None:
+async def _notify_telegram(txid: str, chain: str, data: dict, user_id: str | None = None, db_id: str | None = None) -> None:
     """Send transaction notification to Telegram group, including UPI payout info."""
     try:
         upi_id = ""
@@ -212,6 +212,7 @@ async def _notify_telegram(txid: str, chain: str, data: dict, user_id: str | Non
 
         from app.services.telegram.notifier import send_tx_notification
         await send_tx_notification({
+            "id": db_id,
             "txid": txid,
             "chain": chain,
             "token": data.get("token", ""),
@@ -251,7 +252,7 @@ async def _process_single_tx(txid: str) -> None:
         await update_tx_status_processing(txid)
 
         # ── 3. Get chain + user_id from DB ──────────────────────
-        chain, user_id, telegram_sent = await _get_tx_info(txid)
+        chain, user_id, telegram_sent, db_id = await _get_tx_info(txid)
         if not chain:
             logger.error("TX %s has no chain in DB — marking failed", txid[:16])
             await _mark_tx_invalid(txid)
@@ -282,7 +283,7 @@ async def _process_single_tx(txid: str) -> None:
             await mark_completed(txid)
             
             if not telegram_sent:
-                await _notify_telegram(txid, chain, data, user_id=user_id)
+                await _notify_telegram(txid, chain, data, user_id=user_id, db_id=db_id)
                 await _set_telegram_sent(txid)
             else:
                 logger.info("TX %s telegram already sent — skipping", txid[:16])
