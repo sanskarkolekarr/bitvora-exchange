@@ -189,6 +189,33 @@ async def _update_transaction_status(
 
 # ── Inline Button Callbacks ──────────────────────────────────────
 
+async def _edit_message_remove_buttons(message, suffix: str) -> None:
+    """
+    Remove inline keyboard from the message and append a status note.
+    Works for both photo messages (edit_caption) and text messages (edit_text).
+    """
+    from aiogram.enums import ParseMode
+    try:
+        if message.photo or message.document:
+            # Photo/QR notification — edit the caption
+            original = message.caption or ""
+            await message.edit_caption(
+                caption=original + suffix,
+                reply_markup=None,
+                parse_mode=ParseMode.HTML,
+            )
+        else:
+            # Plain text notification
+            original = message.html_text or message.text or ""
+            await message.edit_text(
+                original + suffix,
+                reply_markup=None,
+                parse_mode=ParseMode.HTML,
+            )
+    except Exception as exc:
+        logger.warning("[callback] Could not edit message to remove buttons: %s", exc)
+
+
 @router.callback_query(F.data.startswith("paid:"))
 async def cb_paid(callback: CallbackQuery) -> None:
     if not _is_admin(callback.from_user.id):
@@ -197,18 +224,16 @@ async def cb_paid(callback: CallbackQuery) -> None:
 
     txid = callback.data.split(":", 1)[1]
     admin_name = callback.from_user.username or str(callback.from_user.id)
-    
+
     success, msg_text = await _update_transaction_status(txid, TransactionStatus.PAID, admin_name)
-    
-    await callback.answer("Marked as PAID!" if success else "Failed to mark paid.", show_alert=not success)
-    
+
+    await callback.answer("Marked as PAID! ✅" if success else "Failed to mark paid.", show_alert=not success)
+
     if success and callback.message:
-        original_text = callback.message.html_text or ""
-        new_text = original_text + f"\n\n✅ <b>Action:</b> Marked PAID by @{admin_name}"
-        try:
-            await callback.message.edit_text(new_text, reply_markup=None)
-        except Exception:
-            pass
+        await _edit_message_remove_buttons(
+            callback.message,
+            f"\n\n✅ <b>PAID</b> by @{admin_name}"
+        )
 
 @router.callback_query(F.data.startswith("success:"))
 async def cb_success(callback: CallbackQuery) -> None:
@@ -218,18 +243,16 @@ async def cb_success(callback: CallbackQuery) -> None:
 
     txid = callback.data.split(":", 1)[1]
     admin_name = callback.from_user.username or str(callback.from_user.id)
-    
+
     success, msg_text = await _update_transaction_status(txid, TransactionStatus.CONFIRMED, admin_name)
-    
-    await callback.answer("Transaction Approved!" if success else "Failed to approve.", show_alert=not success)
-    
+
+    await callback.answer("Transaction Approved! ✅" if success else "Failed to approve.", show_alert=not success)
+
     if success and callback.message:
-        original_text = callback.message.html_text or ""
-        new_text = original_text + f"\n\n✅ <b>Action:</b> APPROVED by @{admin_name}"
-        try:
-            await callback.message.edit_text(new_text, reply_markup=None)
-        except Exception:
-            pass
+        await _edit_message_remove_buttons(
+            callback.message,
+            f"\n\n✅ <b>APPROVED</b> by @{admin_name}"
+        )
 
 @router.callback_query(F.data.startswith("fail:"))
 async def cb_fail(callback: CallbackQuery) -> None:
@@ -239,18 +262,16 @@ async def cb_fail(callback: CallbackQuery) -> None:
 
     txid = callback.data.split(":", 1)[1]
     admin_name = callback.from_user.username or str(callback.from_user.id)
-    
+
     success, msg_text = await _update_transaction_status(txid, TransactionStatus.FAILED, admin_name)
-    
-    await callback.answer("Marked as FAILED!" if success else "Failed to mark failed.", show_alert=not success)
-    
+
+    await callback.answer("Marked as FAILED! 🚫" if success else "Failed to mark failed.", show_alert=not success)
+
     if success and callback.message:
-        original_text = callback.message.html_text or ""
-        new_text = original_text + f"\n\n🚫 <b>Action:</b> Marked FAILED by @{admin_name}"
-        try:
-            await callback.message.edit_text(new_text, reply_markup=None)
-        except Exception:
-            pass
+        await _edit_message_remove_buttons(
+            callback.message,
+            f"\n\n🚫 <b>FAILED</b> by @{admin_name}"
+        )
 
 
 # ── Action Commands ──────────────────────────────────────────────
