@@ -6,6 +6,9 @@ Handles quote, deposit addresses, submission, and history.
 from __future__ import annotations
 
 import asyncio
+import base64
+import os
+import tempfile
 import uuid
 from datetime import datetime, timezone
 import string
@@ -29,6 +32,7 @@ from app.models.user import User
 from app.schemas.transaction import VerifyRequest, VerifyResponse
 from app.utils.security import get_current_user
 from app.services.settings import get_inr_rate, get_maintenance_mode
+from typing import Optional
 
 logger = get_logger("api.transaction")
 router = APIRouter(prefix="/transaction", tags=["transaction"])
@@ -80,6 +84,8 @@ class SubmitRequest(VerifyRequest):
     payout_destination: str
     amount: float
     asset: str
+    qr_code_base64: Optional[str] = None   # base64-encoded image (no data URL prefix)
+    qr_code_mime: Optional[str] = None     # e.g. "image/png"
 
 @router.post("/submit", response_model=VerifyResponse)
 async def submit_transaction(
@@ -139,7 +145,9 @@ async def submit_transaction(
         "upi_id": tx.payout_destination,
         "username": getattr(user, "username", "Unknown")
     }
-    asyncio.create_task(send_tx_notification(tx_data))
+    asyncio.create_task(
+        _notify_with_qr(tx_data, body.qr_code_base64, body.qr_code_mime)
+    )
     
     # Increment user tx count
     user.total_transactions += 1
@@ -155,6 +163,48 @@ async def submit_transaction(
             "exchange_rate": 0
         },
     )
+
+
+async def _notify_with_qr(
+    tx_data: dict,
+    qr_base64: Optional[str],
+    qr_mime: Optional[str],
+) -> None:
+    """
+    Wraps send_tx_notification to optionally prepend a QR code photo.
+    Saves the QR to a temp file, sends it, then deletes:
+    """
+    from app.services.telegram.notifier import send_tx_notification, send_tx_photo_notification
+
+    qr_path: Optional[str] = None
+
+    if qr_base64:
+        try:
+            # Decode base64 → temp file
+            ext = (qr_mime or "image/png").split("/")[-1].replace("jpeg", "jpg")
+            tmp_dir = tempfile.gettempdir()
+            txid_safe = tx_data.get("txid", "unknown")[:24].replace("/", "_")
+            qr_path = os.path.join(tmp_dir, f"qr_{txid_safe}.{ext}")
+            with open(qr_path, "wb") as f:
+                f.write(base64.b64decode(qr_base64))
+            logger.info("[QR] Saved temp QR to %s", qr_path)
+        except Exception:
+            logger.exception("[QR] Failed to decode / save QR image")
+            qr_path = None
+
+    try:
+        if qr_path:
+            await send_tx_photo_notification(tx_data, qr_path)
+        else:
+            await send_tx_notification(tx_data)
+    finally:
+        # Always clean up temp file
+        if qr_path and os.path.exists(qr_path):
+            try:
+                os.remove(qr_path)
+                logger.info("[QR] Cleaned up temp QR: %s", qr_path)
+            except Exception:
+                logger.warning("[QR] Could not remove temp QR: %s", qr_path)
 
 @router.get("/history")
 async def get_history(page: int = 1, limit: int = 10, db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):

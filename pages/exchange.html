@@ -356,6 +356,138 @@
         letter-spacing: 0.15em;
         box-shadow: 0 0 15px rgba(16, 185, 129, 0.1);
       }
+
+      /* ── QR Upload Zone ────────────────────────────────────────── */
+      .qr-upload-zone {
+        position: relative;
+        border: 2px dashed rgba(255,255,255,0.1);
+        border-radius: 4px;
+        background: #0d0d0d;
+        padding: 32px 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        text-align: center;
+        min-height: 160px;
+      }
+      .qr-upload-zone:hover,
+      .qr-upload-zone.dragover {
+        border-color: rgba(255,255,255,0.35);
+        background: #141414;
+      }
+      .qr-upload-zone.has-file {
+        border-color: rgba(255,255,255,0.3);
+        border-style: solid;
+        background: #111;
+        padding: 16px;
+        min-height: unset;
+      }
+      .qr-upload-icon {
+        font-size: 32px;
+        opacity: 0.25;
+        transition: opacity 0.15s;
+      }
+      .qr-upload-zone:hover .qr-upload-icon {
+        opacity: 0.45;
+      }
+      .qr-upload-text {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: rgba(255,255,255,0.3);
+        letter-spacing: 0.08em;
+        line-height: 1.6;
+      }
+      .qr-upload-text strong {
+        color: rgba(255,255,255,0.55);
+        display: block;
+        font-size: 12px;
+        margin-bottom: 4px;
+      }
+      .qr-upload-browse {
+        font-family: "DM Mono", monospace;
+        font-size: 9px;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,0.4);
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 6px 14px;
+        border-radius: 2px;
+        background: rgba(255,255,255,0.03);
+        transition: all 0.1s;
+      }
+      .qr-upload-zone:hover .qr-upload-browse {
+        color: rgba(255,255,255,0.65);
+        border-color: rgba(255,255,255,0.2);
+        background: rgba(255,255,255,0.06);
+      }
+      .qr-preview-wrap {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        width: 100%;
+      }
+      .qr-preview-img {
+        width: 80px;
+        height: 80px;
+        object-fit: contain;
+        border-radius: 4px;
+        border: 1px solid rgba(255,255,255,0.1);
+        background: #1a1a1a;
+        flex-shrink: 0;
+      }
+      .qr-preview-info {
+        flex: 1;
+        text-align: left;
+      }
+      .qr-preview-name {
+        font-family: "DM Mono", monospace;
+        font-size: 11px;
+        color: #e5e5e5;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px;
+      }
+      .qr-preview-size {
+        font-family: "DM Mono", monospace;
+        font-size: 9px;
+        color: rgba(255,255,255,0.3);
+        letter-spacing: 0.1em;
+        margin-top: 4px;
+        text-transform: uppercase;
+      }
+      .qr-remove-btn {
+        flex-shrink: 0;
+        background: rgba(248,113,113,0.08);
+        border: 1px solid rgba(248,113,113,0.2);
+        border-radius: 2px;
+        padding: 6px 12px;
+        color: #f87171;
+        font-size: 9px;
+        font-family: "DM Mono", monospace;
+        cursor: pointer;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        transition: all 0.1s;
+      }
+      .qr-remove-btn:hover {
+        background: rgba(248,113,113,0.14);
+      }
+      .qr-success-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        font-family: "DM Mono", monospace;
+        font-size: 9px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: rgba(52, 211, 153, 0.8);
+        margin-top: 6px;
+      }
     </style>
     <link rel="icon" type="image/jpeg" href="/Logo/Bitvora.jpg" />
   </head>
@@ -552,7 +684,7 @@
             </div>
           </div>
 
-          <!-- STEP 5: UPI / Bank -->
+          <!-- STEP 4: UPI / Bank -->
           <div>
             <div class="step-label"><span>4</span> Payout Destination</div>
             <label
@@ -571,6 +703,75 @@
             >
               INR will be sent here via IMPS within 15 minutes of chain
               confirmation.
+            </p>
+          </div>
+
+          <!-- STEP 5: QR Code Upload -->
+          <div>
+            <div class="step-label"><span>5</span> UPI QR Code
+              <span style="font-size:8px; color: #f87171; background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.15); padding: 2px 8px; border-radius: 2px; letter-spacing: 0.08em;">REQUIRED</span>
+            </div>
+            <label
+              class="text-[9px] font-mono tracking-[0.15em] text-zinc-600 uppercase block mb-3"
+              >Upload Your UPI QR Code Image</label
+            >
+
+            <!-- Hidden file input -->
+            <input
+              id="qr-file-input"
+              type="file"
+              accept="image/png,image/jpeg,image/jpg,image/webp"
+              style="display:none"
+              onchange="handleQRFileSelect(this)"
+            />
+
+            <!-- Upload Zone -->
+            <div
+              id="qr-upload-zone"
+              class="qr-upload-zone"
+              onclick="document.getElementById('qr-file-input').click()"
+              ondragover="qrDragOver(event)"
+              ondragleave="qrDragLeave(event)"
+              ondrop="qrDrop(event)"
+            >
+              <!-- Empty state -->
+              <div id="qr-empty-state">
+                <div class="qr-upload-icon material-symbols-outlined">qr_code_2</div>
+                <div class="qr-upload-text">
+                  <strong>Drop your QR code here</strong>
+                  or click to browse
+                </div>
+                <div class="qr-upload-browse">Browse Files</div>
+              </div>
+
+              <!-- Preview state (hidden by default) -->
+              <div id="qr-preview-state" style="display:none; width:100%">
+                <div class="qr-preview-wrap">
+                  <img id="qr-preview-img" class="qr-preview-img" src="" alt="QR Preview" />
+                  <div class="qr-preview-info">
+                    <div id="qr-preview-name" class="qr-preview-name">filename.png</div>
+                    <div id="qr-preview-size" class="qr-preview-size">0 KB</div>
+                    <div class="qr-success-tag">
+                      <span class="material-symbols-outlined" style="font-size:12px">check_circle</span>
+                      QR Ready
+                    </div>
+                  </div>
+                  <button
+                    class="qr-remove-btn"
+                    onclick="removeQR(event)"
+                    title="Remove QR"
+                  >
+                    <span class="material-symbols-outlined" style="font-size:12px; vertical-align:middle">close</span>
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div id="qr-error" class="error-msg hidden"></div>
+
+            <p class="text-[9px] font-mono text-zinc-700 mt-3 tracking-wider uppercase">
+              📸 This QR image will be sent to our team with your order for faster processing.
             </p>
           </div>
 
@@ -1021,6 +1222,88 @@
         }
       }
 
+      // ── QR Code State ──────────────────────────────────────────
+      let qrBase64 = null;  // stores the base64 string of the QR image
+
+      function handleQRFileSelect(input) {
+        const file = input.files[0];
+        if (!file) return;
+        processQRFile(file);
+      }
+
+      function qrDragOver(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        document.getElementById('qr-upload-zone').classList.add('dragover');
+      }
+
+      function qrDragLeave(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        document.getElementById('qr-upload-zone').classList.remove('dragover');
+      }
+
+      function qrDrop(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        document.getElementById('qr-upload-zone').classList.remove('dragover');
+        const file = e.dataTransfer?.files?.[0];
+        if (!file) return;
+        if (!file.type.startsWith('image/')) {
+          showQRError('Please upload an image file (PNG, JPG, WEBP).');
+          return;
+        }
+        processQRFile(file);
+      }
+
+      function processQRFile(file) {
+        // Validate type
+        const allowed = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+        if (!allowed.includes(file.type)) {
+          showQRError('Invalid file type. Upload a PNG, JPG or WEBP image.');
+          return;
+        }
+        // Validate size (max 5MB)
+        if (file.size > 5 * 1024 * 1024) {
+          showQRError('File too large. Max size is 5MB.');
+          return;
+        }
+        document.getElementById('qr-error').classList.add('hidden');
+
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          qrBase64 = ev.target.result; // full data URL: "data:image/png;base64,..."
+          // Show preview
+          const zone = document.getElementById('qr-upload-zone');
+          zone.classList.add('has-file');
+          document.getElementById('qr-empty-state').style.display = 'none';
+          document.getElementById('qr-preview-state').style.display = 'block';
+          document.getElementById('qr-preview-img').src = qrBase64;
+          document.getElementById('qr-preview-name').textContent = file.name;
+          const kb = (file.size / 1024).toFixed(1);
+          document.getElementById('qr-preview-size').textContent = `${kb} KB · ${file.type.split('/')[1].toUpperCase()}`;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function removeQR(e) {
+        e.stopPropagation();
+        qrBase64 = null;
+        document.getElementById('qr-file-input').value = '';
+        const zone = document.getElementById('qr-upload-zone');
+        zone.classList.remove('has-file');
+        document.getElementById('qr-empty-state').style.display = '';
+        document.getElementById('qr-preview-state').style.display = 'none';
+        document.getElementById('qr-preview-img').src = '';
+      }
+
+      function showQRError(msg) {
+        const el = document.getElementById('qr-error');
+        el.textContent = '· ' + msg;
+        el.classList.remove('hidden');
+      }
+
+      // ── Main Submit Handler ────────────────────────────────────
       async function handleSubmit() {
         const errEl = document.getElementById("submit-error");
         const txidEl = document.getElementById("txid-input");
@@ -1029,6 +1312,7 @@
         const btn = document.getElementById("submit-btn");
         errEl.classList.add("hidden");
         document.getElementById("txid-error").classList.add("hidden");
+        document.getElementById("qr-error").classList.add("hidden");
 
         if (!selectedToken) {
           showError("Please select a token first.");
@@ -1063,9 +1347,20 @@
           return;
         }
 
+        // ── QR Code Validation (Required) ──
+        if (!qrBase64) {
+          showQRError('QR code image is required. Please upload your UPI QR code.');
+          document.getElementById('qr-upload-zone').scrollIntoView({ behavior: 'smooth', block: 'center' });
+          return;
+        }
+
         btn.innerHTML =
           '<span class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span> PROCESSING...';
         btn.disabled = true;
+
+        // Extract base64 data (strip data URL prefix)
+        const base64Data = qrBase64.split(',')[1] || qrBase64;
+        const mimeType = qrBase64.split(';')[0].split(':')[1] || 'image/png';
 
         const res = await apiFetch("/transaction/submit", {
           method: "POST",
@@ -1075,6 +1370,8 @@
             txid: txid,
             amount: amount,
             payout_destination: upi,
+            qr_code_base64: base64Data,
+            qr_code_mime: mimeType,
           }),
         });
 
@@ -1138,11 +1435,15 @@
         document.getElementById("submit-form").classList.remove("hidden");
         document.getElementById("txid-input").value = "";
         document.getElementById("amount-input").value = "";
+        document.getElementById("upi-input").value = "";
         document.getElementById("quote-box").classList.add("hidden");
         document.getElementById("submit-btn").textContent = "VERIFY & SUBMIT";
         document.getElementById("submit-btn").disabled = false;
         selectedToken = null;
         selectedRef = null;
+        // Reset QR
+        removeQR({ stopPropagation: () => {} });
+        document.getElementById('qr-error').classList.add('hidden');
         document
           .querySelectorAll(".token-card")
           .forEach((c) => c.classList.remove("selected"));

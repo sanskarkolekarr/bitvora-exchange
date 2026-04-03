@@ -13,7 +13,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 from aiogram.exceptions import TelegramRetryAfter, TelegramAPIError
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, FSInputFile
 
 from app.core.config import settings
 from app.core.logger import get_logger
@@ -61,6 +61,51 @@ async def send_tx_notification(data: dict[str, Any]) -> bool:
 
     return await _send_with_retry(chat_id=group_id, text=message, reply_markup=markup)
 
+
+async def send_tx_photo_notification(data: dict[str, Any], photo_path: str) -> bool:
+    """
+    Send a transaction notification where the QR code photo is the primary
+    message and order details are sent as the caption.
+
+    Falls back to a plain text notification if photo delivery fails.
+    """
+    group_id = settings.TELEGRAM_GROUP_ID
+    if not group_id:
+        logger.error("TELEGRAM_GROUP_ID not configured — notification skipped")
+        return False
+
+    caption = _format_tx_message(data)
+    # Telegram caption max is 1024 chars; trim if needed
+    if len(caption) > 1024:
+        caption = caption[:1020] + "..."
+
+    db_id = data.get("id")
+    if db_id:
+        markup = InlineKeyboardMarkup(inline_keyboard=[
+            [
+                InlineKeyboardButton(text="✅ Mark Paid", callback_data=f"paid:{db_id}"),
+                InlineKeyboardButton(text="❌ Fail", callback_data=f"fail:{db_id}")
+            ]
+        ])
+    else:
+        markup = None
+
+    # Try sending as photo with caption
+    try:
+        photo_input = FSInputFile(photo_path)
+        bot = get_bot()
+        await bot.send_photo(
+            chat_id=group_id,
+            photo=photo_input,
+            caption=caption,
+            reply_markup=markup,
+        )
+        logger.info("[QR] Photo notification delivered to %s", group_id)
+        return True
+    except Exception as exc:
+        logger.error("[QR] Photo send failed (%s), falling back to text", exc)
+        # Fallback: send plain text message
+        return await _send_with_retry(chat_id=group_id, text=caption, reply_markup=markup)
 
 async def send_support_ticket(data: dict[str, Any]) -> bool:
     """
