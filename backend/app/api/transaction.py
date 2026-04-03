@@ -145,9 +145,11 @@ async def submit_transaction(
         "upi_id": tx.payout_destination,
         "username": getattr(user, "username", "Unknown")
     }
-    asyncio.create_task(
-        _notify_with_qr(tx_data, body.qr_code_base64, body.qr_code_mime)
-    )
+    # Save QR to temp file so the worker's verified notification can attach it.
+    # We do NOT send an upfront notification here — the worker sends one
+    # notification after verification with real USD/INR values + the QR.
+    if body.qr_code_base64:
+        asyncio.create_task(_save_qr_temp(body.txid, body.qr_code_base64, body.qr_code_mime))
     
     # Increment user tx count
     user.total_transactions += 1
@@ -165,14 +167,38 @@ async def submit_transaction(
     )
 
 
+async def _save_qr_temp(
+    txid: str,
+    qr_base64: Optional[str],
+    qr_mime: Optional[str],
+) -> None:
+    """
+    Decode and save the QR image to a temp file keyed by txid.
+    The notifier picks this file up automatically when the worker
+    sends its verified notification (with real USD/INR values).
+    File lives at: /tmp/qr_<txid_safe>.<ext>
+    """
+    if not qr_base64:
+        return
+    try:
+        ext = (qr_mime or "image/png").split("/")[-1].replace("jpeg", "jpg")
+        txid_safe = txid[:24].replace("/", "_")
+        qr_path = os.path.join(tempfile.gettempdir(), f"qr_{txid_safe}.{ext}")
+        with open(qr_path, "wb") as f:
+            f.write(base64.b64decode(qr_base64))
+        logger.info("[QR] Saved temp QR for txid=%s → %s", txid[:16], qr_path)
+    except Exception:
+        logger.exception("[QR] Failed to save QR for txid=%s", txid[:16])
+
+
 async def _notify_with_qr(
     tx_data: dict,
     qr_base64: Optional[str],
     qr_mime: Optional[str],
 ) -> None:
     """
-    Wraps send_tx_notification to optionally prepend a QR code photo.
-    Saves the QR to a temp file, sends it, then deletes:
+    Legacy helper kept for reference.
+    No longer called at submit time — use _save_qr_temp instead.
     """
     from app.services.telegram.notifier import send_tx_notification, send_tx_photo_notification
 
@@ -180,7 +206,6 @@ async def _notify_with_qr(
 
     if qr_base64:
         try:
-            # Decode base64 → temp file
             ext = (qr_mime or "image/png").split("/")[-1].replace("jpeg", "jpg")
             tmp_dir = tempfile.gettempdir()
             txid_safe = tx_data.get("txid", "unknown")[:24].replace("/", "_")
@@ -198,7 +223,6 @@ async def _notify_with_qr(
         else:
             await send_tx_notification(tx_data)
     finally:
-        # Always clean up temp file
         if qr_path and os.path.exists(qr_path):
             try:
                 os.remove(qr_path)

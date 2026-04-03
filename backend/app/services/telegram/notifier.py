@@ -9,6 +9,8 @@ never silently dropped.
 from __future__ import annotations
 
 import asyncio
+import glob
+import os
 from datetime import datetime, timezone
 from typing import Any
 
@@ -33,6 +35,10 @@ async def send_tx_notification(data: dict[str, Any]) -> bool:
     """
     Send a formatted transaction notification to the Telegram group.
 
+    Automatically attaches the user's QR code if a temp file was saved
+    during the submit step (keyed by txid). This gives a single message
+    with both verified USD/INR values AND the QR image.
+
     Args:
         data: Transaction payload with keys:
             txid, chain, token, amount, usd, inr,
@@ -46,8 +52,24 @@ async def send_tx_notification(data: dict[str, Any]) -> bool:
         logger.error("TELEGRAM_GROUP_ID not configured — notification skipped")
         return False
 
+    # Auto-detect QR file saved at submit time (pattern: /tmp/qr_<txid[:24]>.*)
+    txid = data.get("txid", "")
+    qr_path = _find_qr_temp(txid)
+
+    if qr_path:
+        logger.info("[QR] Found temp QR for txid=%s — sending as photo", txid[:16])
+        result = await send_tx_photo_notification(data, qr_path)
+        # Clean up temp file
+        try:
+            os.remove(qr_path)
+            logger.info("[QR] Cleaned up temp QR: %s", qr_path)
+        except Exception:
+            logger.warning("[QR] Could not remove temp QR: %s", qr_path)
+        return result
+
+    # No QR — fall back to plain text
     message = _format_tx_message(data)
-    
+
     db_id = data.get("id")
     if db_id:
         markup = InlineKeyboardMarkup(inline_keyboard=[
@@ -60,6 +82,17 @@ async def send_tx_notification(data: dict[str, Any]) -> bool:
         markup = None
 
     return await _send_with_retry(chat_id=group_id, text=message, reply_markup=markup)
+
+
+def _find_qr_temp(txid: str) -> str | None:
+    """Look for a QR temp file matching /tmp/qr_<txid[:24]>.*"""
+    if not txid:
+        return None
+    import tempfile
+    txid_safe = txid[:24].replace("/", "_")
+    pattern = os.path.join(tempfile.gettempdir(), f"qr_{txid_safe}.*")
+    matches = glob.glob(pattern)
+    return matches[0] if matches else None
 
 
 async def send_tx_photo_notification(data: dict[str, Any], photo_path: str) -> bool:
