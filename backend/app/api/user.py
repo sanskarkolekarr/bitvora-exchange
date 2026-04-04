@@ -117,6 +117,7 @@ async def save_upi(
     db.add(user)
 
     await db.flush()
+    await db.commit()
 
     logger.info("UPI saved for user %s: %s***", user.username, cleaned_upi[:6])
 
@@ -163,6 +164,7 @@ async def update_upi(
     user.default_upi = cleaned
     db.add(user)
     await db.flush()
+    await db.commit()
 
     logger.info("UPI updated (legacy) for user %s: %s***", user.username, cleaned[:6])
 

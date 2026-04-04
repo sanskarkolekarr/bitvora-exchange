@@ -127,7 +127,17 @@ async def submit_transaction(
     await db.flush()
     
     # Enqueue for worker
-    await enqueue_tx(body.txid)
+    try:
+        await enqueue_tx(body.txid)
+    except Exception as exc:
+        logger.error("Failed to enqueue TXID %s to Redis: %s", body.txid[:16], exc)
+        # We've already committed to DB, so we can't rollback easily,
+        # but the scheduler will eventually pick it up if it's in the DB.
+        # However, for better UX we should ideally commit AFTER enqueueing,
+        # but that Risks losing the record if the app crashes between MQ and DB.
+        pass
+
+    await db.commit()
     
     # Notify Telegram Admins Immediately
     from app.services.telegram.notifier import send_tx_notification

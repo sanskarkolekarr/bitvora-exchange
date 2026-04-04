@@ -112,6 +112,7 @@ async def register(req: RegisterRequest, db: AsyncSession = Depends(get_db)):
     )
     db.add(initial_payment)
     await db.flush()
+    await db.commit()
     
     return {"message": "User created successfully"}
 

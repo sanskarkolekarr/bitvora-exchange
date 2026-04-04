@@ -37,7 +37,7 @@ class Settings(BaseSettings):
     INR_RATE: float = 83.50
 
     # ── Supported blockchain chains ──────────────────────────────
-    SUPPORTED_CHAINS: str = "ethereum,bsc,tron,bitcoin"
+    SUPPORTED_CHAINS: str = "ethereum,bsc,tron,bitcoin,solana,litecoin,ton"
 
     # ── Wallet addresses (per chain) ─────────────────────────────
     DEPOSIT_ADDRESS_ETHEREUM: str = ""
